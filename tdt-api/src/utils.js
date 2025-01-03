@@ -256,7 +256,7 @@ const events = [
       dancers: ["dancingqueen","durounseki"],
       flyer: {
         alt: "Saigon Latin Dance Festival",
-        src: "/uploads/saigonLatinFestival.jpg"
+        src: "saigonLatinFestival.jpg"
       }
     },
     {
@@ -285,7 +285,7 @@ const events = [
       dancers: ["bachaterolover"],
       flyer: {
         alt: "JKBC",
-        src: "/uploads/jkbc.JPG"
+        src: "jkbc.JPG"
       }
     },
     {
@@ -314,7 +314,7 @@ const events = [
       dancers: ["durounseki", "groovyguru"],
       flyer: {
         alt: "TSC2024",
-        src: "/uploads/taiwanSalsaCarnival.jpg"
+        src: "taiwanSalsaCarnival.jpg"
       }
     },
     {
@@ -343,7 +343,7 @@ const events = [
       dancers: [],
       flyer: {
         alt: "LinkingAYL",
-        src: "/uploads/linkingBachata.jpeg"
+        src: "linkingBachata.jpeg"
       }
     },
     {
@@ -367,7 +367,7 @@ const events = [
       dancers: ["durounseki","dancingqueen"],
       flyer: {
         alt: "Haisai",
-        src: "/uploads/haisai.jpg"
+        src: "haisai.jpg"
       }
     },
     {
@@ -391,7 +391,7 @@ const events = [
       dancers: ["groovyguru", "bachaterolover"],
       flyer: {
         alt: "VLX2024",
-        src: "/uploads/vlx.jpeg"
+        src: "vlx.jpeg"
       }
     },
     {
@@ -430,7 +430,7 @@ const events = [
       dancers: ["durounseki","dancingqueen","groovyguru","bachaterolover"],
       flyer: {
         alt: "SBTS2024",
-        src: "/uploads/sbts.png"
+        src: "sbts.png"
       }
     },
   ];
