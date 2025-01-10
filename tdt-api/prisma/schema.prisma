@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id        String        @id @default(cuid())
+  name      String
+  date      DateTime
+  country   String
+  venues    Venue[]
+  sns       SocialMedia[]
+  flyer     Flyer?
+}
+
+model Venue {
+  id      String @id @default(cuid())
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId String
+  name    String
+  url     String
+}
+
+model SocialMedia {
+  id      String @id @default(cuid())
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId String
+  name    String
+  url     String
+  faClass String
+}
+
+model Flyer {
+  id      String  @id @default(cuid())
+  event   Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId String  @unique
+  alt     String
+  src     String
+}
