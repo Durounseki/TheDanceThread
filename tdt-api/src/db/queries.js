@@ -2,7 +2,6 @@ import { snsFaClass } from '../utils.js';
 
 export async function getEvents(){
     try{
-        console.log(this);
         const events = this.findMany();
         return events;
     }catch(error){
@@ -77,6 +76,39 @@ export async function createEvent(eventInfo,key){
     }catch(error){
         console.error("Error creating event:", error);
         throw new Error('Failed to create event');
+    }
+}
+
+export async function getEventById(eventId){
+    try{
+        const event = await this.findUnique({
+            where: {id: eventId},
+            include: {
+                venues: {
+                    select: {
+                        name: true,
+                        url: true
+                    }
+                },
+                sns: {
+                    select: {
+                        name: true,
+                        url: true,
+                        faClass: true
+                    }
+                },
+                flyer: {
+                    select: {
+                        alt: true,
+                        src: true
+                    }
+                }
+            }
+        })
+        return event;
+    }catch(error){
+        console.error("Error finding event",error);
+        throw new Error('Failed to fetch event');
     }
 }
 

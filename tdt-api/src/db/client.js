@@ -8,7 +8,8 @@ export default function createPrismaClient(env){
         model:{
             event:{
                 getEvents: queries.getEvents,
-                createEvent: queries.createEvent
+                getEventById: queries.getEventById,
+                createEvent: queries.createEvent,
             }
         }
     });

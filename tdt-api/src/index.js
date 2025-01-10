@@ -22,9 +22,14 @@ app.use('*', async (c, next) => {
 
 
 app.get('/api/events', async (c) => {
-	const prisma = c.get("prisma");
-	const events = await prisma.event.getEvents();
-	return c.json(events);
+	try{
+		const prisma = c.get("prisma");
+		const events = await prisma.event.getEvents();
+		return c.json(events);
+	}catch(error){
+		console.error("Error fetching events:", error);
+		return c.json({error: "Failed to fetch events"},500);
+	}
 });
 
 app.post('/api/events', async (c) => {
@@ -42,14 +47,31 @@ app.post('/api/events', async (c) => {
 	}
 });
 
-// app.get('/api/events/:id', (c) => {
-// 	const id = parseInt(c.req.param('id'));
-//   	const event = events.find((e) => e.id === id);
-// 	if (!event) {
-// 		return c.json({ error: 'Event not found' }, 404);
-// 	}
-//   	return c.json(event);
-// });
+app.get('/api/events/:id', async (c) => {
+	const id = c.req.param('id');
+	try{
+		const prisma = c.get("prisma");
+		const event = await prisma.event.getEventById(id);
+		if (!event) {
+			return c.json({ error: 'Event not found' }, 404);
+		}
+		const s3 = c.get("s3");
+		
+		const command = new GetObjectCommand({
+			Bucket: c.env.S3_BUCKET,
+			Key: event.flyer.src,
+		});
+		
+		const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+		
+		event.flyer.src = url;
+		
+		return c.json(event);
+	}catch(error){
+		console.error("Error fetching event:", error);
+		return c.json({ error: 'Failed to fetch event' }, 500);
+	}
+});
 
 // app.get('/api/events/:id/flyer', async (c) => {
 	
