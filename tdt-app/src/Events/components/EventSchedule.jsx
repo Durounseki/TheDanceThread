@@ -5,9 +5,7 @@ const EventSchedule = ({ events }) => {
   return (
     <section className="event-cards">
       {events ? (
-        events.map((event) => {
-          <EventCard props={event} />;
-        })
+        events.map((event) => <EventCard key={event.id} event={event} />)
       ) : (
         <p className="search-not-found">
           Sorry, there are no results that match{" "}
@@ -29,7 +27,7 @@ EventSchedule.propTypes = {
         alt: PropTypes.string.isRequired,
       }).isRequired,
       country: PropTypes.string.isRequired,
-      venue: PropTypes.arrayOf(
+      venues: PropTypes.arrayOf(
         PropTypes.shape({
           url: PropTypes.string,
           name: PropTypes.string.isRequired,

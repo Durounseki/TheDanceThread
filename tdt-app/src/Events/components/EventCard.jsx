@@ -2,8 +2,9 @@ import dayjs from "dayjs";
 import PropTypes from "prop-types";
 
 const EventCard = ({ event }) => {
+  console.log("Event:", event);
   return (
-    <div key={event.id} className="event-card" data-event-id={event.id}>
+    <div className="event-card" data-event-id={event.id}>
       <div className="event-date">
         <p>{dayjs(event.date).format("MMMM").toUpperCase().slice(0, 3)}</p>
         <p>{dayjs(event.date).format("D")}</p>
@@ -14,10 +15,10 @@ const EventCard = ({ event }) => {
       <div className="event-details">
         <p className="event-name">{event.name}</p>
         <div className="event-links">
-          <p className="event-venue">
-            {event.venue[0].url ? (
+          <p className="event-venues">
+            {event.venues[0].url ? (
               <a
-                href={event.venue[0].url}
+                href={event.venues[0].url}
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -52,7 +53,7 @@ EventCard.propTypes = {
       alt: PropTypes.string.isRequired,
     }).isRequired,
     country: PropTypes.string.isRequired,
-    venue: PropTypes.arrayOf(
+    venues: PropTypes.arrayOf(
       PropTypes.shape({
         url: PropTypes.string,
         name: PropTypes.string.isRequired,

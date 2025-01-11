@@ -1,6 +1,15 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 const SearchEvent = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [danceStyle, setDanceStyle] = useState("");
+  const [dateQuery, setDateQuery] = useState("");
+
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
   return (
     <search>
       <form action="/events/search" method="POST" className="search-container">
@@ -13,8 +22,14 @@ const SearchEvent = () => {
             name="country-search"
             id="country-search"
             placeholder="Search by country"
+            value={searchQuery}
+            onChange={handleSearch}
           />
-          <button type="reset" className="clear-search">
+          <button
+            type="reset"
+            className={"clear-search" + `${searchQuery !== "" ? " show" : ""}`}
+            onClick={() => setSearchQuery("")}
+          >
             <i className="fa-solid fa-circle-xmark"></i>
           </button>
         </div>
@@ -27,11 +42,10 @@ const SearchEvent = () => {
             <select
               name="style-search"
               id="style-search"
-              data-style-value="<%= selectValue %>"
+              value={danceStyle}
+              onChange={(e) => setDanceStyle(e.target.value)}
             >
-              <option value="" selected>
-                Style
-              </option>
+              <option value="">Style</option>
               <option value="salsa">Salsa</option>
               <option value="bachata">Bachata</option>
               <option value="kizomba">Kizomba</option>
@@ -39,12 +53,13 @@ const SearchEvent = () => {
               <option value="other">Other</option>
             </select>
             <div className="date-filter">
-              <label htmlFor="date">Date:</label>
+              <label htmlFor="date-search">Date:</label>
               <input
                 type="month"
                 id="date-search"
                 name="date-search"
-                value="<%= dateValue %>"
+                value={dateQuery}
+                onChange={(e) => setDateQuery(e.target.value)}
               />
             </div>
             <button type="submit" className="submit-search">
