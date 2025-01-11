@@ -1,27 +1,24 @@
 {
-  "name": "tdt-api",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "start": "wrangler dev",
-    "test": "vitest"
-  },
-  "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.5.2",
-    "vitest": "2.1.8",
-    "wrangler": "^3.60.3"
-  },
-  "dependencies": {
-    "@aws-sdk/client-s3": "^3.717.0",
-    "@aws-sdk/s3-request-presigner": "^3.717.0",
-    "@dicebear/collection": "^9.2.2",
-    "@dicebear/core": "^9.2.2",
-    "@prisma/adapter-d1": "^6.1.0",
-    "@prisma/client": "^6.1.0",
-    "dotenv": "^16.4.7",
-    "hono": "^4.6.14",
-    "prisma": "^6.1.0"
-  }
+	"name": "tdt-api",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"test": "vitest"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.5.2",
+		"vitest": "2.1.8",
+		"wrangler": "^3.60.3"
+	},
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.717.0",
+		"@aws-sdk/s3-request-presigner": "^3.717.0",
+		"@prisma/adapter-d1": "^6.1.0",
+		"@prisma/client": "^6.1.0",
+		"hono": "^4.6.14",
+		"prisma": "^6.1.0"
+	}
 }
