@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
@@ -12,21 +12,25 @@ datasource db {
 }
 
 model Event {
-  id        String        @id @default(cuid())
-  name      String
-  date      DateTime
-  country   String
-  venues    Venue[]
-  sns       SocialMedia[]
-  flyer     Flyer?
+  id          String        @id @default(cuid())
+  name        String
+  date        DateTime
+  country     String
+  city        String?
+  description String?
+  styles      Style[]
+  venues      Venue[]
+  sns         SocialMedia[]
+  flyer       Flyer?
 }
 
 model Venue {
-  id      String @id @default(cuid())
-  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventId String
-  name    String
-  url     String
+  id     String  @id @default(cuid())
+  events Event[]
+  name   String
+  url    String
+
+  @@unique([name, url])
 }
 
 model SocialMedia {
@@ -39,9 +43,15 @@ model SocialMedia {
 }
 
 model Flyer {
-  id      String  @id @default(cuid())
-  event   Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventId String  @unique
+  id      String @id @default(cuid())
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId String @unique
   alt     String
   src     String
+}
+
+model Style {
+  id     String  @id @default(cuid())
+  name   String  @unique
+  events Event[]
 }
