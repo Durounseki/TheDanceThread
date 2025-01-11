@@ -2,7 +2,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./Layout.jsx";
 import Home from "./Home.jsx";
-import Events from "./Events.jsx";
+import Events from "./Events/Events.jsx";
 import CreateEvent from "./CreateEvent.jsx";
 import ErrorPage from "./ErrorPage.jsx";
 
