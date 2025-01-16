@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import createPrismaClient from './db/client.js';
+import { cors } from 'hono/cors';
 
 const app = new Hono();
 
@@ -18,6 +19,14 @@ app.use('*', async (c, next) => {
 	c.set('prisma', createPrismaClient(c.env));
 	await next();
 });
+
+app.use(
+	'/api/*',
+	cors({
+		origin: (origin, c) => c.env.APP_URL || 'http://localhost:8787', // Use APP_URL env var or fallback
+		allowMethods: ['GET', 'POST', 'OPTIONS'], // Explicitly allow OPTIONS
+	})
+);
 
 app.get('/api/events', async (c) => {
 	try {

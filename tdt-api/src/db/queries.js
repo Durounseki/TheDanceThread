@@ -2,7 +2,29 @@ import { snsFaClass } from '../utils.js';
 
 export async function getEvents() {
 	try {
-		const events = this.findMany();
+		const events = this.findMany({
+			include: {
+				venues: {
+					select: {
+						name: true,
+						url: true,
+					},
+				},
+				sns: {
+					select: {
+						name: true,
+						url: true,
+						faClass: true,
+					},
+				},
+				flyer: {
+					select: {
+						alt: true,
+						src: true,
+					},
+				},
+			},
+		});
 		return events;
 	} catch (error) {
 		console.error('Error finding events:', error);
@@ -50,9 +72,6 @@ export async function createEvent(eventInfo, key) {
 	} else {
 		styles = [eventInfo['style[]']];
 	}
-
-	console.log('Styles:', styles);
-	console.log('Styles:', eventInfo['style[]']);
 
 	try {
 		const event = await this.create({
