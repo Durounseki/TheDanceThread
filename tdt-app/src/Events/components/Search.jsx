@@ -33,7 +33,7 @@ const SearchEvent = () => {
             <i className="fa-solid fa-circle-xmark"></i>
           </button>
         </div>
-        <Link href="/events/create" className="create-button">
+        <Link to="/events/create" className="create-button">
           <i className="fa-solid fa-plus"></i>
         </Link>
         <div className="filter-container">
