@@ -2,12 +2,13 @@ import dayjs from "dayjs";
 import PropTypes from "prop-types";
 
 const EventCard = ({ event }) => {
-  console.log("Event:", event);
   return (
     <div className="event-card" data-event-id={event.id}>
       <div className="event-date">
-        <p>{dayjs(event.date).format("MMMM").toUpperCase().slice(0, 3)}</p>
-        <p>{dayjs(event.date).format("D")}</p>
+        <p>
+          {dayjs(new Date(event.date)).format("MMMM").toUpperCase().slice(0, 3)}
+        </p>
+        <p>{dayjs(new Date(event.date)).format("D")}</p>
       </div>
       <div className="event-thumb">
         <img src={event.flyer.src} alt={event.flyer.alt} />
@@ -47,7 +48,7 @@ EventCard.propTypes = {
   event: PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    date: PropTypes.instanceOf(Date).isRequired,
+    date: PropTypes.string.isRequired,
     flyer: PropTypes.shape({
       src: PropTypes.string.isRequired,
       alt: PropTypes.string.isRequired,

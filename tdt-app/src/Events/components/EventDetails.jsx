@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import PropTypes from "prop-types";
 
 const EventDetails = ({ event }) => {
+  console.log("Event details:", event);
   return (
     <>
       <h1 className="event-name">{event.name.toUpperCase()}</h1>
