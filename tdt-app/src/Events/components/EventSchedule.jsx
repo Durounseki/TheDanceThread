@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
 import EventCard from "./EventCard.jsx";
 
-const EventSchedule = ({ events }) => {
+const EventSchedule = ({ eventIds }) => {
   return (
     <section className="event-cards">
-      {events ? (
-        events.map((event) => <EventCard key={event.id} event={event} />)
+      {eventIds ? (
+        eventIds.map((eventId) => <EventCard key={eventId} eventId={eventId} />)
       ) : (
         <p className="search-not-found">
           Sorry, there are no results that match{" "}
@@ -17,31 +17,7 @@ const EventSchedule = ({ events }) => {
 };
 
 EventSchedule.propTypes = {
-  events: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      date: PropTypes.instanceOf(Date).isRequired,
-      flyer: PropTypes.shape({
-        src: PropTypes.string.isRequired,
-        alt: PropTypes.string.isRequired,
-      }).isRequired,
-      country: PropTypes.string.isRequired,
-      venues: PropTypes.arrayOf(
-        PropTypes.shape({
-          url: PropTypes.string,
-          name: PropTypes.string.isRequired,
-        })
-      ).isRequired,
-      sns: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.string.isRequired,
-          url: PropTypes.string.isRequired,
-          faClass: PropTypes.string.isRequired,
-        })
-      ).isRequired,
-    })
-  ),
+  eventIds: PropTypes.arrayOf(PropTypes.string.isRequired),
 };
 
 export default EventSchedule;

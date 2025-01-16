@@ -3,26 +3,8 @@ import { snsFaClass } from '../utils.js';
 export async function getEvents() {
 	try {
 		const events = this.findMany({
-			include: {
-				venues: {
-					select: {
-						name: true,
-						url: true,
-					},
-				},
-				sns: {
-					select: {
-						name: true,
-						url: true,
-						faClass: true,
-					},
-				},
-				flyer: {
-					select: {
-						alt: true,
-						src: true,
-					},
-				},
+			select: {
+				id: true,
 			},
 		});
 		return events;
@@ -140,6 +122,7 @@ export async function getEventById(eventId) {
 				},
 				sns: {
 					select: {
+						id: true,
 						name: true,
 						url: true,
 						faClass: true,
