@@ -4,7 +4,9 @@ import { v4 as uuidv4 } from "uuid";
 
 function EventForm() {
   const [styles, setStyles] = useState([]);
-  const [snsGroups, setSnsGroups] = useState([{ id: uuidv4() }]);
+  const [snsGroups, setSnsGroups] = useState([
+    { id: uuidv4(), platform: "website" },
+  ]);
   const textAreaRef = useRef(null);
 
   useEffect(() => {
@@ -30,7 +32,17 @@ function EventForm() {
 
   const handleAddSnsLink = () => {
     if (snsGroups.length < 4) {
-      setSnsGroups([...snsGroups, { id: uuidv4() }]);
+      const platforms = ["website", "facebook", "instagram", "youtube"];
+      setSnsGroups([
+        ...snsGroups,
+        {
+          id: uuidv4(),
+          platform: platforms.filter(
+            (platform) =>
+              !snsGroups.map((group) => group.platform).includes(platform)
+          )[0],
+        },
+      ]);
     }
   };
 
@@ -38,6 +50,24 @@ function EventForm() {
     if (snsGroups.length > 1) {
       setSnsGroups(snsGroups.filter((group) => group.id !== groupId));
     }
+  };
+
+  const handleSnsPlatformChange = (groupId, newPlatform) => {
+    setSnsGroups((prevSnsGroups) =>
+      prevSnsGroups.map((group) =>
+        group.id === groupId ? { ...group, platform: newPlatform } : group
+      )
+    );
+  };
+
+  const getDisabledOptions = (groupId) => {
+    const disabledOptions = [];
+    snsGroups.forEach((group) => {
+      if (group.id !== groupId) {
+        disabledOptions.push(group.platform);
+      }
+    });
+    return disabledOptions;
   };
 
   const handleSubmit = async (event) => {
@@ -174,6 +204,11 @@ function EventForm() {
               key={group.id}
               onRemove={() => handleRemoveSnsLink(group.id)}
               canRemove={snsGroups.length > 1}
+              platform={group.platform}
+              setPlatform={(newPlatform) =>
+                handleSnsPlatformChange(group.id, newPlatform)
+              }
+              disabledOptions={getDisabledOptions(group.id)}
             />
           ))}
           {snsGroups.length < 4 && (
