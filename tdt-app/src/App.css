@@ -521,8 +521,7 @@ input[type="date"] {
   color: #b4d4ee;
 }
 
-#add-sns,
-.submit-event {
+.event-form-button {
   grid-column: 2;
   margin-left: auto;
   background-color: #202020;
@@ -559,7 +558,7 @@ input[type="file"]::file-selector-button {
 .form-checkbox-container {
   grid-column: 1 / 3;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 8px;
   align-items: center;
   label {
@@ -597,10 +596,20 @@ input[type="file"]::file-selector-button {
   transition: background-color 0.3s ease-in-out;
 }
 
+.style-checkbox:focus + .custom-checkbox {
+  border: solid 1px #b4d4ee;
+}
+
 label:hover input ~ .custom-checkbox {
   background-color: #505050;
 }
 
 label input:checked ~ .custom-checkbox {
   background-color: #b4d4ee;
+}
+
+.other-style-container {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
 }

@@ -43,11 +43,15 @@ app.post('/api/events', async (c) => {
 	const eventInfo = await c.req.parseBody();
 	const file = eventInfo.flyer;
 	try {
-		const key = `${Date.now()}-${file.name}`;
-		await c.env.TDT_BUCKET.put(key, file.stream());
-		const prisma = c.get('prisma');
-		const event = await prisma.event.createEvent(eventInfo, key);
-		return c.json(event, 201);
+		console.log('ok');
+		console.log(JSON.stringify(eventInfo, null, 4));
+		console.log(file);
+		return c.json('OK', 201);
+		// const key = `${Date.now()}-${file.name}`;
+		// await c.env.TDT_BUCKET.put(key, file.stream());
+		// const prisma = c.get('prisma');
+		// const event = await prisma.event.createEvent(eventInfo, key);
+		// return c.json(event, 201);
 	} catch (error) {
 		console.error('Error uploading file:', error);
 		return c.json({ error: 'Failed to upload file' }, 500);

@@ -1,13 +1,42 @@
 import { useState, useRef, useEffect } from "react";
 import SnsGroup from "./SnsGroup";
 import { v4 as uuidv4 } from "uuid";
+import CustomCheckbox from "./CustomCheckbox";
 
 function EventForm() {
-  const [styles, setStyles] = useState([]);
+  const [styleOptions, setStyleOptions] = useState([
+    {
+      id: uuidv4(),
+      value: "salsa",
+      text: "Salsa",
+      checked: false,
+    },
+    {
+      id: uuidv4(),
+      value: "bachata",
+      text: "Bachata",
+      checked: false,
+    },
+    {
+      id: uuidv4(),
+      value: "kizomba",
+      text: "Kizomba",
+      checked: false,
+    },
+    {
+      id: uuidv4(),
+      value: "zouk",
+      text: "Zouk",
+      checked: false,
+    },
+  ]);
+  // const [styles, setStyles] = useState([]);
+  const [otherStyle, setOtherStyle] = useState("");
   const [snsGroups, setSnsGroups] = useState([
     { id: uuidv4(), platform: "website" },
   ]);
   const textAreaRef = useRef(null);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const textArea = textAreaRef.current;
@@ -21,13 +50,36 @@ function EventForm() {
     return () => textArea.removeEventListener("input", resizeTextArea);
   }, []);
 
-  const handleStyleChange = (event) => {
-    const { value, checked } = event.target;
+  const handleStyleCheck = (event) => {
+    const { id, checked } = event.target;
     if (checked) {
-      setStyles([...styles, value]);
+      setStyleOptions(
+        styleOptions.map((option) =>
+          option.id === id ? { ...option, checked: true } : option
+        )
+      );
     } else {
-      setStyles(styles.filter((style) => style !== value));
+      setStyleOptions(
+        styleOptions.map((option) =>
+          option.id === id ? { ...option, checked: false } : option
+        )
+      );
     }
+  };
+
+  const handleOtherStyle = (event) => {
+    event.preventDefault;
+    const value = otherStyle.trim().toLowerCase();
+    if (!styleOptions.some((style) => style.value === value)) {
+      const newStyle = {
+        id: uuidv4(),
+        value: value,
+        text: value.charAt(0).toUpperCase() + value.slice(1),
+        checked: true,
+      };
+      setStyleOptions([...styleOptions, newStyle]);
+    }
+    setOtherStyle("");
   };
 
   const handleAddSnsLink = () => {
@@ -76,20 +128,18 @@ function EventForm() {
     const formData = new FormData(event.target);
 
     try {
-      for (const pair of formData.entries()) {
-        console.log(pair[0] + ", " + pair[1]);
+      for (const key of formData.keys()) {
+        console.log(key + ": " + formData.get(key));
       }
-      // const response = await fetch("/events/create", {
-      //   method: "POST",
-      //   body: formData,
-      // });
-      // if (response.ok) {
-      //   // Handle successful submission (e.g., redirect, show message)
-      //   console.log("Event created successfully!");
-      // } else {
-      //   // Handle error
-      //   console.error("Error creating event");
-      // }
+      const response = await fetch(`${apiUrl}/events`, {
+        method: "POST",
+        body: formData,
+      });
+      if (response.ok) {
+        console.log("Event created successfully!");
+      } else {
+        console.error("Error creating event");
+      }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -124,57 +174,33 @@ function EventForm() {
         <h3 className="form-section-header">Dance Styles</h3>
 
         <div className="form-checkbox-container">
-          <label htmlFor="salsa">
-            <input
-              className="style-checkbox"
-              type="checkbox"
-              id="salsa"
-              name="style"
-              value="salsa"
-              onChange={handleStyleChange}
+          {styleOptions.map((style) => (
+            <CustomCheckbox
+              key={style.id}
+              style={style}
+              onCheck={handleStyleCheck}
             />
-            <div className="custom-checkbox"></div>
-            Salsa
-          </label>
-          <label htmlFor="bachata">
-            <input
-              className="style-checkbox"
-              type="checkbox"
-              id="bachata"
-              name="style"
-              value="bachata"
-              onChange={handleStyleChange}
-            />
-            <div className="custom-checkbox"></div>
-            Bachata
-          </label>
-          <label htmlFor="kizomba">
-            <input
-              className="style-checkbox"
-              type="checkbox"
-              id="kizomba"
-              name="style"
-              value="kizomba"
-              onChange={handleStyleChange}
-            />
-            <div className="custom-checkbox"></div>
-            Kizomba
-          </label>
-          <label htmlFor="zouk">
-            <input
-              className="style-checkbox"
-              type="checkbox"
-              id="zouk"
-              name="style"
-              value="zouk"
-              onChange={handleStyleChange}
-            />
-            <div className="custom-checkbox"></div>
-            Zouk
-          </label>
+          ))}
         </div>
+
         <label htmlFor="other">Other</label>
-        <input type="text" id="other" name="style" />
+        <div className="other-style-container">
+          <input
+            type="text"
+            id="other"
+            name="other-style"
+            value={otherStyle}
+            onChange={(event) => setOtherStyle(event.target.value)}
+          />
+          <button
+            type="button"
+            id="user-add-style"
+            className="event-form-button"
+            onClick={handleOtherStyle}
+          >
+            Add Style
+          </button>
+        </div>
 
         <div className="form-separator"></div>
         <h3 className="form-section-header">Venue</h3>
@@ -185,13 +211,13 @@ function EventForm() {
         <input type="text" id="city" name="city" required />
 
         <label htmlFor="venue-name">Venue:</label>
-        <input type="text" id="venue-name" name="venue-name" required />
+        <input type="text" id="venue-name" name="venue-name[]" required />
 
         <label htmlFor="venue-url">Location:</label>
         <input
           type="text"
           id="venue-url"
-          name="venue-url"
+          name="venue-url[]"
           placeholder="Google Maps link"
         />
 
@@ -212,7 +238,12 @@ function EventForm() {
             />
           ))}
           {snsGroups.length < 4 && (
-            <button type="button" id="add-sns" onClick={handleAddSnsLink}>
+            <button
+              type="button"
+              className="event-form-button"
+              id="add-sns"
+              onClick={handleAddSnsLink}
+            >
               Add Link
             </button>
           )}
@@ -223,7 +254,7 @@ function EventForm() {
         <label htmlFor="flyer">Upload Image:</label>
         <input type="file" accept="image/*" id="flyer" name="flyer" />
 
-        <button type="submit" className="submit-event">
+        <button type="submit" className="event-form-button">
           Add Event
         </button>
       </form>

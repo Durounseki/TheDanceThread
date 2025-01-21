@@ -17,11 +17,11 @@ export async function getEvents() {
 export async function createEvent(eventInfo, key) {
 	let snsPlatforms;
 	let snsUrls;
-	if (Array.isArray(eventInfo['sns-name[]'])) {
-		snsPlatforms = eventInfo['sns-name[]'];
+	if (Array.isArray(eventInfo['sns-platform[]'])) {
+		snsPlatforms = eventInfo['sns-platform[]'];
 		snsUrls = eventInfo['sns-url[]'];
 	} else {
-		snsPlatforms = [eventInfo['sns-name[]']];
+		snsPlatforms = [eventInfo['sns-platform[]']];
 		snsUrls = [eventInfo['sns-url[]']];
 	}
 	let eventSns = [];
