@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import SnsGroup from "./SnsGroup";
 import { v4 as uuidv4 } from "uuid";
 import CustomCheckbox from "./CustomCheckbox";
+import VenueInput from "./VenueInput";
 
 function EventForm() {
   const [styleOptions, setStyleOptions] = useState([
@@ -30,12 +31,12 @@ function EventForm() {
       checked: false,
     },
   ]);
-  // const [styles, setStyles] = useState([]);
   const [otherStyle, setOtherStyle] = useState("");
   const [snsGroups, setSnsGroups] = useState([
     { id: uuidv4(), platform: "website" },
   ]);
   const textAreaRef = useRef(null);
+  const dateRef = useRef(null);
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -48,6 +49,17 @@ function EventForm() {
 
     resizeTextArea();
     return () => textArea.removeEventListener("input", resizeTextArea);
+  }, []);
+
+  useEffect(() => {
+    const today = new Date();
+    const minDate = today.toISOString().split("T")[0];
+    today.setFullYear(today.getFullYear() + 2);
+    const maxDate = today.toISOString().split("T")[0];
+    if (dateRef.current) {
+      dateRef.current.min = minDate;
+      dateRef.current.max = maxDate;
+    }
   }, []);
 
   const handleStyleCheck = (event) => {
@@ -161,7 +173,7 @@ function EventForm() {
           placeholder="The Dance Thread"
         />
         <label htmlFor="date">Date:</label>
-        <input type="date" id="date" name="date" required />
+        <input type="date" id="date" name="date" required ref={dateRef} />
         <label htmlFor="description">Description:</label>
         <textarea
           id="description"
@@ -203,23 +215,7 @@ function EventForm() {
         </div>
 
         <div className="form-separator"></div>
-        <h3 className="form-section-header">Venue</h3>
-
-        <label htmlFor="country">Country:</label>
-        <input type="text" id="country" name="country" required />
-        <label htmlFor="city">City:</label>
-        <input type="text" id="city" name="city" required />
-
-        <label htmlFor="venue-name">Venue:</label>
-        <input type="text" id="venue-name" name="venue-name[]" required />
-
-        <label htmlFor="venue-url">Location:</label>
-        <input
-          type="text"
-          id="venue-url"
-          name="venue-url[]"
-          placeholder="Google Maps link"
-        />
+        <VenueInput />
 
         <div className="form-separator"></div>
         <h3 className="form-section-header">Social Media</h3>

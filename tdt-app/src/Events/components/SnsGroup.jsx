@@ -46,7 +46,7 @@ function SnsGroup({
         ))}
       </select>
       <input
-        type="text"
+        type="url"
         name="sns-url[]"
         placeholder="Enter URL"
         value={url}
