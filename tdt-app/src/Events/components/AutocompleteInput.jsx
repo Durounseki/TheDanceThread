@@ -3,15 +3,15 @@ import PropTypes from "prop-types";
 
 const AutocompleteInput = ({ options, onSelect, placeholder, label }) => {
   const [value, setValue] = useState("");
-  const [filteredOptions, setFilteredOptions] = useState([]);
+  //   const [filteredOptions, setFilteredOptions] = useState([]);
 
   const handleOptions = (event) => {
     const inputValue = event.target.value;
     setValue(inputValue);
-    const newOptions = options.filter((option) =>
-      option.name.toLowerCase().includes(inputValue.toLowerCase())
-    );
-    setFilteredOptions(newOptions);
+    // const newOptions = options.filter((option) =>
+    //   option.name.toLowerCase().includes(inputValue.toLowerCase())
+    // );
+    // setFilteredOptions(newOptions);
     const selected = options.find(
       (option) => option.name.toLowerCase() === inputValue.toLowerCase()
     );
@@ -34,7 +34,7 @@ const AutocompleteInput = ({ options, onSelect, placeholder, label }) => {
         placeholder={placeholder}
       />
       <datalist id={`${label.toLowerCase()}-list`}>
-        {filteredOptions.map((option) => (
+        {options.map((option) => (
           <option key={option.id}>{option.name}</option>
         ))}
       </datalist>

@@ -23,8 +23,8 @@ app.use('*', async (c, next) => {
 app.use(
 	'/api/*',
 	cors({
-		origin: (origin, c) => c.env.APP_URL || 'http://localhost:8787', // Use APP_URL env var or fallback
-		allowMethods: ['GET', 'POST', 'OPTIONS'], // Explicitly allow OPTIONS
+		origin: (origin, c) => c.env.APP_URL || 'http://localhost:8787',
+		allowMethods: ['GET', 'POST', 'OPTIONS'],
 	})
 );
 
@@ -43,15 +43,11 @@ app.post('/api/events', async (c) => {
 	const eventInfo = await c.req.parseBody();
 	const file = eventInfo.flyer;
 	try {
-		console.log('ok');
-		console.log(JSON.stringify(eventInfo, null, 4));
-		console.log(file);
-		return c.json('OK', 201);
-		// const key = `${Date.now()}-${file.name}`;
-		// await c.env.TDT_BUCKET.put(key, file.stream());
-		// const prisma = c.get('prisma');
-		// const event = await prisma.event.createEvent(eventInfo, key);
-		// return c.json(event, 201);
+		const key = `${Date.now()}-${file.name}`;
+		await c.env.TDT_BUCKET.put(key, file.stream());
+		const prisma = c.get('prisma');
+		const event = await prisma.event.createEvent(eventInfo, key);
+		return c.json(event, 201);
 	} catch (error) {
 		console.error('Error uploading file:', error);
 		return c.json({ error: 'Failed to upload file' }, 500);
