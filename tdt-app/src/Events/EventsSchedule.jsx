@@ -5,18 +5,18 @@ import EventSchedule from "./components/EventSchedule.jsx";
 import EventDetails from "./components/EventDetails.jsx";
 import EventNotFound from "./components/EventNotFound.jsx";
 
-const useEventIds = () => {
+const EventsSchedule = () => {
+  const [featuredEventId, setFeaturedEventId] = useState(null);
   const [eventIds, setEventIds] = useState([]);
-  const [featuredEventId, setFeaturedEventId] = useState("");
   const [loading, setLoading] = useState(true);
-  const apiUrl = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_URL;
     const fetchData = async () => {
       try {
         const response = await fetch(`${apiUrl}/events`);
         const data = await response.json();
         setEventIds(data.map((event) => event.id));
-        setFeaturedEventId(data[0].id);
       } catch (error) {
         console.log("Failed to fetch events:", error);
       } finally {
@@ -24,19 +24,23 @@ const useEventIds = () => {
       }
     };
     fetchData();
-  }, [apiUrl]);
+  }, []);
 
-  return { eventIds, featuredEventId, loading };
-};
+  useEffect(() => {
+    if (eventIds.length > 0 && !featuredEventId) {
+      setFeaturedEventId(eventIds[0]);
+    }
+  }, [eventIds, featuredEventId]);
 
-const EventsSchedule = () => {
-  const { eventIds, featuredEventId, loading } = useEventIds();
   if (!loading) {
     return (
       <>
         <main className="event-dashboard">
           <aside className="event-schedule">
-            <SearchEvent />
+            <SearchEvent
+              setFeaturedEventId={setFeaturedEventId}
+              setEventIds={setEventIds}
+            />
             <h2>Dance Events</h2>
             <EventSchedule eventIds={eventIds} />
           </aside>

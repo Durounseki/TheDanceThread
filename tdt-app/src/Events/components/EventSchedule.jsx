@@ -4,7 +4,7 @@ import EventCard from "./EventCard.jsx";
 const EventSchedule = ({ eventIds }) => {
   return (
     <section className="event-cards">
-      {eventIds ? (
+      {eventIds && eventIds.length > 0 ? (
         eventIds.map((eventId) => <EventCard key={eventId} eventId={eventId} />)
       ) : (
         <p className="search-not-found">

@@ -1,18 +1,46 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-const SearchEvent = () => {
+const SearchEvent = ({ setFeaturedEventId, setEventIds }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [danceStyle, setDanceStyle] = useState("");
   const [dateQuery, setDateQuery] = useState("");
+  const apiUrl = import.meta.env.VITE_API_URL;
 
-  const handleSearch = (event) => {
+  const handleInput = (event) => {
     setSearchQuery(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const queryParams = new URLSearchParams();
+    if (searchQuery) queryParams.append("country", searchQuery);
+    if (danceStyle) queryParams.append("style", danceStyle);
+    if (dateQuery) queryParams.append("date", dateQuery);
+    const queryString = queryParams.toString();
+    const url = `${apiUrl}/events?${queryString ? `${queryString}` : ""}`;
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      setEventIds(data.map((event) => event.id));
+
+      if (data.length > 0) {
+        setFeaturedEventId(data[0].id);
+      } else {
+        setFeaturedEventId(null);
+      }
+    } catch (error) {
+      console.error("Failed to fetch events:", error);
+    }
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
   };
 
   return (
     <search>
-      <form action="/events/search" method="POST" className="search-container">
+      <form onSubmit={handleSubmit} className="search-container">
         <div className="searchbar">
           <div className="search" aria-label="Search">
             <i className="fa-solid fa-magnifying-glass"></i>
@@ -23,12 +51,12 @@ const SearchEvent = () => {
             id="country-search"
             placeholder="Search by country"
             value={searchQuery}
-            onChange={handleSearch}
+            onChange={handleInput}
           />
           <button
             type="reset"
             className={"clear-search" + `${searchQuery !== "" ? " show" : ""}`}
-            onClick={() => setSearchQuery("")}
+            onClick={handleReset}
           >
             <i className="fa-solid fa-circle-xmark"></i>
           </button>

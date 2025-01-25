@@ -1,13 +1,47 @@
 import { snsFaClass } from '../utils.js';
 
-export async function getEvents() {
+export async function getEvents(country, style, date) {
+	let dateObj;
+	let newDateObj;
+	if (date) {
+		dateObj = new Date(date);
+		newDateObj = new Date(date);
+
+		newDateObj.setMonth(newDateObj.getMonth() + 1);
+	}
 	try {
 		const events = this.findMany({
+			where: {
+				country: country
+					? {
+							equals: country,
+							mode: 'insensitive',
+					  }
+					: undefined,
+				date: date
+					? {
+							gte: dateObj,
+							lt: newDateObj,
+					  }
+					: undefined,
+				style: style
+					? {
+							some: {
+								name: {
+									equals: style,
+									mode: 'insensitive',
+								},
+							},
+					  }
+					: undefined,
+			},
+			orderBy: { date: 'asc' },
 			select: {
 				id: true,
 			},
 		});
 		return events;
+		console.log(events);
 	} catch (error) {
 		console.error('Error finding events:', error);
 		throw new Error('Failed to find events');

@@ -29,9 +29,12 @@ app.use(
 );
 
 app.get('/api/events', async (c) => {
+	const country = c.req.query('country');
+	const style = c.req.query('style');
+	const date = c.req.query('date');
 	try {
 		const prisma = c.get('prisma');
-		const events = await prisma.event.getEvents();
+		const events = await prisma.event.getEvents(country, style, date);
 		return c.json(events);
 	} catch (error) {
 		console.error('Error fetching events:', error);

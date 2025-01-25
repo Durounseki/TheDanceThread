@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import SnsGroup from "./SnsGroup";
 import { v4 as uuidv4 } from "uuid";
 import CustomCheckbox from "./CustomCheckbox";
 import VenueInput from "./VenueInput";
 
 function EventForm() {
+  const navigate = useNavigate();
   const [styleOptions, setStyleOptions] = useState([
     {
       id: uuidv4(),
@@ -148,7 +150,7 @@ function EventForm() {
         body: formData,
       });
       if (response.ok) {
-        console.log("Event created successfully!");
+        navigate("/events");
       } else {
         console.error("Error creating event");
       }

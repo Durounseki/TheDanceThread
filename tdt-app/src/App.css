@@ -532,6 +532,12 @@ input[type="date"] {
   box-shadow: 2px 2px 2px#000000cc;
 }
 
+.event-form-button:hover {
+  background-color: #b4d4ee;
+  color: #141414;
+  cursor: pointer;
+}
+
 #add-sns.disabled {
   border: solid 1px #202020;
   color: #505050;
