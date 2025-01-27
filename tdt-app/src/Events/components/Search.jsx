@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import CountrySearch from "./CountrySearch";
 
 const SearchEvent = ({ setFeaturedEventId, setEventIds }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -7,14 +8,14 @@ const SearchEvent = ({ setFeaturedEventId, setEventIds }) => {
   const [dateQuery, setDateQuery] = useState("");
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const handleInput = (event) => {
-    setSearchQuery(event.target.value);
+  const handleInput = (option) => {
+    setSearchQuery(option);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const queryParams = new URLSearchParams();
-    if (searchQuery) queryParams.append("country", searchQuery);
+    if (searchQuery) queryParams.append("country", searchQuery.name);
     if (danceStyle) queryParams.append("style", danceStyle);
     if (dateQuery) queryParams.append("date", dateQuery);
     const queryString = queryParams.toString();
@@ -45,14 +46,7 @@ const SearchEvent = ({ setFeaturedEventId, setEventIds }) => {
           <div className="search" aria-label="Search">
             <i className="fa-solid fa-magnifying-glass"></i>
           </div>
-          <input
-            type="text"
-            name="country-search"
-            id="country-search"
-            placeholder="Search by country"
-            value={searchQuery}
-            onChange={handleInput}
-          />
+          <CountrySearch onSelect={handleInput} />
           <button
             type="reset"
             className={"clear-search" + `${searchQuery !== "" ? " show" : ""}`}

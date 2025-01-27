@@ -1,7 +1,13 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 
-const AutocompleteInput = ({ options, onSelect, placeholder, label }) => {
+const AutocompleteInput = ({
+  options,
+  onSelect,
+  placeholder,
+  label,
+  inputName,
+}) => {
   const [value, setValue] = useState("");
 
   const handleOptions = (event) => {
@@ -18,17 +24,17 @@ const AutocompleteInput = ({ options, onSelect, placeholder, label }) => {
   };
   return (
     <>
-      <label htmlFor={label.toLowerCase()}>{label}:</label>
+      {label && <label htmlFor={label.toLowerCase()}>{label}:</label>}
       <input
         type="text"
-        name={label.toLowerCase()}
-        id={label.toLowerCase()}
+        name={inputName.toLowerCase()}
+        id={inputName.toLowerCase()}
         value={value}
         onInput={handleOptions}
-        list={`${label.toLowerCase()}-list`}
+        list={`${inputName.toLowerCase()}-list`}
         placeholder={placeholder}
       />
-      <datalist id={`${label.toLowerCase()}-list`}>
+      <datalist id={`${inputName.toLowerCase()}-list`}>
         {options.map((option) => (
           <option key={option.id}>{option.name}</option>
         ))}
@@ -46,7 +52,8 @@ AutocompleteInput.propTypes = {
   ).isRequired,
   onSelect: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  inputName: PropTypes.string,
 };
 
 export default AutocompleteInput;

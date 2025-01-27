@@ -42,6 +42,7 @@ const CitySelect = ({ countryCode, onSelect }) => {
       onSelect={handleSelect}
       placeholder={"Select a city"}
       label={"City"}
+      inputName={"city"}
     />
   );
 };

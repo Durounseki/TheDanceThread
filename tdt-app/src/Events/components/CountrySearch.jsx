@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import AutocompleteInput from "./AutocompleteInput";
 import PropTypes from "prop-types";
 
-const CountrySelect = ({ onSelect }) => {
+const CountrySearch = ({ onSelect }) => {
   const [countryOptions, setCountryOptions] = useState([]);
 
   useEffect(() => {
@@ -28,15 +28,14 @@ const CountrySelect = ({ onSelect }) => {
     <AutocompleteInput
       options={countryOptions}
       onSelect={handleSelect}
-      placeholder={"Select a country"}
-      label={"Country"}
-      inputName={"country"}
+      placeholder={"Search by country"}
+      inputName={"country-search"}
     />
   );
 };
 
-CountrySelect.propTypes = {
+CountrySearch.propTypes = {
   onSelect: PropTypes.func.isRequired,
 };
 
-export default CountrySelect;
+export default CountrySearch;

@@ -15,7 +15,6 @@ export async function getEvents(country, style, date) {
 				country: country
 					? {
 							equals: country,
-							mode: 'insensitive',
 					  }
 					: undefined,
 				date: date
@@ -29,7 +28,6 @@ export async function getEvents(country, style, date) {
 							some: {
 								name: {
 									equals: style,
-									mode: 'insensitive',
 								},
 							},
 					  }
@@ -41,7 +39,6 @@ export async function getEvents(country, style, date) {
 			},
 		});
 		return events;
-		console.log(events);
 	} catch (error) {
 		console.error('Error finding events:', error);
 		throw new Error('Failed to find events');
