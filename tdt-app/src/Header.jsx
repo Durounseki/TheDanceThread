@@ -17,7 +17,13 @@ const Header = () => {
                 <Link to="/events">Events</Link>
               </li>
               <li>
-                <Link to="/create-event">New Event</Link>
+                <Link to="/events/create">New Event</Link>
+              </li>
+              <li>
+                <Link to="/login">Get started</Link>
+              </li>
+              <li>
+                <Link to="/profile">Profile</Link>
               </li>
             </ul>
           </nav>
