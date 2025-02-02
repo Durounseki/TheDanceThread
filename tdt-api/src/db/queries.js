@@ -23,7 +23,7 @@ export async function getEvents(country, style, date) {
 							lt: newDateObj,
 					  }
 					: undefined,
-				style: style
+				styles: style
 					? {
 							some: {
 								name: {
@@ -171,5 +171,38 @@ export async function getEventById(eventId) {
 	} catch (error) {
 		console.error('Error finding event', error);
 		throw new Error('Failed to fetch event');
+	}
+}
+
+export async function getUser(userId) {
+	try {
+		console.log('fetching user');
+		const user = await this.findUnique({
+			where: { id: userId },
+		});
+		console.log('user:', user);
+		return user;
+	} catch (error) {
+		console.error('Error retrieving user', error);
+		throw new Error('Failed to fetch user');
+	}
+}
+
+export async function createUser(user) {
+	try {
+		const newUser = await this.create({
+			data: {
+				id: user.id,
+				name: user.name,
+				email: user.email,
+			},
+			select: {
+				id: true,
+			},
+		});
+		return newUser.id;
+	} catch (error) {
+		console.error('Error creating user', error);
+		throw new Error('Failed to create user');
 	}
 }

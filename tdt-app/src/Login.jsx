@@ -1,10 +1,8 @@
-// import { useNavigate } from "react-router-dom";
-import { useGoogleLogin } from "@react-oauth/google";
-
 const Login = () => {
-  const authUrl = import.meta.env.VITE_AUTH_API_URL;
+  const apiUrl = import.meta.env.VITE_API_URL;
   const handleLogin = () => {
-    window.location.href = `${authUrl}/auth/login`;
+    console.log(`${apiUrl}/auth/login`);
+    window.location.href = `${apiUrl}/auth/login`;
   };
 
   return (

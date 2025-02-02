@@ -11,6 +11,10 @@ export default function createPrismaClient(env) {
 				getEventById: queries.getEventById,
 				createEvent: queries.createEvent,
 			},
+			user: {
+				getUser: queries.getUser,
+				createUser: queries.createUser,
+			},
 		},
 	});
 	return prisma;
