@@ -8,6 +8,8 @@ import ErrorPage from "./ErrorPage.jsx";
 import EventsSchedule from "./Events/EventsSchedule.jsx";
 import Login from "./Login.jsx";
 import Profile from "./Profile.jsx";
+import TermsOfService from "./TermsOfService.jsx";
+import PrivacyPolicy from "./PrivacyPolicy.jsx";
 
 const Router = () => {
   const { user, loading } = useAuth();
@@ -22,6 +24,8 @@ const Router = () => {
           </Route>
           {!user && <Route path="/login" element={<Login />} />}
           {user && <Route path="/profile" element={<Profile />} />}
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
       </Routes>

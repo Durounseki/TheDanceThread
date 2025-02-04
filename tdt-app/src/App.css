@@ -619,3 +619,83 @@ label input:checked ~ .custom-checkbox {
   gap: 16px;
   flex-wrap: wrap;
 }
+
+.modal-backdrop {
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  display: flex;
+}
+
+.modal-content {
+  margin: auto;
+  background-color: #141414;
+  padding: 28px 36px;
+  border-radius: 8px;
+  border: 1px solid #505050;
+  box-shadow: 4px 4px 4px #000000cc;
+  a {
+    color: #b4d4ee;
+    text-decoration: underline;
+  }
+}
+
+.login-form-container {
+  position: relative;
+  h2 {
+    margin-top: 0;
+    color: #ffa6db;
+  }
+  p {
+    font-size: 12px;
+    margin-top: 32px;
+  }
+}
+
+.login-form-container button {
+  background-color: #141414;
+  border: 1px solid #202020;
+  padding: 12px 36px;
+  margin: 0 auto;
+  border-radius: 8px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  p {
+    margin: 0;
+    font-size: 16px;
+  }
+  i {
+    font-size: 20px;
+  }
+}
+
+.login-form-container button:hover {
+  background-color: #b4d4ee;
+  color: #141414;
+  cursor: pointer;
+}
+
+.login-form-container button.close-button {
+  padding: 0px;
+  border: none;
+  position: absolute;
+  top: -16px;
+  right: -24px;
+  i {
+    font-size: 10px;
+  }
+}
+
+.legal-document {
+  h1 {
+    color: #ffa6db;
+  }
+  padding-inline: 24px;
+  text-align: left;
+  ul {
+    flex-direction: column;
+  }
+}
