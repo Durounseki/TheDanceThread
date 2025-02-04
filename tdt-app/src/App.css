@@ -201,11 +201,12 @@ footer {
   overflow: hidden;
 }
 
-.event-card .venue,
+.event-card .event-venues a,
 .event-card .event-sns {
   font-size: medium;
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
 .event-card .event-sns {
@@ -520,7 +521,9 @@ input[type="date"] {
   color: #b4d4ee;
 }
 
-.event-form-button {
+.event-form-button,
+.save-profile,
+.user-button {
   grid-column: 2;
   margin-left: auto;
   background-color: #202020;
@@ -531,7 +534,9 @@ input[type="date"] {
   box-shadow: 2px 2px 2px#000000cc;
 }
 
-.event-form-button:hover {
+.event-form-button:hover,
+.save-profile:hover,
+.user-button:hover {
   background-color: #b4d4ee;
   color: #141414;
   cursor: pointer;
@@ -712,4 +717,100 @@ label input:checked ~ .custom-checkbox {
   a:hover {
     color: #b4d4ee;
   }
+}
+
+.profile-container {
+  display: flex;
+  gap: 16px;
+  padding: 24px 16px;
+}
+
+.user-details {
+  border: 1px solid #505050;
+  padding: 24px 16px;
+  border-radius: 16px;
+  background-color: #181818;
+}
+
+.user-banner,
+.user-form {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 16px;
+  row-gap: 8px;
+  align-items: center;
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  h1 {
+    color: #ffa6db;
+    font-size: 24px;
+    margin: 0;
+  }
+}
+
+.profile-picture {
+  margin: 0;
+  width: 60px;
+  height: 60px;
+  border: 1px solid #505050;
+  border-radius: 50%;
+  box-shadow: 4px 4px 4px #000000cc;
+}
+
+.profile-picture.edit {
+  position: relative;
+  i {
+    position: absolute;
+    right: -12px;
+    top: -12px;
+    background-color: #141414;
+    border: 1px solid #202020;
+    padding: 6px;
+    border-radius: 50%;
+  }
+  i:hover {
+    color: #b4d4ee;
+  }
+}
+
+.user-email,
+.user-sns {
+  grid-column: 1/3;
+  font-size: 12px;
+}
+
+.user-form div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.user-form input {
+  background-color: #202020;
+  border: solid 1px #20202000;
+  padding: 8px 16px;
+  border-radius: 16px;
+  height: 16px;
+  color: #fff5ff;
+}
+
+.user-form input:focus {
+  border: solid 1px #b4d4ee;
+  outline: none;
+}
+
+.save-profile {
+  width: 90%;
+}
+
+.user-button:not(.delete-account) {
+  width: 100%;
+  grid-column: auto;
+}
+
+.delete-account {
+  grid-column: 1/3;
+  width: 100%;
 }
