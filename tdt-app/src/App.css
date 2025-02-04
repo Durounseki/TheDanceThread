@@ -1,6 +1,5 @@
 #root {
   max-width: 1280px;
-  /* margin: 0 auto; */
   padding: 0;
   text-align: center;
 }
@@ -697,5 +696,20 @@ label input:checked ~ .custom-checkbox {
   text-align: left;
   ul {
     flex-direction: column;
+  }
+}
+
+.profile-actions {
+  position: absolute;
+  flex-direction: column;
+  z-index: 1;
+  background-color: #141414;
+  border-radius: 8px;
+  border: 1px solid #505050;
+  padding: 8px 16px;
+  right: 16px;
+  box-shadow: 4px 4px 4px #000000cc;
+  a:hover {
+    color: #b4d4ee;
   }
 }

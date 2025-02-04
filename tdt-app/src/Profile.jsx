@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import useAuth from "./useAuth.jsx";
 
 const Profile = () => {
+  const { user, logout } = useAuth();
   const apiUrl = import.meta.env.VITE_API_URL;
-  const [user, setUser] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -15,7 +19,7 @@ const Profile = () => {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          setUser(data.name);
+          setUserInfo(data);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -26,19 +30,10 @@ const Profile = () => {
     fetchData();
   }, []);
 
-  const handleLogOut = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/auth/logout`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (response.ok) {
-        console.log(await response.json());
-        setUser(null);
-      }
-    } catch (error) {
-      console.error("Error logging out", error);
-    }
+  const handleLogOut = async (event) => {
+    event.preventDefault();
+    navigate("/");
+    await logout();
   };
 
   if (loading) {
@@ -47,7 +42,7 @@ const Profile = () => {
 
   return user ? (
     <div>
-      <p>Hello, {user}!</p>
+      <p>Hello, {userInfo.name}!</p>
       <button onClick={handleLogOut} type="button">
         Log out
       </button>

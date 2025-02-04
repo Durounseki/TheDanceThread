@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import mainLogo from "./assets/tdt-logo-dark.png";
 import useAuth from "./useAuth.jsx";
 import { useState, useEffect, useRef } from "react";
@@ -6,6 +6,7 @@ const Header = ({ showLogin }) => {
   const { user, logout } = useAuth();
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
   const profileMenuRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleShowLogin = (event) => {
     event.preventDefault();
@@ -17,7 +18,13 @@ const Header = ({ showLogin }) => {
   };
   const handleLogOut = async (event) => {
     event.preventDefault();
+    navigate("/");
     await logout();
+  };
+  const handleOpenProfile = (event) => {
+    event.preventDefault();
+    setOpenProfileMenu(!openProfileMenu);
+    navigate("/profile");
   };
 
   useEffect(() => {
@@ -69,9 +76,11 @@ const Header = ({ showLogin }) => {
                     Profile
                   </a>
                   {openProfileMenu && (
-                    <ul>
+                    <ul className="profile-actions">
                       <li>
-                        <Link to="/profile">Edit</Link>
+                        <a href="#" onClick={handleOpenProfile}>
+                          Edit
+                        </a>
                       </li>
                       <li>
                         <a href="#" onClick={handleLogOut}>
