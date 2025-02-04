@@ -179,6 +179,11 @@ export async function getUser(userId) {
 		console.log('fetching user');
 		const user = await this.findUnique({
 			where: { id: userId },
+			include: {
+				sns: true,
+				eventsCreated: true,
+				eventsAttending: true,
+			},
 		});
 		console.log('user:', user);
 		return user;

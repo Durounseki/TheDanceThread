@@ -7,6 +7,8 @@ import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import createPrismaClient from './db/client.js';
 import { cors } from 'hono/cors';
+import { createAvatar } from '@dicebear/core';
+import { shapes } from '@dicebear/collection';
 
 const app = new Hono();
 
@@ -185,6 +187,16 @@ app.get('api/auth/protected', authenticate, async (c) => {
 	console.log(userId);
 	const prisma = c.get('prisma');
 	const user = await prisma.user.getUser(userId);
+	const avatar = createAvatar(shapes, {
+		seed: user.id,
+		radius: 50,
+		backgroundColor: ['181818'],
+		shape1Color: ['ffa6db'],
+		shape2Color: ['fff5ff'],
+		shape3Color: ['b4d4ee'],
+	}).toString();
+	user.avatar = avatar;
+	console.log(user);
 	return c.json(user);
 });
 
