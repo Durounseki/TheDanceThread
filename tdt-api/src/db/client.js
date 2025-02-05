@@ -15,6 +15,9 @@ export default function createPrismaClient(env) {
 				getUser: queries.getUser,
 				createUser: queries.createUser,
 			},
+			style: {
+				getStyles: queries.getStyles,
+			},
 		},
 	});
 	return prisma;

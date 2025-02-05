@@ -101,6 +101,17 @@ app.get('/api/events/:id', async (c) => {
 	}
 });
 
+app.get('api/styles', async (c) => {
+	try {
+		const prisma = c.get('prisma');
+		const styles = await prisma.style.getStyles();
+		return c.json(styles);
+	} catch (error) {
+		console.error('Error fetching dance styles:', error);
+		return c.json({ error: 'Failed to fetch dance styles' }, 500);
+	}
+});
+
 app.get('api/auth/login', (c) => {
 	const google = c.get('google');
 	const authorizeUrl = google.generateAuthUrl({

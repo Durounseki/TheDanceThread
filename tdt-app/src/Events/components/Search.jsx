@@ -1,22 +1,25 @@
-import { Link } from "react-router-dom";
 import { useState } from "react";
 import CountrySearch from "./CountrySearch";
+import StyleSearch from "./StyleSearch";
 
 const SearchEvent = ({ setFeaturedEventId, setEventIds }) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [danceStyle, setDanceStyle] = useState("");
+  const [countryQuery, setCountryQuery] = useState("");
+  const [styleQuery, setStyleQuery] = useState("");
   const [dateQuery, setDateQuery] = useState("");
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const handleInput = (option) => {
-    setSearchQuery(option);
+  const handleCountryInput = (option) => {
+    setCountryQuery(option);
+  };
+  const handleStyleInput = (option) => {
+    setStyleQuery(option);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const queryParams = new URLSearchParams();
-    if (searchQuery) queryParams.append("country", searchQuery.name);
-    if (danceStyle) queryParams.append("style", danceStyle);
+    if (countryQuery) queryParams.append("country", countryQuery.name);
+    if (styleQuery) queryParams.append("style", styleQuery);
     if (dateQuery) queryParams.append("date", dateQuery);
     const queryString = queryParams.toString();
     const url = `${apiUrl}/events?${queryString ? `${queryString}` : ""}`;
@@ -36,7 +39,7 @@ const SearchEvent = ({ setFeaturedEventId, setEventIds }) => {
   };
 
   const handleReset = () => {
-    setSearchQuery("");
+    setCountryQuery("");
   };
 
   return (
@@ -46,44 +49,28 @@ const SearchEvent = ({ setFeaturedEventId, setEventIds }) => {
           <div className="search" aria-label="Search">
             <i className="fa-solid fa-magnifying-glass"></i>
           </div>
-          <CountrySearch onSelect={handleInput} />
+          <CountrySearch onSelect={handleCountryInput} />
           <button
             type="reset"
-            className={"clear-search" + `${searchQuery !== "" ? " show" : ""}`}
+            className={"clear-search" + `${countryQuery !== "" ? " show" : ""}`}
             onClick={handleReset}
           >
             <i className="fa-solid fa-circle-xmark"></i>
           </button>
         </div>
-        <Link to="/events/create" className="create-button">
-          <i className="fa-solid fa-plus"></i>
-        </Link>
         <div className="filter-container">
           <p>Filter by</p>
           <div className="search-filter">
-            <select
-              name="style-search"
-              id="style-search"
-              value={danceStyle}
-              onChange={(e) => setDanceStyle(e.target.value)}
-            >
-              <option value="">Style</option>
-              <option value="salsa">Salsa</option>
-              <option value="bachata">Bachata</option>
-              <option value="kizomba">Kizomba</option>
-              <option value="zouk">Zouk</option>
-              <option value="other">Other</option>
-            </select>
-            <div className="date-filter">
-              <label htmlFor="date-search">Date:</label>
-              <input
-                type="month"
-                id="date-search"
-                name="date-search"
-                value={dateQuery}
-                onChange={(e) => setDateQuery(e.target.value)}
-              />
-            </div>
+            <StyleSearch onSelect={handleStyleInput} />
+            <label htmlFor="date-search">Date:</label>
+            <input
+              type="month"
+              id="date-search"
+              name="date-search"
+              className={dateQuery === "" ? "empty" : ""}
+              value={dateQuery}
+              onChange={(e) => setDateQuery(e.target.value)}
+            />
             <button type="submit" className="submit-search">
               Filter
             </button>

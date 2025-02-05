@@ -174,9 +174,18 @@ export async function getEventById(eventId) {
 	}
 }
 
+export async function getStyles() {
+	try {
+		const styles = await this.findMany();
+		return styles;
+	} catch (error) {
+		console.error('Error finding styles', error);
+		throw new Error('Failed to fetch styles');
+	}
+}
+
 export async function getUser(userId) {
 	try {
-		console.log('fetching user');
 		const user = await this.findUnique({
 			where: { id: userId },
 			include: {
@@ -185,7 +194,6 @@ export async function getUser(userId) {
 				eventsAttending: true,
 			},
 		});
-		console.log('user:', user);
 		return user;
 	} catch (error) {
 		console.error('Error retrieving user', error);
