@@ -30,30 +30,24 @@ const EventDetails = ({ eventId }) => {
     return (
       <>
         <h1 className="event-name">{event.name.toUpperCase()}</h1>
-        <div className="event-image">
-          <img src={event.flyer.src} alt={event.flyer.alt} />
+        <div className="event-host">
+          {event.createdBy && (
+            <>
+              <figure className="profile-picture">
+                <div dangerouslySetInnerHTML={{ __html: event.host.avatar }} />
+              </figure>
+              <div>
+                <h2>Hosted by</h2>
+                <p>
+                  <b>Creator</b>
+                </p>
+              </div>
+            </>
+          )}
         </div>
-        <p>{event.description}</p>
-        <div className="event-details">
-          <p className="date">
-            <i className="fa-regular fa-calendar"></i>
-            {dayjs(event.date).format("YYYY MMMM D")}
-          </p>
-          <p className="venue">
-            <i className="fa-regular fa-map"></i>
-            {event.venues[0].url ? (
-              <a
-                href={event.venues[0].url}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                {event.venues[0].name}
-              </a>
-            ) : (
-              event.venues[0].name
-            )}
-          </p>
-          <p className="sns">
+        <div className="event-sns">
+          <h2>Find more at</h2>
+          <p>
             {event.sns.map((sns) => (
               <a
                 key={sns.id}
@@ -65,6 +59,48 @@ const EventDetails = ({ eventId }) => {
                 <i className={sns.faClass}></i>
               </a>
             ))}
+          </p>
+        </div>
+
+        <div className="event-image">
+          <img src={event.flyer.src} alt={event.flyer.alt} />
+        </div>
+        <div className="event-date">
+          <i className="fa-regular fa-calendar"></i>
+          <p>{dayjs(event.date).format("YYYY MMMM D")}</p>
+        </div>
+        <div className="event-buttons">
+          <ul>
+            <li>
+              <button>Save</button>
+            </li>
+            <li>
+              <button>Like</button>
+            </li>
+            <li>
+              <button>Share</button>
+            </li>
+          </ul>
+        </div>
+        <div className="event-description">
+          <h2>Details</h2>
+          <p>{event.description}</p>
+        </div>
+
+        <div className="event-venue">
+          <i className="fa-regular fa-map"></i>
+          <p>
+            {event.venues[0].url ? (
+              <a
+                href={event.venues[0].url}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                {event.venues[0].name}
+              </a>
+            ) : (
+              event.venues[0].name
+            )}
           </p>
         </div>
       </>

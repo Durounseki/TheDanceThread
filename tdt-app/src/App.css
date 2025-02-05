@@ -45,11 +45,10 @@ footer {
 
 /* Events page */
 .event-dashboard {
-  /* display: flex; */
   align-self: stretch;
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 48px;
+  gap: 16px;
   padding: 24px 16px;
   width: 100%;
   overflow: hidden;
@@ -62,7 +61,7 @@ footer {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding-right: 48px;
+  padding-right: 16px;
   border-right: solid 1px #b4d4ee;
 }
 
@@ -82,30 +81,46 @@ footer {
 }
 
 .event-details-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: left;
+  text-align: left;
+  align-items: center;
 }
 
 .event-container .event-name {
   color: #ffa6db;
   width: 100%;
-  font-size: xx-large;
+  font-size: x-large;
+  grid-column: 1/3;
 }
 
-.event-headline {
-  color: #b4d4ee;
-  width: 100%;
+.event-sns {
+  text-align: right;
+  padding: 8px 16px;
+  h2 {
+    font-size: medium;
+    font-weight: normal;
+    margin: 0;
+    color: #7d7d7d;
+  }
+  p {
+    margin: 0;
+    display: flex;
+    gap: 8px;
+    font-size: 18px;
+    justify-content: right;
+  }
 }
 
 .event-description,
-.event-cta,
 .event-details {
-  width: 100%;
+  grid-column: 1/3;
 }
 
 .event-details {
   display: flex;
+  flex: 1;
   justify-content: space-between;
   flex-wrap: wrap;
   p {
@@ -115,10 +130,9 @@ footer {
 }
 
 .event-image {
-  max-width: 90%;
   overflow: hidden;
   display: flex;
-  flex-shrink: 0;
+  grid-column: 1/3;
   img {
     max-width: 100%;
     max-height: 100%;
@@ -130,9 +144,34 @@ footer {
   margin: 24px auto;
 }
 
+.event-date,
+.event-venue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  p {
+    margin: 0;
+  }
+}
+
+.event-buttons {
+  ul {
+    margin: 0;
+    display: grid;
+    gap: 4px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  li {
+    button {
+      width: 100%;
+    }
+  }
+}
+
 /* Event card */
 .event-card {
   width: 100%;
+  min-width: 350px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -179,14 +218,13 @@ footer {
 }
 
 .event-card .event-details {
-  flex-shrink: 1;
   text-align: left;
-  margin: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
   p {
     margin: 0;
+    padding-bottom: 2px;
   }
   a {
     display: flex;
@@ -222,6 +260,13 @@ footer {
   :first-child {
     margin-left: auto;
   }
+}
+
+.event-actions ul {
+  flex-direction: column;
+  margin: 0;
+  gap: 8px;
+  padding-left: 16px;
 }
 /* Schedule header */
 /* Searchbar */
@@ -517,7 +562,8 @@ input[type="date"] {
 
 .event-form-button,
 .save-profile,
-.user-button {
+.user-button,
+.event-buttons button {
   grid-column: 2;
   margin-left: auto;
   background-color: #202020;
@@ -530,7 +576,8 @@ input[type="date"] {
 
 .event-form-button:hover,
 .save-profile:hover,
-.user-button:hover {
+.user-button:hover,
+.event-buttons button:hover {
   background-color: #b4d4ee;
   color: #141414;
   cursor: pointer;

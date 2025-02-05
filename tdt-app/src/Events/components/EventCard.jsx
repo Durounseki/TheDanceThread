@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
+import useAuth from "../../useAuth";
 
 const useEvent = (eventId) => {
+  const { user } = useAuth;
   const [event, setEvent] = useState([]);
   const [loading, setLoading] = useState(true);
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -26,8 +28,18 @@ const useEvent = (eventId) => {
 
 const EventCard = ({ eventId, selectEvent }) => {
   const { event, loading } = useEvent(eventId);
+  const [bookmark, setBookmark] = useState(false);
   const handleSelectEvent = () => {
     selectEvent(eventId);
+  };
+  const handleBookmark = async (event) => {
+    event.preventDefault();
+    setBookmark(!bookmark);
+  };
+  const handleShare = async (event) => {
+    event.preventDefault();
+    const url = window.location.host + window.location.pathname + `/${eventId}`;
+    console.log(`Copying ${url}`);
   };
   if (!loading) {
     return (
@@ -71,6 +83,24 @@ const EventCard = ({ eventId, selectEvent }) => {
             </p>
           </div>
         </div>
+        <div className="event-actions">
+          <ul>
+            <li>
+              <a href="#" onClick={handleBookmark}>
+                {!bookmark ? (
+                  <i className="fa-regular fa-bookmark"></i>
+                ) : (
+                  <i className="fa-solid fa-bookmark"></i>
+                )}
+              </a>
+            </li>
+            <li>
+              <a href="#" onClick={handleShare}>
+                <i className="fa-solid fa-share-from-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     );
   }
@@ -78,6 +108,7 @@ const EventCard = ({ eventId, selectEvent }) => {
 
 EventCard.propTypes = {
   eventId: PropTypes.string.isRequired,
+  selectEvent: PropTypes.func.isRequired,
 };
 
 export default EventCard;

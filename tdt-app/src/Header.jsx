@@ -46,15 +46,12 @@ const Header = ({ showLogin }) => {
   return (
     <>
       <header>
-        <Link className="main-logo">
+        <Link to="/" className="main-logo">
           <img src={mainLogo} alt="TDT" />
         </Link>
         <nav>
           <nav>
             <ul>
-              <li>
-                <Link to="/">Home</Link>
-              </li>
               <li>
                 <Link to="/events">Events</Link>
               </li>
