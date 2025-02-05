@@ -32,6 +32,10 @@ const EventsSchedule = () => {
     }
   }, [eventIds, featuredEventId]);
 
+  const handleFeaturedEvent = (eventId) => {
+    setFeaturedEventId(eventId);
+  };
+
   if (!loading) {
     return (
       <>
@@ -42,7 +46,10 @@ const EventsSchedule = () => {
               setEventIds={setEventIds}
             />
             <h2>Dance Events</h2>
-            <EventSchedule eventIds={eventIds} />
+            <EventSchedule
+              eventIds={eventIds}
+              showFeaturedEvent={handleFeaturedEvent}
+            />
           </aside>
           <article className="event-container">
             <section className="event-details-container">

@@ -143,6 +143,11 @@ footer {
   box-sizing: border-box;
 }
 
+.event-card:hover {
+  outline: 1px solid #b4d4ee;
+  box-shadow: 2px 2px 2px#000000cc;
+}
+
 .event-card .event-date {
   text-align: center;
   display: flex;
@@ -207,6 +212,10 @@ footer {
   display: flex;
   gap: 8px;
   align-items: center;
+}
+
+.event-card a:hover {
+  color: #ffa6db;
 }
 
 .event-card .event-sns {

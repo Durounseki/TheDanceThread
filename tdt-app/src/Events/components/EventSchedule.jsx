@@ -1,11 +1,17 @@
 import PropTypes from "prop-types";
 import EventCard from "./EventCard.jsx";
 
-const EventSchedule = ({ eventIds }) => {
+const EventSchedule = ({ eventIds, showFeaturedEvent }) => {
   return (
     <section className="event-cards">
       {eventIds && eventIds.length > 0 ? (
-        eventIds.map((eventId) => <EventCard key={eventId} eventId={eventId} />)
+        eventIds.map((eventId) => (
+          <EventCard
+            key={eventId}
+            eventId={eventId}
+            selectEvent={showFeaturedEvent}
+          />
+        ))
       ) : (
         <p className="search-not-found">
           Sorry, there are no results that match{" "}

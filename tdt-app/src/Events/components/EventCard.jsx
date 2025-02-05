@@ -24,11 +24,14 @@ const useEvent = (eventId) => {
   return { event, loading };
 };
 
-const EventCard = ({ eventId }) => {
+const EventCard = ({ eventId, selectEvent }) => {
   const { event, loading } = useEvent(eventId);
+  const handleSelectEvent = () => {
+    selectEvent(eventId);
+  };
   if (!loading) {
     return (
-      <div className="event-card" data-event-id={event.id}>
+      <div className="event-card" onClick={handleSelectEvent}>
         <div className="event-date">
           <p>
             {dayjs(new Date(event.date))
