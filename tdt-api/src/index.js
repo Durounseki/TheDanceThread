@@ -94,6 +94,18 @@ app.get('/api/events/:id', async (c) => {
 
 		event.flyer.src = url;
 
+		if (event.creatorId) {
+			const avatar = createAvatar(shapes, {
+				seed: event.creatorId,
+				radius: 50,
+				backgroundColor: ['181818'],
+				shape1Color: ['ffa6db'],
+				shape2Color: ['fff5ff'],
+				shape3Color: ['b4d4ee'],
+			}).toString();
+			event.createdBy.avatar = avatar;
+		}
+
 		return c.json(event);
 	} catch (error) {
 		console.error('Error fetching event:', error);

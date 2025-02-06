@@ -19,23 +19,30 @@ model User {
   sns             SocialMedia[]
   eventsCreated   Event[]           @relation("EventCreator")
   eventsAttending EventAttendance[]
+  likedEvents     EventLike[]
+  savedEvents     EventSave[]
 }
 
 model Event {
-  id          String            @id @default(cuid())
-  name        String
-  date        DateTime
-  country     String
-  city        String?
-  description String?
-  styles      Style[]
-  venues      Venue[]
-  sns         SocialMedia[]
-  flyer       Flyer?
-  createdAt   DateTime          @default(now())
-  createdBy   User?             @relation("EventCreator", fields: [creatorId], references: [id], onDelete: SetNull)
-  creatorId   String?
-  attendees   EventAttendance[]
+  id             String            @id @default(cuid())
+  name           String
+  date           DateTime
+  country        String
+  city           String?
+  description    String?
+  styles         Style[]
+  venues         Venue[]
+  sns            SocialMedia[]
+  flyer          Flyer?
+  createdAt      DateTime          @default(now())
+  createdBy      User?             @relation("EventCreator", fields: [creatorId], references: [id], onDelete: SetNull)
+  creatorId      String?
+  attendees      EventAttendance[]
+  likes          EventLike[]
+  saves          EventSave[]
+  totalLikes     Int               @default(0)
+  totalAttendees Int               @default(0)
+  totalSaves     Int               @default(0)
 }
 
 model Venue {
@@ -81,4 +88,24 @@ model EventAttendance {
   type    String @default("GOING")
 
   @@unique([userId, eventId, type])
+}
+
+model EventLike {
+  id      String @id @default(cuid())
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId String
+
+  @@unique([userId, eventId])
+}
+
+model EventSave {
+  id      String @id @default(cuid())
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId String
+
+  @@unique([userId, eventId])
 }

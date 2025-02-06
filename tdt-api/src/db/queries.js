@@ -131,6 +131,9 @@ export async function createEvent(eventInfo, key) {
 						src: key,
 					},
 				},
+				createdBy: {
+					connect: { id: eventInfo['creatorId'] },
+				},
 			},
 		});
 		return event;
@@ -163,6 +166,33 @@ export async function getEventById(eventId) {
 					select: {
 						alt: true,
 						src: true,
+					},
+				},
+				attendees: {
+					select: {
+						type: true,
+						user: {
+							select: {
+								id: true,
+								name: true,
+								email: true,
+								country: true,
+								sns: {
+									select: {
+										id: true,
+										name: true,
+										url: true,
+										faClass: true,
+									},
+								},
+							},
+						},
+					},
+				},
+				createdBy: {
+					select: {
+						id: true,
+						name: true,
 					},
 				},
 			},

@@ -30,16 +30,18 @@ const EventDetails = ({ eventId }) => {
     return (
       <>
         <h1 className="event-name">{event.name.toUpperCase()}</h1>
-        <div className="event-host">
+        <div className="event-creator">
           {event.createdBy && (
             <>
               <figure className="profile-picture">
-                <div dangerouslySetInnerHTML={{ __html: event.host.avatar }} />
+                <div
+                  dangerouslySetInnerHTML={{ __html: event.createdBy.avatar }}
+                />
               </figure>
               <div>
-                <h2>Hosted by</h2>
+                <h2>Posted by</h2>
                 <p>
-                  <b>Creator</b>
+                  <b>{event.createdBy.name}</b>
                 </p>
               </div>
             </>

@@ -4,9 +4,11 @@ import SnsGroup from "./SnsGroup";
 import { v4 as uuidv4 } from "uuid";
 import CustomCheckbox from "./CustomCheckbox";
 import VenueInput from "./VenueInput";
+import useAuth from "../../useAuth";
 
 function EventForm() {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
   const [styleOptions, setStyleOptions] = useState([
     {
       id: uuidv4(),
@@ -140,6 +142,9 @@ function EventForm() {
     event.preventDefault();
 
     const formData = new FormData(event.target);
+    if (user) {
+      formData.append("creatorId", user.id);
+    }
 
     try {
       for (const key of formData.keys()) {
@@ -150,7 +155,7 @@ function EventForm() {
         body: formData,
       });
       if (response.ok) {
-        navigate("/events");
+        navigate(`/events/${response.json().id}`);
       } else {
         console.error("Error creating event");
       }
@@ -158,6 +163,10 @@ function EventForm() {
       console.error("Error:", error);
     }
   };
+
+  if (loading) {
+    return <div>Loading ...</div>;
+  }
 
   return (
     <div className="event-form-container">
