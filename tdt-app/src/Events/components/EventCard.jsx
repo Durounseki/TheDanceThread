@@ -29,7 +29,9 @@ const useEvent = (eventId) => {
 const EventCard = ({ eventId, selectEvent }) => {
   const { event, loading } = useEvent(eventId);
   const [bookmark, setBookmark] = useState(false);
+  const [shared, setShared] = useState(false);
   const handleSelectEvent = () => {
+    console.log(eventId);
     selectEvent(eventId);
   };
   const handleBookmark = async (event) => {
@@ -39,7 +41,16 @@ const EventCard = ({ eventId, selectEvent }) => {
   const handleShare = async (event) => {
     event.preventDefault();
     const url = window.location.host + window.location.pathname + `/${eventId}`;
-    console.log(`Copying ${url}`);
+    try {
+      await navigator.clipboard.writeText(url);
+      setShared(true);
+      console.log(`Copying ${url}`);
+      setTimeout(() => {
+        setShared(false);
+      }, 1000);
+    } catch (error) {
+      console.error("Failed to copy link:", error);
+    }
   };
   if (!loading) {
     return (

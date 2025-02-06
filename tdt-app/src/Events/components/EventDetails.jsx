@@ -82,7 +82,7 @@ const EventDetails = ({ eventId }) => {
             </li>
           </ul>
         </div>
-        <div className="event-description">
+        <div className="event-section">
           <h2>Details</h2>
           <p>{event.description}</p>
         </div>
@@ -103,6 +103,15 @@ const EventDetails = ({ eventId }) => {
             )}
           </p>
         </div>
+        <section className="event-section">
+          <h2>Artists</h2>
+        </section>
+        <section className="event-section">
+          <h2>Dancers</h2>
+        </section>
+        <section className="event-section">
+          <h2>DJ's</h2>
+        </section>
       </>
     );
   }

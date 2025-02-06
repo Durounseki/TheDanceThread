@@ -113,7 +113,7 @@ footer {
   }
 }
 
-.event-description,
+.event-section,
 .event-details {
   grid-column: 1/3;
 }
