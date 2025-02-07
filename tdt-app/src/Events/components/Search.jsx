@@ -35,6 +35,10 @@ const SearchEvent = ({ setFeaturedEventId, setEventIds }) => {
       }
     } catch (error) {
       console.error("Failed to fetch events:", error);
+    } finally {
+      setCountryQuery("");
+      setDateQuery("");
+      setStyleQuery("");
     }
   };
 

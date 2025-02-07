@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import useAuth from "../../useAuth";
 
 const useEvent = (eventId) => {
-  const { user } = useAuth;
   const [event, setEvent] = useState([]);
   const [loading, setLoading] = useState(true);
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -27,16 +26,42 @@ const useEvent = (eventId) => {
 };
 
 const EventCard = ({ eventId, selectEvent }) => {
+  const { user } = useAuth();
   const { event, loading } = useEvent(eventId);
   const [bookmark, setBookmark] = useState(false);
   const [shared, setShared] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_URL;
   const handleSelectEvent = () => {
     console.log(eventId);
     selectEvent(eventId);
   };
+  useEffect(() => {
+    if (!loading && event.totalSaves > 0 && user) {
+      const bookmarked = event.saves.find((item) => item.user.id === user.id);
+      if (bookmarked) {
+        setBookmark(true);
+      }
+    }
+  }, [event, loading, user]);
   const handleBookmark = async (event) => {
     event.preventDefault();
-    setBookmark(!bookmark);
+    event.stopPropagation();
+    try {
+      if (!bookmark) {
+        await fetch(`${apiUrl}/events/${eventId}/saves`, {
+          method: "POST",
+          credentials: "include",
+        });
+      } else {
+        await fetch(`${apiUrl}/events/${eventId}/saves`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+      }
+      setBookmark(!bookmark);
+    } catch (error) {
+      console.error("Failed to bookmark event", error);
+    }
   };
   const handleShare = async (event) => {
     event.preventDefault();
@@ -94,24 +119,26 @@ const EventCard = ({ eventId, selectEvent }) => {
             </p>
           </div>
         </div>
-        <div className="event-actions">
-          <ul>
-            <li>
-              <a href="#" onClick={handleBookmark}>
-                {!bookmark ? (
-                  <i className="fa-regular fa-bookmark"></i>
-                ) : (
-                  <i className="fa-solid fa-bookmark"></i>
-                )}
-              </a>
-            </li>
-            <li>
-              <a href="#" onClick={handleShare}>
-                <i className="fa-solid fa-share-from-square"></i>
-              </a>
-            </li>
-          </ul>
-        </div>
+        {user && (
+          <div className="event-actions">
+            <ul>
+              <li>
+                <a href="#" onClick={handleBookmark}>
+                  {!bookmark ? (
+                    <i className="fa-regular fa-bookmark"></i>
+                  ) : (
+                    <i className="fa-solid fa-bookmark"></i>
+                  )}
+                </a>
+              </li>
+              <li>
+                <a href="#" onClick={handleShare}>
+                  <i className="fa-solid fa-link"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
     );
   }

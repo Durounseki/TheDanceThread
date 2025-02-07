@@ -41,7 +41,7 @@ app.use(
 	'/api/*',
 	cors({
 		origin: (origin, c) => c.env.APP_URL || 'http://localhost:8787',
-		allowMethods: ['GET', 'POST', 'OPTIONS'],
+		allowMethods: ['GET', 'POST', 'OPTIONS', 'DELETE'],
 		credentials: true,
 	})
 );
@@ -110,6 +110,85 @@ app.get('/api/events/:id', async (c) => {
 	} catch (error) {
 		console.error('Error fetching event:', error);
 		return c.json({ error: 'Failed to fetch event' }, 500);
+	}
+});
+
+app.post('api/events/:id/likes', authenticate, async (c) => {
+	const eventId = c.req.param('id');
+	const userId = c.get('userId');
+	try {
+		const prisma = c.get('prisma');
+		await prisma.eventLike.likeEvent(eventId, userId);
+		await prisma.event.addLike(eventId);
+		return c.json({ message: 'Event updated' }, 200);
+	} catch (error) {
+		console.error('Error updating likes', error);
+		return c.json({ error: 'Failed to update event likes' }, 500);
+	}
+});
+app.delete('api/events/:id/likes', authenticate, async (c) => {
+	const eventId = c.req.param('id');
+	const userId = c.get('userId');
+	try {
+		const prisma = c.get('prisma');
+		await prisma.eventLike.unlikeEvent(eventId, userId);
+		await prisma.event.removeLike(eventId);
+		return c.json({ message: 'Event updated' }, 200);
+	} catch (error) {
+		console.error('Error updating likes', error);
+		return c.json({ error: 'Failed to update event likes' }, 500);
+	}
+});
+app.post('api/events/:id/saves', authenticate, async (c) => {
+	const eventId = c.req.param('id');
+	const userId = c.get('userId');
+	try {
+		const prisma = c.get('prisma');
+		await prisma.eventSave.saveEvent(eventId, userId);
+		await prisma.event.addSave(eventId);
+		return c.json({ message: 'Event updated' }, 200);
+	} catch (error) {
+		console.error('Error updating saves', error);
+		return c.json({ error: 'Failed to update event saves' }, 500);
+	}
+});
+app.delete('api/events/:id/saves', authenticate, async (c) => {
+	const eventId = c.req.param('id');
+	const userId = c.get('userId');
+	try {
+		const prisma = c.get('prisma');
+		await prisma.eventSave.unsaveEvent(eventId, userId);
+		await prisma.event.removeSave(eventId);
+		return c.json({ message: 'Event updated' }, 200);
+	} catch (error) {
+		console.error('Error updating saves', error);
+		return c.json({ error: 'Failed to update event saves' }, 500);
+	}
+});
+app.post('api/events/:id/attendees', authenticate, async (c) => {
+	const eventId = c.req.param('id');
+	const userId = c.get('userId');
+	try {
+		const prisma = c.get('prisma');
+		await prisma.eventAttendance.attendEvent(eventId, userId);
+		await prisma.event.addAttendee(eventId);
+		return c.json({ message: 'Event updated' }, 200);
+	} catch (error) {
+		console.error('Error updating attendees', error);
+		return c.json({ error: 'Failed to update event attendees' }, 500);
+	}
+});
+app.delete('api/events/:id/attendees', authenticate, async (c) => {
+	const eventId = c.req.param('id');
+	const userId = c.get('userId');
+	try {
+		const prisma = c.get('prisma');
+		await prisma.eventAttendance.unattendEvent(eventId, userId);
+		await prisma.event.removeAttendee(eventId);
+		return c.json({ message: 'Event updated' }, 200);
+	} catch (error) {
+		console.error('Error updating attendees', error);
+		return c.json({ error: 'Failed to update event attendees' }, 500);
 	}
 });
 
@@ -187,7 +266,7 @@ app.get('api/auth/callback', async (c) => {
 	}
 });
 
-const authenticate = async (c, next) => {
+async function authenticate(c, next) {
 	const token = getCookie(c, 'jwt');
 	const jwtSecret = c.get('jwtSecret');
 
@@ -203,7 +282,7 @@ const authenticate = async (c, next) => {
 		return c.json({ message: 'Authentication error', error: error }, 401);
 	}
 	await next();
-};
+}
 
 app.get('api/auth/protected', authenticate, async (c) => {
 	const userId = c.get('userId');

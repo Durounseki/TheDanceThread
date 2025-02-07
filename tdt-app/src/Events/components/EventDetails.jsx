@@ -26,6 +26,7 @@ const useEvent = (eventId) => {
 
 const EventDetails = ({ eventId }) => {
   const { event, loading } = useEvent(eventId);
+
   if (!loading) {
     return (
       <>
@@ -71,16 +72,15 @@ const EventDetails = ({ eventId }) => {
           <i className="fa-regular fa-calendar"></i>
           <p>{dayjs(event.date).format("YYYY MMMM D")}</p>
         </div>
-        <div className="event-buttons">
+        <div className="event-interactions">
           <ul>
             <li>
-              <button>Save</button>
+              <i className="fa-solid fa-heart"></i>
+              <p>{event.totalLikes}</p>
             </li>
             <li>
-              <button>Like</button>
-            </li>
-            <li>
-              <button>Share</button>
+              <i className="fa-solid fa-people-group"></i>
+              <p>{event.totalAttendees}</p>
             </li>
           </ul>
         </div>
@@ -107,12 +107,19 @@ const EventDetails = ({ eventId }) => {
         </div>
         <section className="event-section">
           <h2>Artists</h2>
-        </section>
-        <section className="event-section">
-          <h2>Dancers</h2>
+          <div className="coming-soon"></div>
         </section>
         <section className="event-section">
           <h2>DJ's</h2>
+          <div className="coming-soon"></div>
+        </section>
+        <section className="event-section">
+          <h2>Dancers</h2>
+          {event.attendees.map((item) => (
+            <p key={item.user.id}>
+              <b>{item.user.name}</b>
+            </p>
+          ))}
         </section>
       </>
     );

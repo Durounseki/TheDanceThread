@@ -10,6 +10,12 @@ export default function createPrismaClient(env) {
 				getEvents: queries.getEvents,
 				getEventById: queries.getEventById,
 				createEvent: queries.createEvent,
+				addLike: queries.addLike,
+				removeLike: queries.removeLike,
+				addSave: queries.addSave,
+				removeSave: queries.removeSave,
+				addAttendee: queries.addAttendee,
+				removeAttendee: queries.removeAttendee,
 			},
 			user: {
 				getUser: queries.getUser,
@@ -17,6 +23,18 @@ export default function createPrismaClient(env) {
 			},
 			style: {
 				getStyles: queries.getStyles,
+			},
+			eventAttendance: {
+				attendEvent: queries.attendEvent,
+				unattendEvent: queries.unattendEvent,
+			},
+			eventLike: {
+				likeEvent: queries.likeEvent,
+				unlikeEvent: queries.unlikeEvent,
+			},
+			eventSave: {
+				saveEvent: queries.saveEvent,
+				unsaveEvent: queries.unsaveEvent,
 			},
 		},
 	});

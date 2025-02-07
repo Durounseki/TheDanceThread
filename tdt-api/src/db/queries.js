@@ -175,16 +175,26 @@ export async function getEventById(eventId) {
 							select: {
 								id: true,
 								name: true,
-								email: true,
-								country: true,
-								sns: {
-									select: {
-										id: true,
-										name: true,
-										url: true,
-										faClass: true,
-									},
-								},
+							},
+						},
+					},
+				},
+				likes: {
+					select: {
+						user: {
+							select: {
+								id: true,
+								name: true,
+							},
+						},
+					},
+				},
+				saves: {
+					select: {
+						user: {
+							select: {
+								id: true,
+								name: true,
 							},
 						},
 					},
@@ -201,6 +211,192 @@ export async function getEventById(eventId) {
 	} catch (error) {
 		console.error('Error finding event', error);
 		throw new Error('Failed to fetch event');
+	}
+}
+
+export async function likeEvent(eventId, userId) {
+	try {
+		const like = await this.findUnique({
+			where: {
+				userId_eventId: { userId, eventId },
+			},
+		});
+		if (!like) {
+			await this.create({
+				data: {
+					user: { connect: { id: userId } },
+					event: { connect: { id: eventId } },
+				},
+			});
+		}
+		return true;
+	} catch (error) {
+		console.error('Error updating event likes', error);
+		throw new Error('Failed to update event likes');
+	}
+}
+
+export async function addLike(eventId) {
+	try {
+		await this.update({
+			where: { id: eventId },
+			data: { totalLikes: { increment: 1 } },
+		});
+		return true;
+	} catch (error) {
+		console.error('Error updating event total likes', error);
+		throw new Error('Failed to update event total likes');
+	}
+}
+
+export async function unlikeEvent(eventId, userId) {
+	try {
+		const like = await this.delete({
+			where: {
+				userId_eventId: { userId, eventId },
+			},
+		});
+		return true;
+	} catch (error) {
+		console.error('Error updating event likes', error);
+		throw new Error('Failed to update event likes');
+	}
+}
+
+export async function removeLike(eventId) {
+	try {
+		await this.update({
+			where: { id: eventId },
+			data: { totalLikes: { decrement: 1 } },
+		});
+		return true;
+	} catch (error) {
+		console.error('Error updating event total likes', error);
+		throw new Error('Failed to update event total likes');
+	}
+}
+
+export async function saveEvent(eventId, userId) {
+	try {
+		const saved = await this.findUnique({
+			where: {
+				userId_eventId: { userId, eventId },
+			},
+		});
+		if (!saved) {
+			await this.create({
+				data: {
+					user: { connect: { id: userId } },
+					event: { connect: { id: eventId } },
+				},
+			});
+		}
+		return true;
+	} catch (error) {
+		console.error('Error updating event saves', error);
+		throw new Error('Failed to update event saves');
+	}
+}
+
+export async function addSave(eventId) {
+	try {
+		await this.update({
+			where: { id: eventId },
+			data: { totalSaves: { increment: 1 } },
+		});
+		return true;
+	} catch (error) {
+		console.error('Error updating event total likes', error);
+		throw new Error('Failed to update event total likes');
+	}
+}
+
+export async function unsaveEvent(eventId, userId) {
+	try {
+		const like = await this.delete({
+			where: {
+				userId_eventId: { userId, eventId },
+			},
+		});
+		return true;
+	} catch (error) {
+		console.error('Error updating event saves', error);
+		throw new Error('Failed to update event saves');
+	}
+}
+
+export async function removeSave(eventId) {
+	try {
+		await this.update({
+			where: { id: eventId },
+			data: { totalSaves: { decrement: 1 } },
+		});
+		return true;
+	} catch (error) {
+		console.error('Error updating event total likes', error);
+		throw new Error('Failed to update event total likes');
+	}
+}
+
+export async function attendEvent(eventId, userId) {
+	try {
+		const attendance = await this.findUnique({
+			where: {
+				userId_eventId_type: { userId, eventId, type: 'GOING' },
+			},
+		});
+		if (!attendance) {
+			await this.create({
+				data: {
+					user: { connect: { id: userId } },
+					event: { connect: { id: eventId } },
+				},
+			});
+		}
+		return true;
+	} catch (error) {
+		console.error('Error updating event attendees', error);
+		throw new Error('Failed to update event attendees');
+	}
+}
+
+export async function addAttendee(eventId) {
+	try {
+		await this.update({
+			where: { id: eventId },
+			data: { totalAttendees: { increment: 1 } },
+		});
+		return true;
+	} catch (error) {
+		console.error('Error updating event total attendees', error);
+		throw new Error('Failed to update event total attendees');
+	}
+}
+
+export async function unattendEvent(eventId, userId) {
+	try {
+		const like = await this.delete({
+			where: {
+				userId_eventId_type: { userId, eventId, type: 'GOING' },
+			},
+		});
+		return true;
+	} catch (error) {
+		console.error('Error updating event attendees', error);
+		throw new Error('Failed to update event attendees');
+	}
+}
+
+export async function removeAttendee(eventId) {
+	try {
+		await this.update({
+			where: { id: eventId },
+			data: { totalAttendees: { decrement: 1 } },
+		});
+		return true;
+	} catch (error) {
+		console.error('Error updating event total attendees', error);
+		throw new Error('Failed to update event total attendees');
 	}
 }
 

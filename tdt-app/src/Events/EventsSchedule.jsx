@@ -4,6 +4,7 @@ import SearchEvent from "./components/Search.jsx";
 import EventSchedule from "./components/EventSchedule.jsx";
 import EventDetails from "./components/EventDetails.jsx";
 import EventNotFound from "./components/EventNotFound.jsx";
+import EventBanner from "./components/EventBanner.jsx";
 
 const EventsSchedule = () => {
   const [featuredEventId, setFeaturedEventId] = useState(null);
@@ -61,6 +62,8 @@ const EventsSchedule = () => {
             </section>
           </article>
         </main>
+        {featuredEventId && <EventBanner eventId={featuredEventId} />}
+
         <Outlet />
       </>
     );
