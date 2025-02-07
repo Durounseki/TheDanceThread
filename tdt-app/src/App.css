@@ -37,10 +37,69 @@ a {
 }
 
 footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 48px;
+  padding: 24px 16px;
+  .footer-cta {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #505050;
+    h2 {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    button {
+      margin: auto 0;
+      font-weight: bold;
+      border-radius: 24px;
+      border: 1px solid #ffa6db;
+      padding: 12px 24px;
+      color: #ffa6db;
+      background-color: #141414;
+    }
+    button:hover {
+      color: #141414;
+      background-color: #ffa6db;
+      cursor: pointer;
+    }
+  }
+  .site-map,
+  .tdt-sns {
+    padding-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    h3 {
+      grid-row: 1;
+      font-size: 16px;
+    }
+    ul {
+      flex-direction: column;
+      gap: 8px;
+      align-self: start;
+      margin: 0;
+      font-size: 14px;
+    }
+    p {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      align-self: end;
+      margin-bottom: 0;
+      a {
+        display: flex;
+        align-items: center;
+        i {
+          font-size: 20px;
+        }
+      }
+    }
+    p:nth-child(2) {
+      a {
+        text-decoration: underline;
+      }
+    }
+  }
 }
 
 /* Events page */
@@ -216,6 +275,7 @@ footer {
         border: 1px solid #ffa6db;
         padding: 16px 32px;
         color: #ffa6db;
+        background-color: #202020;
       }
       button:hover {
         color: #141414;
@@ -655,8 +715,7 @@ input[type="date"] {
 
 .event-form-button,
 .save-profile,
-.user-button,
-.event-banner button {
+.user-button {
   grid-column: 2;
   margin-left: auto;
   background-color: #202020;
@@ -669,8 +728,7 @@ input[type="date"] {
 
 .event-form-button:hover,
 .save-profile:hover,
-.user-button:hover,
-.event-banner button:hover {
+.user-button:hover {
   background-color: #a6dbff;
   color: #141414;
   cursor: pointer;

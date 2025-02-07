@@ -16,7 +16,7 @@ const Layout = ({ loading }) => {
           <Login closeLogin={setShowLogin} />
         </Modal>
       )}
-      <Footer />
+      <Footer showLogin={setShowLogin} />
     </>
   );
 };

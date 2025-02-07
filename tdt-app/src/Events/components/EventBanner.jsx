@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
 import useAuth from "../../useAuth";
-import { removeSave } from "../../../../tdt-api/src/db/queries";
 
 const useEvent = (eventId) => {
   const [event, setEvent] = useState([]);
@@ -147,7 +146,7 @@ const EventBanner = ({ eventId }) => {
       console.error("Failed to like event", error);
     }
   };
-  if (!loading && user) {
+  if (!loading) {
     return (
       <div className="event-banner">
         <div className="event-date">
@@ -155,49 +154,49 @@ const EventBanner = ({ eventId }) => {
           <p>{dayjs(event.date).format("YYYY MMMM D")}</p>
         </div>
         <h2 className="event-name">{event.name.toUpperCase()}</h2>
-        <div className="event-actions">
-          <ul>
-            <li>
-              <a href="#" onClick={handleBookmark}>
-                {!bookmark ? (
-                  <i className="fa-regular fa-bookmark"></i>
+        {user && (
+          <div className="event-actions">
+            <ul>
+              <li>
+                <a href="#" onClick={handleBookmark}>
+                  {!bookmark ? (
+                    <i className="fa-regular fa-bookmark"></i>
+                  ) : (
+                    <i className="fa-solid fa-bookmark"></i>
+                  )}
+                </a>
+              </li>
+              <li>
+                <a href="#" onClick={handleLike}>
+                  {!like ? (
+                    <i className="fa-regular fa-heart"></i>
+                  ) : (
+                    <i className="fa-solid fa-heart"></i>
+                  )}
+                </a>
+              </li>
+              <li>
+                <a href="#" onClick={handleShare}>
+                  <i className="fa-solid fa-link"></i>
+                </a>
+              </li>
+              <li>
+                {!attend ? (
+                  <button onClick={handleAttend}>Attend</button>
                 ) : (
-                  <i className="fa-solid fa-bookmark"></i>
+                  <div className="event-attendance">
+                    <h2>Going</h2>
+                    <a href="#" onClick={handleAttend}>
+                      Cancel
+                    </a>
+                  </div>
                 )}
-              </a>
-            </li>
-            <li>
-              <a href="#" onClick={handleLike}>
-                {!like ? (
-                  <i className="fa-regular fa-heart"></i>
-                ) : (
-                  <i className="fa-solid fa-heart"></i>
-                )}
-              </a>
-            </li>
-            <li>
-              <a href="#" onClick={handleShare}>
-                <i className="fa-solid fa-link"></i>
-              </a>
-            </li>
-            <li>
-              {!attend ? (
-                <button onClick={handleAttend}>Attend</button>
-              ) : (
-                <div className="event-attendance">
-                  <h2>Going</h2>
-                  <a href="#" onClick={handleAttend}>
-                    Cancel
-                  </a>
-                </div>
-              )}
-            </li>
-          </ul>
-        </div>
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
     );
-  } else {
-    return <></>;
   }
 };
 
