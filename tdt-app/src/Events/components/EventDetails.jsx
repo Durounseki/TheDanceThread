@@ -107,19 +107,24 @@ const EventDetails = ({ eventId }) => {
         </div>
         <section className="event-section">
           <h2>Artists</h2>
-          <div className="coming-soon"></div>
+          <p>Coming soon!</p>
         </section>
         <section className="event-section">
           <h2>DJ's</h2>
-          <div className="coming-soon"></div>
+          <p>Coming soon!</p>
         </section>
         <section className="event-section">
           <h2>Dancers</h2>
-          {event.attendees.map((item) => (
-            <p key={item.user.id}>
-              <b>{item.user.name}</b>
-            </p>
-          ))}
+
+          {event.totalAttendees > 0 ? (
+            event.attendees.map((item) => (
+              <p key={item.user.id}>
+                <b>{item.user.name}</b>
+              </p>
+            ))
+          ) : (
+            <p>No one here yet...</p>
+          )}
         </section>
       </>
     );

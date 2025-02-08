@@ -56,6 +56,11 @@ const Profile = () => {
     setUserEmail(userInfo.email);
     setEditMode(!editMode);
   };
+  const handleCancelEdit = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setEditMode(!editMode);
+  };
 
   const handleSaveProfile = async (event) => {
     event.preventDefault();
@@ -111,45 +116,53 @@ const Profile = () => {
     <article className="profile-container">
       <div className="user-details">
         {!editMode ? (
-          <section className="user-banner">
-            <Link to={`/profile`}>
-              <figure className="profile-picture">
-                <div dangerouslySetInnerHTML={{ __html: user.avatar }} />
-              </figure>
-            </Link>
-            <h1 className="user-name">{userInfo.name}</h1>
-            <p className="user-email">{userInfo.email}</p>
-            {userInfo.sns.length > 0 && (
-              <div className="user-sns">
-                {userInfo.sns.map((sns) => (
-                  <a key={sns.id} href={sns.url} aria-label={sns.name}>
-                    <i className={sns.faClass}></i>
-                  </a>
-                ))}
-              </div>
-            )}
-            <button className="user-button" onClick={handleEditProfile}>
-              Edit
-            </button>
-            <button className="user-button" onClick={handleLogOut}>
-              Logout
-            </button>
-            <button
-              className="user-button delete-account"
-              onClick={handleDeleteAccount}
-            >
-              Delete Account
-            </button>
-          </section>
+          <>
+            <section className="user-banner">
+              <Link to={`/profile`}>
+                <figure className="profile-picture">
+                  <div dangerouslySetInnerHTML={{ __html: user.avatar }} />
+                </figure>
+              </Link>
+              <h1 className="user-name">{userInfo.name}</h1>
+              <p className="user-email">{userInfo.email}</p>
+              <button className="user-button" onClick={handleEditProfile}>
+                Edit
+              </button>
+              <button className="user-button" onClick={handleLogOut}>
+                Logout
+              </button>
+              <button
+                className="user-button delete-account"
+                onClick={handleDeleteAccount}
+              >
+                Delete Account
+              </button>
+            </section>
+            <section className="user-social-media">
+              <span className="user-section-title">Social Media</span>
+              {userInfo.sns.length > 0 ? (
+                <div className="user-sns">
+                  {userInfo.sns.map((sns) => (
+                    <a key={sns.id} href={sns.url} aria-label={sns.name}>
+                      <i className={sns.faClass}></i>
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <p>Nothing here...</p>
+              )}
+            </section>
+          </>
         ) : (
           <form className="user-form" onSubmit={handleSaveProfile}>
             <figure className="profile-picture edit">
               <div dangerouslySetInnerHTML={{ __html: user.avatar }} />
               <i className="fa-solid fa-pencil"></i>
             </figure>
-            <button className="save-profile" type="submit">
-              Save Profile
-            </button>
+            <div className="edit-profile-submit">
+              <button type="submit">Save</button>
+              <button onClick={handleCancelEdit}>Cancel</button>
+            </div>
             <label htmlFor="user-name">Name:</label>
             <input
               type="text"

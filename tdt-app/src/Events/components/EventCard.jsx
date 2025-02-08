@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
 import useAuth from "../../useAuth";
@@ -25,15 +26,15 @@ const useEvent = (eventId) => {
   return { event, loading };
 };
 
-const EventCard = ({ eventId, selectEvent }) => {
+const EventCard = ({ eventId }) => {
   const { user } = useAuth();
   const { event, loading } = useEvent(eventId);
   const [bookmark, setBookmark] = useState(false);
   const [shared, setShared] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
   const handleSelectEvent = () => {
-    console.log(eventId);
-    selectEvent(eventId);
+    navigate(`/events/${eventId}`);
   };
   useEffect(() => {
     if (!loading && event.totalSaves > 0 && user) {
@@ -65,6 +66,7 @@ const EventCard = ({ eventId, selectEvent }) => {
   };
   const handleShare = async (event) => {
     event.preventDefault();
+    event.stopPropagation();
     const url = window.location.host + window.location.pathname + `/${eventId}`;
     try {
       await navigator.clipboard.writeText(url);
@@ -146,7 +148,6 @@ const EventCard = ({ eventId, selectEvent }) => {
 
 EventCard.propTypes = {
   eventId: PropTypes.string.isRequired,
-  selectEvent: PropTypes.func.isRequired,
 };
 
 export default EventCard;

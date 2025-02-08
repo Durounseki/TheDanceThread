@@ -20,6 +20,7 @@ const Router = () => {
           <Route index element={<Home />} />
           <Route path="/events" element={<Events />}>
             <Route index element={<EventsSchedule />} />
+            <Route path=":id" element={<EventsSchedule />} />
             {user && <Route path="create" element={<CreateEvent />} />}
           </Route>
           {!user && <Route path="/login" element={<Login />} />}

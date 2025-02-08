@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import SearchEvent from "./components/Search.jsx";
 import EventSchedule from "./components/EventSchedule.jsx";
 import EventDetails from "./components/EventDetails.jsx";
@@ -7,6 +7,7 @@ import EventNotFound from "./components/EventNotFound.jsx";
 import EventBanner from "./components/EventBanner.jsx";
 
 const EventsSchedule = () => {
+  const { id: eventId } = useParams();
   const [featuredEventId, setFeaturedEventId] = useState(null);
   const [eventIds, setEventIds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,14 +29,12 @@ const EventsSchedule = () => {
   }, []);
 
   useEffect(() => {
-    if (eventIds.length > 0 && !featuredEventId) {
+    if (eventId) {
+      setFeaturedEventId(eventId);
+    } else if (eventIds.length > 0 && !featuredEventId) {
       setFeaturedEventId(eventIds[0]);
     }
-  }, [eventIds, featuredEventId]);
-
-  const handleFeaturedEvent = (eventId) => {
-    setFeaturedEventId(eventId);
-  };
+  }, [eventIds, featuredEventId, eventId]);
 
   if (!loading) {
     return (
@@ -47,10 +46,7 @@ const EventsSchedule = () => {
               setEventIds={setEventIds}
             />
             <h2>Dance Events</h2>
-            <EventSchedule
-              eventIds={eventIds}
-              showFeaturedEvent={handleFeaturedEvent}
-            />
+            <EventSchedule eventIds={eventIds} />
           </aside>
           <article className="event-container">
             <section className="event-details-container">
@@ -64,7 +60,7 @@ const EventsSchedule = () => {
         </main>
         {featuredEventId && <EventBanner eventId={featuredEventId} />}
 
-        <Outlet />
+        {/* <Outlet /> */}
       </>
     );
   }

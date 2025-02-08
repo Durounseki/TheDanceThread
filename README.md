@@ -9,6 +9,7 @@ This is the prototype of The Dance Thread a social platform where dancers can fi
 - [x] Remove create button with '+' sign and replace with an explicit "Add Event" that prompts the user to log in if they are not logged in or redirects to the create event form if they are.
 - [ ] Add css styles for mobile version
 - [x] Add like, save, share and going actions to each event and update user properties.
+- [ ] Edit event.
 - [ ] Add eventId according to the featured event.
 - [ ] Fetch avatars for each user.
 - [ ] Add avatars to users.
@@ -17,5 +18,5 @@ This is the prototype of The Dance Thread a social platform where dancers can fi
 - [x] Modify the create event logic to include the userId of the creator.
 - [ ] Add a home page explore events and create event options.
 - [ ] Style the header.
-- [ ] Add a footer.
+- [x] Add a footer.
 - [x] Fetch event styles and add to datalist in the event filter.
