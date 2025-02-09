@@ -207,7 +207,7 @@ const Profile = () => {
         )}
       </div>
       <section className="user-events">
-        <UserEvents user={user} />
+        <UserEvents user={user} canEdit={true} />
       </section>
     </article>
   ) : (

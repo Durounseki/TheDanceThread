@@ -26,7 +26,7 @@ const useEvent = (eventId) => {
   return { event, loading };
 };
 
-const EventCard = ({ eventId }) => {
+const EventCard = ({ eventId, canEdit = false }) => {
   const { user } = useAuth();
   const { event, loading } = useEvent(eventId);
   const [bookmark, setBookmark] = useState(false);
@@ -79,64 +79,87 @@ const EventCard = ({ eventId }) => {
       console.error("Failed to copy link:", error);
     }
   };
+  const handleEdit = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    navigate(`/events/${eventId}/edit`);
+  };
+  const handleRemove = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
   if (!loading) {
     return (
-      <div className="event-card" onClick={handleSelectEvent}>
-        <div className="event-date">
-          <p>
-            {dayjs(new Date(event.date))
-              .format("MMMM")
-              .toUpperCase()
-              .slice(0, 3)}
-          </p>
-          <p>{dayjs(new Date(event.date)).format("D")}</p>
-        </div>
-        <div className="event-thumb">
-          <img src={event.flyer.src} alt={event.flyer.alt} />
-        </div>
-        <div className="event-details">
-          <p className="event-name">{event.name}</p>
-          <div className="event-links">
-            <p className="event-venues">
-              {event.venues[0].url ? (
-                <a
-                  href={event.venues[0].url}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  <i className="fa-regular fa-map"></i> {event.country}
-                </a>
-              ) : (
-                <>
-                  <i className="fa-regular fa-map"></i> {event.country}
-                </>
-              )}
+      <div className="event-card-container">
+        <div className="event-card" onClick={handleSelectEvent}>
+          <div className="event-date">
+            <p>
+              {dayjs(new Date(event.date))
+                .format("MMMM")
+                .toUpperCase()
+                .slice(0, 3)}
             </p>
-            <p className="event-sns">
-              {event.sns.map((sns) => (
-                <a key={sns.id} href={sns.url} aria-label={sns.name}>
-                  <i className={sns.faClass}></i>
-                </a>
-              ))}
-            </p>
+            <p>{dayjs(new Date(event.date)).format("D")}</p>
           </div>
+          <div className="event-thumb">
+            <img src={event.flyer.src} alt={event.flyer.alt} />
+          </div>
+          <div className="event-details">
+            <p className="event-name">{event.name}</p>
+            <div className="event-links">
+              <p className="event-venues">
+                {event.venues[0].url ? (
+                  <a
+                    href={event.venues[0].url}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <i className="fa-regular fa-map"></i> {event.country}
+                  </a>
+                ) : (
+                  <>
+                    <i className="fa-regular fa-map"></i> {event.country}
+                  </>
+                )}
+              </p>
+              <p className="event-sns">
+                {event.sns.map((sns) => (
+                  <a key={sns.id} href={sns.url} aria-label={sns.name}>
+                    <i className={sns.faClass}></i>
+                  </a>
+                ))}
+              </p>
+            </div>
+          </div>
+          {user && (
+            <div className="event-actions">
+              <ul>
+                <li>
+                  <a href="#" onClick={handleBookmark}>
+                    {!bookmark ? (
+                      <i className="fa-regular fa-bookmark"></i>
+                    ) : (
+                      <i className="fa-solid fa-bookmark"></i>
+                    )}
+                  </a>
+                </li>
+                <li>
+                  <a href="#" onClick={handleShare}>
+                    <i className="fa-solid fa-link"></i>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
-        {user && (
-          <div className="event-actions">
+        {canEdit && (
+          <div className="edit-event-buttons">
             <ul>
               <li>
-                <a href="#" onClick={handleBookmark}>
-                  {!bookmark ? (
-                    <i className="fa-regular fa-bookmark"></i>
-                  ) : (
-                    <i className="fa-solid fa-bookmark"></i>
-                  )}
-                </a>
+                <button onClick={handleEdit}>Edit</button>
               </li>
               <li>
-                <a href="#" onClick={handleShare}>
-                  <i className="fa-solid fa-link"></i>
-                </a>
+                <button onClick={handleRemove}>Remove</button>
               </li>
             </ul>
           </div>
@@ -148,6 +171,7 @@ const EventCard = ({ eventId }) => {
 
 EventCard.propTypes = {
   eventId: PropTypes.string.isRequired,
+  canEdit: PropTypes.bool,
 };
 
 export default EventCard;

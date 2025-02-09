@@ -37,6 +37,7 @@ a {
 }
 
 footer {
+  border-top: 1px solid #202020;
   padding: 24px 16px;
   .footer-cta {
     display: flex;
@@ -320,20 +321,26 @@ footer {
 }
 
 /* Event card */
-.event-card {
-  width: 100%;
+.event-card-container {
   min-width: 350px;
   display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: nowrap;
+  flex-direction: column;
   background-color: #202020;
   border-radius: 16px;
   padding: 8px 16px;
   box-sizing: border-box;
+  gap: 8px;
 }
 
-.event-card:hover {
+.event-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.event-card-container:hover {
   outline: 1px solid #a6dbff;
   box-shadow: 2px 2px 2px#000000cc;
 }
@@ -365,6 +372,26 @@ footer {
     height: auto;
     margin: auto;
     border-radius: 4px;
+  }
+}
+
+.create-event-form .event-thumb {
+  justify-self: center;
+}
+
+.flyer-filename {
+  justify-self: left;
+  color: #a6dbff;
+}
+
+.edit-form-buttons {
+  display: flex;
+  gap: 8px;
+  grid-column: 2;
+  justify-content: right;
+  margin-left: auto;
+  button {
+    width: 80px;
   }
 }
 
@@ -424,6 +451,19 @@ footer {
   margin: 0;
   gap: 8px;
   padding-left: 16px;
+}
+
+.edit-event-buttons {
+  ul {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(100px, 1fr));
+    li {
+      button {
+        width: 100%;
+      }
+    }
+  }
 }
 /* Schedule header */
 /* Searchbar */
@@ -623,6 +663,7 @@ footer {
   align-items: center;
   gap: 16px;
   margin-top: 48px;
+  padding-bottom: 24px;
 }
 
 .form-section-header {
@@ -729,7 +770,8 @@ input[type="date"] {
 }
 .event-form-button,
 .edit-profile-submit button,
-.user-button {
+.user-button,
+.edit-event-buttons button {
   grid-column: 2;
   margin-left: auto;
   background-color: #202020;
@@ -742,7 +784,8 @@ input[type="date"] {
 
 .event-form-button:hover,
 .edit-profile-submit button:hover,
-.user-button:hover {
+.user-button:hover,
+.edit-event-buttons button:hover {
   background-color: #a6dbff;
   color: #141414;
   cursor: pointer;
@@ -939,6 +982,7 @@ label input:checked ~ .custom-checkbox {
 .user-details {
   display: grid;
   gap: 16px;
+  grid-template-rows: max-content;
 }
 
 .user-social-media {

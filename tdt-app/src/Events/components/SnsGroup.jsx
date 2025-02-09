@@ -1,4 +1,3 @@
-import { useState } from "react";
 import PropTypes from "prop-types";
 
 function SnsGroup({
@@ -7,6 +6,8 @@ function SnsGroup({
   platform,
   setPlatform,
   disabledOptions,
+  url,
+  setUrl,
 }) {
   const options = [
     {
@@ -26,7 +27,6 @@ function SnsGroup({
       text: "Youtube",
     },
   ];
-  const [url, setUrl] = useState("");
 
   return (
     <div className="sns-group">

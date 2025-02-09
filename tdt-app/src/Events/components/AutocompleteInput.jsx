@@ -1,4 +1,3 @@
-import { useState } from "react";
 import PropTypes from "prop-types";
 
 const AutocompleteInput = ({
@@ -7,12 +6,11 @@ const AutocompleteInput = ({
   placeholder,
   label,
   inputName,
+  value,
 }) => {
-  const [value, setValue] = useState("");
-
   const handleOptions = (event) => {
     const inputValue = event.target.value;
-    setValue(inputValue);
+    onSelect(inputValue);
     const selected = options.find(
       (option) => option.name.toLowerCase() === inputValue.toLowerCase()
     );
@@ -29,7 +27,7 @@ const AutocompleteInput = ({
         type="text"
         name={inputName.toLowerCase()}
         id={inputName.toLowerCase()}
-        value={value}
+        value={value && value.name ? value.name : value}
         onInput={handleOptions}
         list={`${inputName.toLowerCase()}-list`}
         placeholder={placeholder}

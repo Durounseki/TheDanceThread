@@ -10,6 +10,7 @@ export default function createPrismaClient(env) {
 				getEvents: queries.getEvents,
 				getEventById: queries.getEventById,
 				createEvent: queries.createEvent,
+				updateEvent: queries.updateEvent,
 				addLike: queries.addLike,
 				removeLike: queries.removeLike,
 				addSave: queries.addSave,
@@ -35,6 +36,9 @@ export default function createPrismaClient(env) {
 			eventSave: {
 				saveEvent: queries.saveEvent,
 				unsaveEvent: queries.unsaveEvent,
+			},
+			flyer: {
+				getFlyerKey: queries.getFlyerKey,
 			},
 		},
 	});

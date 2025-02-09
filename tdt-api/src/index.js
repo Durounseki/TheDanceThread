@@ -41,7 +41,7 @@ app.use(
 	'/api/*',
 	cors({
 		origin: (origin, c) => c.env.APP_URL || 'http://localhost:8787',
-		allowMethods: ['GET', 'POST', 'OPTIONS', 'DELETE'],
+		allowMethods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
 		credentials: true,
 	})
 );
@@ -64,14 +64,17 @@ app.post('/api/events', async (c) => {
 	const eventInfo = await c.req.parseBody();
 	const file = eventInfo.flyer;
 	try {
-		const key = `${Date.now()}-${file.name}`;
-		await c.env.TDT_BUCKET.put(key, file.stream());
+		let key;
 		const prisma = c.get('prisma');
+		if (file) {
+			key = `${Date.now()}-${file.name}`;
+			await c.env.TDT_BUCKET.put(key, file.stream());
+		}
 		const event = await prisma.event.createEvent(eventInfo, key);
 		return c.json(event, 201);
 	} catch (error) {
-		console.error('Error uploading file:', error);
-		return c.json({ error: 'Failed to upload file' }, 500);
+		console.error('Error creating event:', error);
+		return c.json({ error: 'Failed to create event' }, 500);
 	}
 });
 
@@ -110,6 +113,31 @@ app.get('/api/events/:id', async (c) => {
 	} catch (error) {
 		console.error('Error fetching event:', error);
 		return c.json({ error: 'Failed to fetch event' }, 500);
+	}
+});
+
+app.patch('/api/events/:id', async (c) => {
+	const eventInfo = await c.req.parseBody();
+	const file = eventInfo.flyer;
+	try {
+		const prisma = c.get('prisma');
+		let key;
+		if (file) {
+			const oldKey = await prisma.flyer.getFlyerKey(eventInfo.id);
+			console.log('old key:', oldKey.src);
+			if (oldKey && oldKey.src !== 'the-dance-thread-logo-dark-2.png') {
+				console.log('deleting old object');
+				await c.env.TDT_BUCKET.delete(oldKey.src);
+			}
+			key = `${Date.now()}-${file.name}`;
+			await c.env.TDT_BUCKET.put(key, file.stream());
+		}
+		const event = await prisma.event.updateEvent(eventInfo, key);
+		console.log(JSON.stringify(event, null, 4));
+		return c.json(event);
+	} catch (error) {
+		console.error('Error updating event:', error);
+		return c.json({ error: 'Failed to update event' }, 500);
 	}
 });
 

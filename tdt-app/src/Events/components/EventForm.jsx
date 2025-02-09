@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SnsGroup from "./SnsGroup";
 import { v4 as uuidv4 } from "uuid";
 import CustomCheckbox from "./CustomCheckbox";
@@ -8,6 +8,14 @@ import useAuth from "../../useAuth";
 
 function EventForm() {
   const navigate = useNavigate();
+  const { id: eventId } = useParams();
+  const [name, setName] = useState("");
+  const [date, setDate] = useState("");
+  const [description, setDescription] = useState("");
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
+  const [venueName, setVenueName] = useState("");
+  const [venueUrl, setVenueUrl] = useState("");
   const { user, loading } = useAuth();
   const [styleOptions, setStyleOptions] = useState([
     {
@@ -37,11 +45,55 @@ function EventForm() {
   ]);
   const [otherStyle, setOtherStyle] = useState("");
   const [snsGroups, setSnsGroups] = useState([
-    { id: uuidv4(), platform: "website" },
+    { id: uuidv4(), platform: "website", url: "" },
   ]);
+  const [flyer, setFlyer] = useState(undefined);
   const textAreaRef = useRef(null);
   const dateRef = useRef(null);
   const apiUrl = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/events/${eventId}`);
+        const data = await response.json();
+        console.log(data);
+        setName(data.name);
+        setDate(new Date(data.date).toISOString().substring(0, 10));
+        setDescription(data.description);
+        setCountry(data.country);
+        setCity(data.city);
+        setVenueName(data.venues[0].name);
+        setVenueUrl(data.venues[0].url);
+        setStyleOptions(
+          styleOptions.map((option) =>
+            data.styles.map((style) => style.name).includes(option.value)
+              ? { ...option, checked: true }
+              : option
+          )
+        );
+        setSnsGroups(
+          data.sns.map((sns) => ({
+            id: sns.id,
+            platform: sns.name,
+            url: sns.url,
+          }))
+        );
+        const flyerUrl = new URL(data.flyer.src);
+        const flyerPathname = flyerUrl.pathname;
+        const flyerFileName = flyerPathname
+          .split("/")
+          .pop()
+          .replace(/^\d+-/, "");
+        setFlyer({ ...data.flyer, fileName: flyerFileName });
+      } catch (error) {
+        console.log("Failed to fetch event info:", error);
+      }
+    };
+    if (eventId) {
+      fetchData();
+    }
+  }, [eventId, apiUrl]);
 
   useEffect(() => {
     const textArea = textAreaRef.current;
@@ -84,7 +136,7 @@ function EventForm() {
   };
 
   const handleOtherStyle = (event) => {
-    event.preventDefault;
+    event.preventDefault();
     const value = otherStyle.trim().toLowerCase();
     if (!styleOptions.some((style) => style.value === value)) {
       const newStyle = {
@@ -128,6 +180,14 @@ function EventForm() {
     );
   };
 
+  const handleSnsUrl = (groupId, newUrl) => {
+    setSnsGroups((prevSnsGroups) =>
+      prevSnsGroups.map((group) =>
+        group.id === groupId ? { ...group, url: newUrl } : group
+      )
+    );
+  };
+
   const getDisabledOptions = (groupId) => {
     const disabledOptions = [];
     snsGroups.forEach((group) => {
@@ -147,21 +207,36 @@ function EventForm() {
     }
 
     try {
-      for (const key of formData.keys()) {
-        console.log(key + ": " + formData.get(key));
+      let response;
+
+      if (eventId) {
+        snsGroups.forEach((sns) => formData.append("sns-id[]", sns.id));
+        formData.append("id", eventId);
+        response = await fetch(`${apiUrl}/events/${eventId}`, {
+          method: "PATCH",
+          body: formData,
+        });
+      } else {
+        response = await fetch(`${apiUrl}/events`, {
+          method: "POST",
+          body: formData,
+        });
       }
-      const response = await fetch(`${apiUrl}/events`, {
-        method: "POST",
-        body: formData,
-      });
       if (response.ok) {
-        navigate(`/events/${response.json().id}`);
+        const responseData = await response.json();
+        navigate(`/events/${responseData.id}`);
       } else {
         console.error("Error creating event");
       }
     } catch (error) {
       console.error("Error:", error);
     }
+  };
+
+  const handleCancel = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    navigate("/profile");
   };
 
   if (loading) {
@@ -182,15 +257,27 @@ function EventForm() {
           name="name"
           required
           placeholder="The Dance Thread"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
         <label htmlFor="date">Date:</label>
-        <input type="date" id="date" name="date" required ref={dateRef} />
+        <input
+          type="date"
+          id="date"
+          name="date"
+          required
+          ref={dateRef}
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
         <label htmlFor="description">Description:</label>
         <textarea
           id="description"
           name="description"
           placeholder="Dance, share, celebrate yourself!"
           ref={textAreaRef}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         ></textarea>
 
         <div className="form-separator"></div>
@@ -226,7 +313,16 @@ function EventForm() {
         </div>
 
         <div className="form-separator"></div>
-        <VenueInput />
+        <VenueInput
+          country={country}
+          setCountry={setCountry}
+          city={city}
+          setCity={setCity}
+          venueName={venueName}
+          setVenueName={setVenueName}
+          venueUrl={venueUrl}
+          setVenueUrl={setVenueUrl}
+        />
 
         <div className="form-separator"></div>
         <h3 className="form-section-header">Social Media</h3>
@@ -242,6 +338,8 @@ function EventForm() {
                 handleSnsPlatformChange(group.id, newPlatform)
               }
               disabledOptions={getDisabledOptions(group.id)}
+              url={group.url}
+              setUrl={(newUrl) => handleSnsUrl(group.id, newUrl)}
             />
           ))}
           {snsGroups.length < 4 && (
@@ -258,12 +356,37 @@ function EventForm() {
 
         <div className="form-separator"></div>
         <h3 className="form-section-header">Flyer</h3>
+        {flyer && (
+          <>
+            <div className="event-thumb">
+              <img src={flyer.src} alt={flyer.alt} />
+            </div>
+            <a
+              href={flyer.src}
+              rel="noopener noreferrer"
+              target="_blank"
+              className="flyer-filename"
+            >
+              {flyer.fileName}
+            </a>
+          </>
+        )}
         <label htmlFor="flyer">Upload Image:</label>
         <input type="file" accept="image/*" id="flyer" name="flyer" />
-
-        <button type="submit" className="event-form-button">
-          Add Event
-        </button>
+        {eventId ? (
+          <div className="edit-form-buttons">
+            <button onClick={handleCancel} className="event-form-button">
+              Cancel
+            </button>
+            <button type="submit" className="event-form-button">
+              {eventId ? "Save" : "Add Event"}
+            </button>
+          </div>
+        ) : (
+          <button type="submit" className="event-form-button">
+            {eventId ? "Save" : "Add Event"}
+          </button>
+        )}
       </form>
     </div>
   );

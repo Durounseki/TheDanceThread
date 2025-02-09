@@ -4,6 +4,7 @@ import Layout from "./Layout.jsx";
 import Home from "./Home.jsx";
 import Events from "./Events/Events.jsx";
 import CreateEvent from "./Events/CreateEvent.jsx";
+import EditEvent from "./Events/EditEvent.jsx";
 import ErrorPage from "./ErrorPage.jsx";
 import EventsSchedule from "./Events/EventsSchedule.jsx";
 import Login from "./Login.jsx";
@@ -22,6 +23,7 @@ const Router = () => {
             <Route index element={<EventsSchedule />} />
             <Route path=":id" element={<EventsSchedule />} />
             {user && <Route path="create" element={<CreateEvent />} />}
+            {user && <Route path=":id/edit" element={<EditEvent />} />}
           </Route>
           {!user && <Route path="/login" element={<Login />} />}
           {user && <Route path="/profile" element={<Profile />} />}

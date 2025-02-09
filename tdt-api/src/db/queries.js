@@ -45,19 +45,27 @@ export async function getEvents(country, style, date) {
 	}
 }
 
-export async function createEvent(eventInfo, key) {
+function prepareEventData(eventInfo) {
 	let snsPlatforms;
 	let snsUrls;
+	let snsIds;
 	if (Array.isArray(eventInfo['sns-platform[]'])) {
 		snsPlatforms = eventInfo['sns-platform[]'];
 		snsUrls = eventInfo['sns-url[]'];
+		if (eventInfo['sns-id[]']) {
+			snsIds = eventInfo['sns-id[]'];
+		}
 	} else {
 		snsPlatforms = [eventInfo['sns-platform[]']];
 		snsUrls = [eventInfo['sns-url[]']];
+		if (eventInfo['sns-id[]']) {
+			snsIds = [eventInfo['sns-id[]']];
+		}
 	}
 	let eventSns = [];
 	snsPlatforms.forEach((platform, index) => {
 		eventSns.push({
+			id: eventInfo['sns-id[]'] ? snsIds[index] : '',
 			name: platform,
 			url: snsUrls[index],
 			faClass: snsFaClass[platform],
@@ -85,61 +93,98 @@ export async function createEvent(eventInfo, key) {
 	} else {
 		styles = [eventInfo['style[]']];
 	}
+	const data = {
+		name: eventInfo['name'],
+		date: new Date(eventInfo['date']),
+		country: eventInfo['country'],
+		city: eventInfo['city'],
+		description: eventInfo['description'],
+		venues: {
+			connectOrCreate: venues.map((venue) => ({
+				where: {
+					name_url: venue,
+				},
+				create: venue,
+			})),
+		},
+		styles: {
+			connectOrCreate: styles.map((style) => ({
+				where: {
+					name: style,
+				},
+				create: {
+					name: style,
+				},
+			})),
+		},
+		sns: {
+			connectOrCreate: eventSns.map((sns) => ({
+				where: { id: sns.id },
+				create: { name: sns.name, url: sns.url, faClass: sns.faClass },
+			})),
+		},
+		createdBy: {
+			connect: { id: eventInfo['creatorId'] },
+		},
+	};
+	return data;
+}
 
+export async function createEvent(eventInfo, key) {
+	console.log(JSON.stringify(eventInfo, null, 4));
+	const data = prepareEventData(eventInfo);
+	console.log(data);
 	try {
 		const event = await this.create({
 			data: {
-				name: eventInfo['name'],
-				date: new Date(eventInfo['date']),
-				country: eventInfo['country'],
-				city: eventInfo['city'],
-				description: eventInfo['description'],
-				venues: {
-					connectOrCreate: venues.map((venue) => ({
-						where: {
-							name_url: {
-								name: venue.name,
-								url: venue.url,
+				...data,
+				flyer: key
+					? {
+							create: {
+								alt: eventInfo['name'],
+								src: key,
 							},
-						},
-						create: {
-							name: venue.name,
-							url: venue.url,
-						},
-					})),
-				},
-				styles: {
-					connectOrCreate: styles.map((style) => ({
-						where: {
-							name: style,
-						},
-						create: {
-							name: style,
-						},
-					})),
-				},
-				sns: {
-					create: eventSns.map((sns) => ({
-						name: sns.name,
-						url: sns.url,
-						faClass: sns.faClass,
-					})),
-				},
-				flyer: {
-					create: {
-						alt: eventInfo['name'],
-						src: key,
-					},
-				},
-				createdBy: {
-					connect: { id: eventInfo['creatorId'] },
-				},
+					  }
+					: {
+							create: {
+								alt: eventInfo['name'],
+								src: 'the-dance-thread-logo-dark-2.png',
+							},
+					  },
 			},
 		});
 		return event;
 	} catch (error) {
 		console.error('Error creating event:', error);
 		throw new Error('Failed to create event');
+	}
+}
+
+export async function updateEvent(eventInfo, key) {
+	const data = prepareEventData(eventInfo);
+	if (key) {
+		data.flyer = {
+			upsert: {
+				update: {
+					alt: eventInfo['name'],
+					src: key,
+				},
+				create: {
+					alt: eventInfo['name'],
+					src: key,
+				},
+			},
+		};
+	}
+	try {
+		const event = await this.update({
+			where: { id: eventInfo.id },
+			data: data,
+		});
+		return event;
+	} catch (error) {
+		console.error('Error updating event:', error);
+		throw new Error('Failed to update event');
 	}
 }
 
@@ -152,6 +197,12 @@ export async function getEventById(eventId) {
 					select: {
 						name: true,
 						url: true,
+					},
+				},
+				styles: {
+					select: {
+						id: true,
+						name: true,
 					},
 				},
 				sns: {
@@ -443,5 +494,20 @@ export async function createUser(user) {
 	} catch (error) {
 		console.error('Error creating user', error);
 		throw new Error('Failed to create user');
+	}
+}
+
+export async function getFlyerKey(eventId) {
+	try {
+		const key = await this.findUnique({
+			where: {
+				eventId: eventId,
+			},
+			select: { src: true },
+		});
+		return key;
+	} catch (error) {
+		console.error('Error finding flyer key', error);
+		throw new Error('Failed to find flyer key');
 	}
 }

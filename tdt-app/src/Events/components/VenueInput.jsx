@@ -1,10 +1,16 @@
-import { useState } from "react";
 import CountrySelect from "./CountrySelect";
 import CitySelect from "./CitySelect";
 
-const VenueInput = () => {
-  const [country, setCountry] = useState("");
-  const [city, setCity] = useState("");
+const VenueInput = ({
+  country,
+  setCountry,
+  city,
+  setCity,
+  venueName,
+  setVenueName,
+  venueUrl,
+  setVenueUrl,
+}) => {
   const handleCountrySelect = (option) => {
     setCountry(option);
     setCity("");
@@ -16,13 +22,24 @@ const VenueInput = () => {
   return (
     <>
       <h3 className="form-section-header">Venue</h3>
-      <CountrySelect onSelect={handleCountrySelect} />
+      <CountrySelect value={country} onSelect={handleCountrySelect} />
       {country && (
-        <CitySelect countryCode={country.code} onSelect={handleCitySelect} />
+        <CitySelect
+          value={city}
+          countryCode={country.code}
+          onSelect={handleCitySelect}
+        />
       )}
 
       <label htmlFor="venue-name">Venue:</label>
-      <input type="text" id="venue-name" name="venue-name[]" required />
+      <input
+        type="text"
+        id="venue-name"
+        name="venue-name[]"
+        value={venueName}
+        onChange={(e) => setVenueName(e.target.value)}
+        required
+      />
 
       <label htmlFor="venue-url">Location:</label>
       <input
@@ -30,6 +47,8 @@ const VenueInput = () => {
         id="venue-url"
         name="venue-url[]"
         placeholder="Google Maps link"
+        value={venueUrl}
+        onChange={(e) => setVenueUrl(e.target.value)}
         required
       />
     </>

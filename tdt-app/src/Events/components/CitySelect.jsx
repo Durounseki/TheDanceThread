@@ -4,8 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import AutocompleteInput from "./AutocompleteInput";
 import PropTypes from "prop-types";
 
-const CitySelect = ({ countryCode, onSelect }) => {
-  console.log(countryCode);
+const CitySelect = ({ value, countryCode, onSelect }) => {
   const [cityOptions, setCityOptions] = useState([]);
 
   useEffect(() => {
@@ -43,6 +42,7 @@ const CitySelect = ({ countryCode, onSelect }) => {
       placeholder={"Select a city"}
       label={"City"}
       inputName={"city"}
+      value={value}
     />
   );
 };
