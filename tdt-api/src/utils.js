@@ -10,7 +10,7 @@ const snsFaClass = {
 
 function createUserAvatar(userId) {
 	const avatar = createAvatar(shapes, {
-		seed: user.id,
+		seed: userId,
 		radius: 50,
 		backgroundColor: ['181818'],
 		shape1Color: ['ffa6db'],
