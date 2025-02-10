@@ -7,8 +7,7 @@ import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import createPrismaClient from './db/client.js';
 import { cors } from 'hono/cors';
-import { createAvatar } from '@dicebear/core';
-import { shapes } from '@dicebear/collection';
+// import { createUserAvatar } from './utils.js';
 
 const app = new Hono();
 
@@ -97,17 +96,10 @@ app.get('/api/events/:id', async (c) => {
 
 		event.flyer.src = url;
 
-		if (event.creatorId) {
-			const avatar = createAvatar(shapes, {
-				seed: event.creatorId,
-				radius: 50,
-				backgroundColor: ['181818'],
-				shape1Color: ['ffa6db'],
-				shape2Color: ['fff5ff'],
-				shape3Color: ['b4d4ee'],
-			}).toString();
-			event.createdBy.avatar = avatar;
-		}
+		// if (event.creatorId) {
+		// 	const avatar = createUserAvatar(event.creatorId);
+		// 	event.createdBy.avatar = avatar;
+		// }
 
 		return c.json(event);
 	} catch (error) {
@@ -284,7 +276,7 @@ app.get('api/auth/callback', async (c) => {
 			},
 		});
 		const user = await res.json();
-		const storedUser = await prisma.user.getUser(user.id);
+		const storedUser = await prisma.user.getUserById(user.id);
 		let userId;
 		if (!storedUser) {
 			userId = await prisma.user.createUser(user);
@@ -333,22 +325,66 @@ async function authenticate(c, next) {
 app.get('api/auth/protected', authenticate, async (c) => {
 	const userId = c.get('userId');
 	const prisma = c.get('prisma');
-	const user = await prisma.user.getUser(userId);
-	const avatar = createAvatar(shapes, {
-		seed: user.id,
-		radius: 50,
-		backgroundColor: ['181818'],
-		shape1Color: ['ffa6db'],
-		shape2Color: ['fff5ff'],
-		shape3Color: ['b4d4ee'],
-	}).toString();
-	user.avatar = avatar;
+	const user = await prisma.user.getUserById(userId);
+	// const avatar = createUserAvatar(user.id);
+	// user.avatar = avatar;
 	return c.json(user);
 });
 
 app.get('api/auth/logout', async (c) => {
 	deleteCookie(c, 'jwt');
 	return c.json({ message: 'Logged out successfully!' }, 200);
+});
+
+app.get('api/users', async (c) => {
+	const name = c.req.query('name');
+	const country = c.req.query('country');
+	const style = c.req.query('style');
+	try {
+		const prisma = c.get('prisma');
+		const users = await prisma.user.getUsers(name, country, style);
+		return c.json(users, 200);
+	} catch (error) {
+		console.error('Error fetching users:', error);
+		return c.json({ error: 'Failed to fetch users' }, 500);
+	}
+});
+
+app.get('api/users/:id', async (c) => {
+	const userId = c.req.param('id');
+	try {
+		const prisma = c.get('prisma');
+		const user = await prisma.user.getUserById(userId);
+		return c.json(user, 200);
+	} catch (error) {
+		console.error('Error fetching user:', error);
+		return c.json({ error: 'Failed to fetch user' }, 500);
+	}
+});
+
+app.patch('api/users/:id', authenticate, async (c) => {
+	const userInfo = await c.req.parseBody();
+	const userId = c.get('userId');
+	try {
+		const prisma = c.get('prisma');
+		const user = await prisma.user.updateUser(userId, userInfo);
+		return c.json(user);
+	} catch (error) {
+		console.error('Error updating user:', error);
+		return c.json({ error: 'Failed to update user' }, 500);
+	}
+});
+
+app.delete('api/users/:id', authenticate, async (c) => {
+	const userId = c.req.param('id');
+	try {
+		const prisma = c.get('prisma');
+		await prisma.event.deleteEvent(userId);
+		return c.json({ message: 'User deleted' }, 200);
+	} catch (error) {
+		console.error('Error deleting user', error);
+		return c.json({ error: 'Failed to delete user' }, 500);
+	}
 });
 
 export default app;

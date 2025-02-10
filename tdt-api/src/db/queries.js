@@ -1,4 +1,5 @@
 import { snsFaClass } from '../utils.js';
+import { createUserAvatar } from '../utils.js';
 
 export async function getEvents(country, style, date) {
 	let dateObj;
@@ -42,6 +43,83 @@ export async function getEvents(country, style, date) {
 	} catch (error) {
 		console.error('Error finding events:', error);
 		throw new Error('Failed to find events');
+	}
+}
+
+export async function getEventById(eventId) {
+	try {
+		const event = await this.findUnique({
+			where: { id: eventId },
+			include: {
+				venues: {
+					select: {
+						name: true,
+						url: true,
+					},
+				},
+				styles: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+				sns: {
+					select: {
+						id: true,
+						name: true,
+						url: true,
+						faClass: true,
+					},
+				},
+				flyer: {
+					select: {
+						alt: true,
+						src: true,
+					},
+				},
+				attendees: {
+					select: {
+						type: true,
+						user: {
+							select: {
+								id: true,
+								name: true,
+							},
+						},
+					},
+				},
+				likes: {
+					select: {
+						user: {
+							select: {
+								id: true,
+								name: true,
+							},
+						},
+					},
+				},
+				saves: {
+					select: {
+						user: {
+							select: {
+								id: true,
+								name: true,
+							},
+						},
+					},
+				},
+				createdBy: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+			},
+		});
+		return event;
+	} catch (error) {
+		console.error('Error finding event', error);
+		throw new Error('Failed to fetch event');
 	}
 }
 
@@ -195,83 +273,6 @@ export async function deleteEvent(eventId) {
 	} catch (error) {
 		console.error('Error deleting event:', error);
 		throw new Error('Failed to delete event');
-	}
-}
-
-export async function getEventById(eventId) {
-	try {
-		const event = await this.findUnique({
-			where: { id: eventId },
-			include: {
-				venues: {
-					select: {
-						name: true,
-						url: true,
-					},
-				},
-				styles: {
-					select: {
-						id: true,
-						name: true,
-					},
-				},
-				sns: {
-					select: {
-						id: true,
-						name: true,
-						url: true,
-						faClass: true,
-					},
-				},
-				flyer: {
-					select: {
-						alt: true,
-						src: true,
-					},
-				},
-				attendees: {
-					select: {
-						type: true,
-						user: {
-							select: {
-								id: true,
-								name: true,
-							},
-						},
-					},
-				},
-				likes: {
-					select: {
-						user: {
-							select: {
-								id: true,
-								name: true,
-							},
-						},
-					},
-				},
-				saves: {
-					select: {
-						user: {
-							select: {
-								id: true,
-								name: true,
-							},
-						},
-					},
-				},
-				createdBy: {
-					select: {
-						id: true,
-						name: true,
-					},
-				},
-			},
-		});
-		return event;
-	} catch (error) {
-		console.error('Error finding event', error);
-		throw new Error('Failed to fetch event');
 	}
 }
 
@@ -484,42 +485,6 @@ export async function getStyles() {
 	}
 }
 
-export async function getUser(userId) {
-	try {
-		const user = await this.findUnique({
-			where: { id: userId },
-			include: {
-				sns: true,
-				eventsCreated: true,
-				eventsAttending: true,
-			},
-		});
-		return user;
-	} catch (error) {
-		console.error('Error retrieving user', error);
-		throw new Error('Failed to fetch user');
-	}
-}
-
-export async function createUser(user) {
-	try {
-		const newUser = await this.create({
-			data: {
-				id: user.id,
-				name: user.name,
-				email: user.email,
-			},
-			select: {
-				id: true,
-			},
-		});
-		return newUser.id;
-	} catch (error) {
-		console.error('Error creating user', error);
-		throw new Error('Failed to create user');
-	}
-}
-
 export async function getFlyerKey(eventId) {
 	try {
 		const key = await this.findUnique({
@@ -532,5 +497,188 @@ export async function getFlyerKey(eventId) {
 	} catch (error) {
 		console.error('Error finding flyer key', error);
 		throw new Error('Failed to find flyer key');
+	}
+}
+
+export async function createUser(user) {
+	try {
+		const newUser = await this.create({
+			data: {
+				id: user.id,
+				name: user.name,
+				email: user.email,
+				avatar: createUserAvatar(user.id),
+				createdAt: new Date(),
+			},
+			select: {
+				id: true,
+			},
+		});
+		return newUser.id;
+	} catch (error) {
+		console.error('Error creating user', error);
+		throw new Error('Failed to create user');
+	}
+}
+
+export async function getUsers(name, country, style) {
+	try {
+		const users = this.findMany({
+			where: {
+				name: name
+					? {
+							contains: name,
+					  }
+					: undefined,
+				country: country
+					? {
+							equals: country,
+					  }
+					: undefined,
+				styles: style
+					? {
+							some: {
+								name: {
+									equals: style,
+								},
+							},
+					  }
+					: undefined,
+			},
+			orderBy: { name: 'asc' },
+			select: {
+				id: true,
+				name: true,
+				avatar: true,
+				profilePic: true,
+				styles: true,
+			},
+		});
+		return users;
+	} catch (error) {
+		console.error('Error finding users:', error);
+		throw new Error('Failed to find users');
+	}
+}
+
+export async function getUserById(userId) {
+	try {
+		const user = await this.findUnique({
+			where: { id: userId },
+			include: {
+				styles: true,
+				sns: true,
+				eventsCreated: true,
+				eventsAttending: true,
+				likedEvents: true,
+				savedEvents: true,
+				profilePic: true,
+			},
+		});
+		return user;
+	} catch (error) {
+		console.error('Error retrieving user', error);
+		throw new Error('Failed to fetch user');
+	}
+}
+
+function prepareUserData(userInfo, key) {
+	let snsPlatforms;
+	let snsUrls;
+	let snsIds;
+	if (Array.isArray(userInfo['sns-platform[]'])) {
+		snsPlatforms = userInfo['sns-platform[]'];
+		snsUrls = userInfo['sns-url[]'];
+		if (userInfo['sns-id[]']) {
+			snsIds = userInfo['sns-id[]'];
+		}
+	} else {
+		snsPlatforms = [userInfo['sns-platform[]']];
+		snsUrls = [userInfo['sns-url[]']];
+		if (userInfo['sns-id[]']) {
+			snsIds = [userInfo['sns-id[]']];
+		}
+	}
+	let eventSns = [];
+	snsPlatforms.forEach((platform, index) => {
+		eventSns.push({
+			id: userInfo['sns-id[]'] ? snsIds[index] : '',
+			name: platform,
+			url: snsUrls[index],
+			faClass: snsFaClass[platform],
+		});
+	});
+	let styles;
+	if (Array.isArray(userInfo['style[]'])) {
+		styles = userInfo['style[]'];
+	} else {
+		styles = [userInfo['style[]']];
+	}
+	const data = {
+		name: userInfo['name'],
+		email: userInfo['email'],
+		country: userInfo['country'],
+		bio: userInfo['bio'],
+		styles: {
+			connectOrCreate: styles.map((style) => ({
+				where: {
+					name: style,
+				},
+				create: {
+					name: style,
+				},
+			})),
+		},
+		sns: {
+			connectOrCreate: eventSns.map((sns) => ({
+				where: { id: sns.id },
+				create: { name: sns.name, url: sns.url, faClass: sns.faClass },
+			})),
+		},
+	};
+	if (key) {
+		data.profilePic = {
+			upsert: {
+				update: {
+					alt: userInfo['name'],
+					src: key,
+				},
+				create: {
+					alt: userInfo['name'],
+					src: key,
+				},
+			},
+		};
+	}
+	return data;
+}
+
+export async function updateUser(userId, userInfo, key) {
+	const data = prepareUserData(userInfo, key);
+
+	try {
+		const user = await this.update({
+			where: { id: userId },
+			data: data,
+			select: {
+				id: true,
+			},
+		});
+		return user.id;
+	} catch (error) {
+		console.error('Error updating user:', error);
+		throw new Error('Failed to update user');
+	}
+}
+
+export async function deleteUser(userId) {
+	try {
+		await this.delete({
+			where: { id: userId },
+		});
+		return true;
+	} catch (error) {
+		console.error('Error deleting user:', error);
+		throw new Error('Failed to delete user');
 	}
 }

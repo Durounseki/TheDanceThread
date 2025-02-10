@@ -21,8 +21,11 @@ export default function createPrismaClient(env) {
 				getCreatorId: queries.getCreatorId,
 			},
 			user: {
-				getUser: queries.getUser,
 				createUser: queries.createUser,
+				getUsers: queries.getUsers,
+				getUserById: queries.getUserById,
+				updateUser: queries.updateUser,
+				deleteUser: queries.deleteUser,
 			},
 			style: {
 				getStyles: queries.getStyles,

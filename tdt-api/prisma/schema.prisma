@@ -16,6 +16,11 @@ model User {
   name            String
   email           String
   country         String?
+  bio             String?
+  styles          Style[]
+  createdAt       DateTime?
+  avatar          String?
+  profilePic      ProfilePic?
   sns             SocialMedia[]
   eventsCreated   Event[]           @relation("EventCreator")
   eventsAttending EventAttendance[]
@@ -73,10 +78,19 @@ model Flyer {
   src     String
 }
 
+model ProfilePic {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  alt    String
+  src    String
+}
+
 model Style {
   id     String  @id @default(cuid())
   name   String  @unique
   events Event[]
+  users  User[]
 }
 
 model EventAttendance {

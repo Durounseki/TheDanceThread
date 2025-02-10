@@ -1,3 +1,6 @@
+import { createAvatar } from '@dicebear/core';
+import { shapes } from '@dicebear/collection';
+
 const snsFaClass = {
 	website: 'fa-solid fa-globe',
 	facebook: 'fa-brands fa-square-facebook',
@@ -5,4 +8,16 @@ const snsFaClass = {
 	youtube: 'fa-brands fa-youtube',
 };
 
-export { snsFaClass };
+function createUserAvatar(userId) {
+	const avatar = createAvatar(shapes, {
+		seed: user.id,
+		radius: 50,
+		backgroundColor: ['181818'],
+		shape1Color: ['ffa6db'],
+		shape2Color: ['fff5ff'],
+		shape3Color: ['b4d4ee'],
+	}).toString();
+	return avatar;
+}
+
+export { snsFaClass, createUserAvatar };
