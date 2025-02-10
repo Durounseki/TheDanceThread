@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-const ConfirmDelete = ({ eventId, showModal, setEventId }) => {
+const ConfirmEventDelete = ({ eventId, showModal, setEventId }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const handleDelete = async () => {
@@ -38,4 +38,4 @@ const ConfirmDelete = ({ eventId, showModal, setEventId }) => {
   );
 };
 
-export default ConfirmDelete;
+export default ConfirmEventDelete;

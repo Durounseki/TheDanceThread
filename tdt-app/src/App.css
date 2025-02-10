@@ -692,7 +692,8 @@ footer {
   outline: none;
 }
 
-.create-event-form textarea {
+.create-event-form textarea,
+.user-form textarea {
   background-color: #202020;
   border: solid 1px #20202000;
   padding: 8px 16px;
@@ -1012,7 +1013,9 @@ label input:checked ~ .custom-checkbox {
   grid-template-rows: max-content;
 }
 
-.user-social-media {
+.user-social-media,
+.user-bio,
+.user-styles {
   position: relative;
   .user-section-title {
     color: #7d7d7d;
@@ -1029,6 +1032,8 @@ label input:checked ~ .custom-checkbox {
 
 .user-banner,
 .user-social-media,
+.user-bio,
+.user-styles,
 .events-created,
 .events-going,
 .user-form {
@@ -1088,10 +1093,13 @@ label input:checked ~ .custom-checkbox {
   }
 }
 
-.user-email,
-.user-sns {
+.user-email {
   grid-column: 1/3;
   font-size: 12px;
+}
+
+.user-country {
+  justify-self: left;
 }
 
 .user-form input {
