@@ -26,7 +26,7 @@ const useEvent = (eventId) => {
   return { event, loading };
 };
 
-const EventCard = ({ eventId, canEdit = false }) => {
+const EventCard = ({ eventId, canEdit = false, showModal, setEventId }) => {
   const { user } = useAuth();
   const { event, loading } = useEvent(eventId);
   const [bookmark, setBookmark] = useState(false);
@@ -87,6 +87,8 @@ const EventCard = ({ eventId, canEdit = false }) => {
   const handleRemove = async (event) => {
     event.preventDefault();
     event.stopPropagation();
+    showModal(true);
+    setEventId(eventId);
   };
   if (!loading) {
     return (

@@ -215,11 +215,13 @@ function EventForm() {
         response = await fetch(`${apiUrl}/events/${eventId}`, {
           method: "PATCH",
           body: formData,
+          credentials: "include",
         });
       } else {
         response = await fetch(`${apiUrl}/events`, {
           method: "POST",
           body: formData,
+          credentials: "include",
         });
       }
       if (response.ok) {

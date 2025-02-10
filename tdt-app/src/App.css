@@ -883,6 +883,7 @@ label input:checked ~ .custom-checkbox {
   position: fixed;
   top: 0;
   display: flex;
+  z-index: 1;
 }
 
 .modal-content {
@@ -910,7 +911,20 @@ label input:checked ~ .custom-checkbox {
   }
 }
 
-.login-form-container button {
+.confirm-delete {
+  position: relative;
+  h2 {
+    margin-top: 0;
+    color: #ffa6db;
+  }
+  p {
+    font-size: 12px;
+    margin-bottom: 32px;
+  }
+}
+
+.login-form-container button,
+.confirm-delete button {
   background-color: #141414;
   border: 1px solid #202020;
   padding: 12px 36px;
@@ -919,6 +933,7 @@ label input:checked ~ .custom-checkbox {
   display: flex;
   gap: 16px;
   align-items: center;
+  justify-content: center;
   p {
     margin: 0;
     font-size: 16px;
@@ -928,14 +943,16 @@ label input:checked ~ .custom-checkbox {
   }
 }
 
-.login-form-container button:hover {
+.login-form-container button:hover,
+.confirm-delete button:hover {
   background-color: #a6dbff;
   color: #141414;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }
 
-.login-form-container button.close-button {
+.login-form-container button.close-button,
+.confirm-delete button.close-button {
   padding: 0px;
   border: none;
   position: absolute;
@@ -943,6 +960,16 @@ label input:checked ~ .custom-checkbox {
   right: -24px;
   i {
     font-size: 10px;
+  }
+}
+
+.confirm-delete-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  button {
+    width: 100%;
+    text-align: center;
   }
 }
 

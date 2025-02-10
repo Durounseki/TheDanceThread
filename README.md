@@ -5,17 +5,24 @@ This is the prototype of The Dance Thread a social platform where dancers can fi
 ## To do
 
 - [ ] Add google map.
-- [ ] Edit event.
+- [ ] Edit user.
+- [ ] Delete user.
+- [x] Edit event.
+- [ ] Delete event.
+- [ ] Sanitize data.
 - [x] User event lists with created events, saved events, liked events and dance schedule.
 - [x] Add eventId according to the featured event.
 - [ ] Add a home page explore events and create event options.
 - [ ] Style the header.
 - [ ] Add css styles for mobile version
 - [ ] Refactor event page to fetch all the events at once.
+- [ ] Cache events on client side to avoid sending the request to the server too often.
 - [x] Show featured event on click on the corresponding event card.
 - [x] Remove create button with '+' sign and replace with an explicit "Add Event" that prompts the user to log in if they are not logged in or redirects to the create event form if they are.
 - [x] Add like, save, share and going actions to each event and update user properties.
 - [ ] Add avatars to users.
+- [ ] Show avatar after login.
+- [ ] Handle protected routes properly.
 - [ ] Fetch avatars for each user.
 - [ ] Reload event components on event update.
 - [x] Modify the create event logic to include the userId of the creator.

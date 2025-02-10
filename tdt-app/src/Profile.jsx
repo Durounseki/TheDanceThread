@@ -4,8 +4,12 @@ import useAuth from "./useAuth.jsx";
 import UserEvents from "./UserEvents.jsx";
 import { v4 as uuidv4 } from "uuid";
 import SnsGroup from "./Events/components/SnsGroup.jsx";
+import ConfirmDelete from "./ConfirmDelete.jsx";
+import Modal from "./Modal.jsx";
 
 const Profile = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [eventId, setEventId] = useState(null);
   const { user, logout } = useAuth();
   const apiUrl = import.meta.env.VITE_API_URL;
   const [userInfo, setUserInfo] = useState(null);
@@ -113,103 +117,119 @@ const Profile = () => {
   }
 
   return user ? (
-    <article className="profile-container">
-      <div className="user-details">
-        {!editMode ? (
-          <>
-            <section className="user-banner">
-              <Link to={`/profile`}>
-                <figure className="profile-picture">
-                  <div dangerouslySetInnerHTML={{ __html: user.avatar }} />
-                </figure>
-              </Link>
-              <h1 className="user-name">{userInfo.name}</h1>
-              <p className="user-email">{userInfo.email}</p>
-              <button className="user-button" onClick={handleEditProfile}>
-                Edit
-              </button>
-              <button className="user-button" onClick={handleLogOut}>
-                Logout
-              </button>
-              <button
-                className="user-button delete-account"
-                onClick={handleDeleteAccount}
-              >
-                Delete Account
-              </button>
-            </section>
-            <section className="user-social-media">
-              <span className="user-section-title">Social Media</span>
-              {userInfo.sns.length > 0 ? (
-                <div className="user-sns">
-                  {userInfo.sns.map((sns) => (
-                    <a key={sns.id} href={sns.url} aria-label={sns.name}>
-                      <i className={sns.faClass}></i>
-                    </a>
-                  ))}
-                </div>
-              ) : (
-                <p>Nothing here...</p>
-              )}
-            </section>
-          </>
-        ) : (
-          <form className="user-form" onSubmit={handleSaveProfile}>
-            <figure className="profile-picture edit">
-              <div dangerouslySetInnerHTML={{ __html: user.avatar }} />
-              <i className="fa-solid fa-pencil"></i>
-            </figure>
-            <div className="edit-profile-submit">
-              <button type="submit">Save</button>
-              <button onClick={handleCancelEdit}>Cancel</button>
-            </div>
-            <label htmlFor="user-name">Name:</label>
-            <input
-              type="text"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              id="user-name"
-              name="user-name"
-            />
-            <label htmlFor="user-email">Email:</label>
-            <input
-              type="text"
-              value={userEmail}
-              onChange={(e) => setUserEmail(e.target.value)}
-              id="user-email"
-              name="user-email"
-            />
-            <div className="sns-container">
-              {snsGroups.map((group) => (
-                <SnsGroup
-                  key={group.id}
-                  onRemove={() => handleRemoveSnsLink(group.id)}
-                  canRemove={snsGroups.length > 1}
-                  platform={group.platform}
-                  setPlatform={(newPlatform) =>
-                    handleSnsPlatformChange(group.id, newPlatform)
-                  }
-                  disabledOptions={getDisabledOptions(group.id)}
-                />
-              ))}
-              {snsGroups.length < 4 && (
-                <button
-                  type="button"
-                  className="event-form-button"
-                  id="add-sns"
-                  onClick={handleAddSnsLink}
-                >
-                  Add Link
+    <>
+      {showModal && (
+        <Modal>
+          <ConfirmDelete
+            eventId={eventId}
+            showModal={setShowModal}
+            setEventId={setEventId}
+          />
+        </Modal>
+      )}
+      <article className="profile-container">
+        <div className="user-details">
+          {!editMode ? (
+            <>
+              <section className="user-banner">
+                <Link to={`/profile`}>
+                  <figure className="profile-picture">
+                    <div dangerouslySetInnerHTML={{ __html: user.avatar }} />
+                  </figure>
+                </Link>
+                <h1 className="user-name">{userInfo.name}</h1>
+                <p className="user-email">{userInfo.email}</p>
+                <button className="user-button" onClick={handleEditProfile}>
+                  Edit
                 </button>
-              )}
-            </div>
-          </form>
-        )}
-      </div>
-      <section className="user-events">
-        <UserEvents user={user} canEdit={true} />
-      </section>
-    </article>
+                <button className="user-button" onClick={handleLogOut}>
+                  Logout
+                </button>
+                <button
+                  className="user-button delete-account"
+                  onClick={handleDeleteAccount}
+                >
+                  Delete Account
+                </button>
+              </section>
+              <section className="user-social-media">
+                <span className="user-section-title">Social Media</span>
+                {userInfo.sns.length > 0 ? (
+                  <div className="user-sns">
+                    {userInfo.sns.map((sns) => (
+                      <a key={sns.id} href={sns.url} aria-label={sns.name}>
+                        <i className={sns.faClass}></i>
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <p>Nothing here...</p>
+                )}
+              </section>
+            </>
+          ) : (
+            <form className="user-form" onSubmit={handleSaveProfile}>
+              <figure className="profile-picture edit">
+                <div dangerouslySetInnerHTML={{ __html: user.avatar }} />
+                <i className="fa-solid fa-pencil"></i>
+              </figure>
+              <div className="edit-profile-submit">
+                <button type="submit">Save</button>
+                <button onClick={handleCancelEdit}>Cancel</button>
+              </div>
+              <label htmlFor="user-name">Name:</label>
+              <input
+                type="text"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                id="user-name"
+                name="user-name"
+              />
+              <label htmlFor="user-email">Email:</label>
+              <input
+                type="text"
+                value={userEmail}
+                onChange={(e) => setUserEmail(e.target.value)}
+                id="user-email"
+                name="user-email"
+              />
+              <div className="sns-container">
+                {snsGroups.map((group) => (
+                  <SnsGroup
+                    key={group.id}
+                    onRemove={() => handleRemoveSnsLink(group.id)}
+                    canRemove={snsGroups.length > 1}
+                    platform={group.platform}
+                    setPlatform={(newPlatform) =>
+                      handleSnsPlatformChange(group.id, newPlatform)
+                    }
+                    disabledOptions={getDisabledOptions(group.id)}
+                  />
+                ))}
+                {snsGroups.length < 4 && (
+                  <button
+                    type="button"
+                    className="event-form-button"
+                    id="add-sns"
+                    onClick={handleAddSnsLink}
+                  >
+                    Add Link
+                  </button>
+                )}
+              </div>
+            </form>
+          )}
+        </div>
+        <section className="user-events">
+          <UserEvents
+            user={user}
+            canEdit={true}
+            showModal={setShowModal}
+            setEventId={setEventId}
+          />
+        </section>
+      </article>
+    </>
   ) : (
     <p>Please log in first.</p>
   );

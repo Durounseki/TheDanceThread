@@ -131,9 +131,7 @@ function prepareEventData(eventInfo) {
 }
 
 export async function createEvent(eventInfo, key) {
-	console.log(JSON.stringify(eventInfo, null, 4));
 	const data = prepareEventData(eventInfo);
-	console.log(data);
 	try {
 		const event = await this.create({
 			data: {
@@ -160,7 +158,7 @@ export async function createEvent(eventInfo, key) {
 	}
 }
 
-export async function updateEvent(eventInfo, key) {
+export async function updateEvent(eventId, eventInfo, key) {
 	const data = prepareEventData(eventInfo);
 	if (key) {
 		data.flyer = {
@@ -178,13 +176,25 @@ export async function updateEvent(eventInfo, key) {
 	}
 	try {
 		const event = await this.update({
-			where: { id: eventInfo.id },
+			where: { id: eventId },
 			data: data,
 		});
 		return event;
 	} catch (error) {
 		console.error('Error updating event:', error);
 		throw new Error('Failed to update event');
+	}
+}
+
+export async function deleteEvent(eventId) {
+	try {
+		await this.delete({
+			where: { id: eventId },
+		});
+		return true;
+	} catch (error) {
+		console.error('Error deleting event:', error);
+		throw new Error('Failed to delete event');
 	}
 }
 
@@ -262,6 +272,19 @@ export async function getEventById(eventId) {
 	} catch (error) {
 		console.error('Error finding event', error);
 		throw new Error('Failed to fetch event');
+	}
+}
+
+export async function getCreatorId(eventId) {
+	try {
+		const creatorId = await this.findUnique({
+			where: { id: eventId },
+			select: { creatorId: true },
+		});
+		return creatorId;
+	} catch (error) {
+		console.error('Error finding creatorId', error);
+		throw new Error('Failed to fetch creatorId');
 	}
 }
 

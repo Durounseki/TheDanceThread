@@ -60,7 +60,7 @@ app.get('/api/events', async (c) => {
 	}
 });
 
-app.post('/api/events', async (c) => {
+app.post('/api/events', authenticate, async (c) => {
 	const eventInfo = await c.req.parseBody();
 	const file = eventInfo.flyer;
 	try {
@@ -116,28 +116,55 @@ app.get('/api/events/:id', async (c) => {
 	}
 });
 
-app.patch('/api/events/:id', async (c) => {
+app.patch('/api/events/:id', authenticate, async (c) => {
+	const userId = c.get('userId');
+	const eventId = c.req.param('id');
 	const eventInfo = await c.req.parseBody();
 	const file = eventInfo.flyer;
 	try {
 		const prisma = c.get('prisma');
-		let key;
-		if (file) {
-			const oldKey = await prisma.flyer.getFlyerKey(eventInfo.id);
-			console.log('old key:', oldKey.src);
-			if (oldKey && oldKey.src !== 'the-dance-thread-logo-dark-2.png') {
-				console.log('deleting old object');
-				await c.env.TDT_BUCKET.delete(oldKey.src);
+		const creatorId = await prisma.event.getCreatorId(eventId);
+		if (userId !== creatorId.creatorId) {
+			return c.json({ message: 'Unauthorized!' }, 401);
+		} else {
+			let key;
+			if (file) {
+				const oldKey = await prisma.flyer.getFlyerKey(eventId);
+				if (oldKey && oldKey.src !== 'the-dance-thread-logo-dark-2.png') {
+					await c.env.TDT_BUCKET.delete(oldKey.src);
+				}
+				key = `${Date.now()}-${file.name}`;
+				await c.env.TDT_BUCKET.put(key, file.stream());
 			}
-			key = `${Date.now()}-${file.name}`;
-			await c.env.TDT_BUCKET.put(key, file.stream());
+			const event = await prisma.event.updateEvent(eventId, eventInfo, key);
+			return c.json(event);
 		}
-		const event = await prisma.event.updateEvent(eventInfo, key);
-		console.log(JSON.stringify(event, null, 4));
-		return c.json(event);
 	} catch (error) {
 		console.error('Error updating event:', error);
 		return c.json({ error: 'Failed to update event' }, 500);
+	}
+});
+
+app.delete('api/events/:id', authenticate, async (c) => {
+	const userId = c.get('userId');
+	const eventId = c.req.param('id');
+	try {
+		const prisma = c.get('prisma');
+		const creatorId = await prisma.event.getCreatorId(eventId);
+		console.log(creatorId, userId);
+		if (userId !== creatorId.creatorId) {
+			return c.json({ message: 'Unauthorized!' }, 401);
+		} else {
+			const key = await prisma.flyer.getFlyerKey(eventId);
+			const deleted = await prisma.event.deleteEvent(eventId);
+			if (key && key !== 'the-dance-thread-logo-dark-2.png') {
+				await c.env.TDT_BUCKET.delete(key.src);
+			}
+			return c.json({ message: 'Event and flyer deleted' }, 200);
+		}
+	} catch (error) {
+		console.error('Error deleting event', error);
+		return c.json({ error: 'Failed to delete event' }, 500);
 	}
 });
 
@@ -206,6 +233,7 @@ app.post('api/events/:id/attendees', authenticate, async (c) => {
 		return c.json({ error: 'Failed to update event attendees' }, 500);
 	}
 });
+
 app.delete('api/events/:id/attendees', authenticate, async (c) => {
 	const eventId = c.req.param('id');
 	const userId = c.get('userId');
@@ -256,20 +284,13 @@ app.get('api/auth/callback', async (c) => {
 			},
 		});
 		const user = await res.json();
-		console.log(user);
-		console.log('userId:', user.id);
-		console.log('Checking user exists on db');
 		const storedUser = await prisma.user.getUser(user.id);
-		console.log('storedUser:', storedUser);
 		let userId;
 		if (!storedUser) {
-			console.log('creating user');
 			userId = await prisma.user.createUser(user);
-			console.log(userId);
 		} else {
 			userId = storedUser.id;
 		}
-		console.log('user exists, set credentials');
 		const token = await new SignJWT({
 			userId,
 		})
@@ -286,7 +307,6 @@ app.get('api/auth/callback', async (c) => {
 			path: '/',
 			secure: c.env.ENV === 'production',
 		});
-		console.log('Cookies set, redirecting to:', `${c.env.APP_URL}/profile`);
 		return c.redirect(`${c.env.APP_URL}/profile`);
 	} catch (error) {
 		console.error(error);
@@ -297,13 +317,11 @@ app.get('api/auth/callback', async (c) => {
 async function authenticate(c, next) {
 	const token = getCookie(c, 'jwt');
 	const jwtSecret = c.get('jwtSecret');
-
 	if (!token) {
 		return c.json({ message: 'Unauthorized' }, 401);
 	}
 	try {
 		const payload = await jwtVerify(token, jwtSecret);
-		console.log('payload', payload.payload.userId);
 		c.set('userId', payload.payload.userId);
 	} catch (error) {
 		console.error(error);
@@ -314,7 +332,6 @@ async function authenticate(c, next) {
 
 app.get('api/auth/protected', authenticate, async (c) => {
 	const userId = c.get('userId');
-	console.log(userId);
 	const prisma = c.get('prisma');
 	const user = await prisma.user.getUser(userId);
 	const avatar = createAvatar(shapes, {
@@ -326,7 +343,6 @@ app.get('api/auth/protected', authenticate, async (c) => {
 		shape3Color: ['b4d4ee'],
 	}).toString();
 	user.avatar = avatar;
-	console.log(user);
 	return c.json(user);
 });
 

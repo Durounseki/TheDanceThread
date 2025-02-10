@@ -1,14 +1,20 @@
 import { Link } from "react-router-dom";
 import EventCard from "./Events/components/EventCard";
 
-const UserEvents = ({ user, canEdit = false }) => {
+const UserEvents = ({ user, canEdit = false, showModal, setEventId }) => {
   return (
     <>
       <div className="events-created">
         <span className="events-section-title">Events Created</span>
         {user.eventsCreated.length > 0 &&
           user.eventsCreated.map((event) => (
-            <EventCard key={event.id} eventId={event.id} canEdit={canEdit} />
+            <EventCard
+              key={event.id}
+              eventId={event.id}
+              canEdit={canEdit}
+              showModal={showModal}
+              setEventId={setEventId}
+            />
           ))}
 
         <Link className="create-event-button" to="/events/create">
