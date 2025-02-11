@@ -327,8 +327,16 @@ app.get('api/auth/protected', authenticate, async (c) => {
 	const userId = c.get('userId');
 	const prisma = c.get('prisma');
 	const user = await prisma.user.getUserById(userId);
-	// const avatar = createUserAvatar(user.id);
-	// user.avatar = avatar;
+	const s3 = c.get('s3');
+
+	const command = new GetObjectCommand({
+		Bucket: c.env.S3_BUCKET,
+		Key: user.profilePic.src,
+	});
+
+	const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+	user.profilePic.src = url;
 	return c.json(user);
 });
 
@@ -356,6 +364,16 @@ app.get('api/users/:id', async (c) => {
 	try {
 		const prisma = c.get('prisma');
 		const user = await prisma.user.getUserById(userId);
+		const s3 = c.get('s3');
+
+		const command = new GetObjectCommand({
+			Bucket: c.env.S3_BUCKET,
+			Key: user.profilePic.src,
+		});
+
+		const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+		user.profilePic.src = url;
 		return c.json(user, 200);
 	} catch (error) {
 		console.error('Error fetching user:', error);
@@ -365,11 +383,53 @@ app.get('api/users/:id', async (c) => {
 
 app.patch('api/users/:id', authenticate, async (c) => {
 	const userInfo = await c.req.parseBody();
+	const id = c.req.param('id');
 	const userId = c.get('userId');
+	if (id !== userId) {
+		return c.json({ message: 'unauthorized!' }, 401);
+	}
 	try {
 		const prisma = c.get('prisma');
-		const user = await prisma.user.updateUser(userId, userInfo);
-		return c.json(user);
+		const user = await prisma.user.updateUserInfo(userId, userInfo);
+		return c.json(user, 200);
+	} catch (error) {
+		console.error('Error updating user info:', error);
+		return c.json({ error: 'Failed to update user info' }, 500);
+	}
+});
+
+app.patch('api/users/:id/profile-pic', authenticate, async (c) => {
+	const data = await c.req.parseBody();
+	const file = data.profilePic;
+	const id = c.req.param('id');
+	const userId = c.get('userId');
+	if (id !== userId) {
+		return c.json({ message: 'unauthorized!' }, 401);
+	}
+	if (key) {
+		return c.json({ message: 'No image selected' }, 400);
+	}
+	try {
+		const prisma = c.get('prisma');
+
+		const oldKey = await prisma.profilePic.getProfilePicKey(userId);
+		if (oldKey) {
+			await c.env.TDT_BUCKET.delete(oldKey.src);
+		}
+		const key = `${Date.now()}-${file.name}`;
+		await c.env.TDT_BUCKET.put(key, file.stream());
+
+		await prisma.profilePic.updateProfilePic(userId, key);
+
+		const s3 = c.get('s3');
+		const command = new GetObjectCommand({
+			Bucket: c.env.S3_BUCKET,
+			Key: key,
+		});
+		const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+		user.profilePic.src = url;
+		return c.json(user, 200);
 	} catch (error) {
 		console.error('Error updating user:', error);
 		return c.json({ error: 'Failed to update user' }, 500);
@@ -385,6 +445,18 @@ app.delete('api/users/:id', authenticate, async (c) => {
 	} catch (error) {
 		console.error('Error deleting user', error);
 		return c.json({ error: 'Failed to delete user' }, 500);
+	}
+});
+
+app.delete('api/users/:id/profile-pic', authenticate, async (c) => {
+	const userId = c.req.param('id');
+	try {
+		const prisma = c.get('prisma');
+		await prisma.profilePic.deleteProfilePic(userId);
+		return c.json({ message: 'Profile pic deleted' }, 200);
+	} catch (error) {
+		console.error('Error deleting profile pic', error);
+		return c.json({ error: 'Failed to delete profile pic' }, 500);
 	}
 });
 

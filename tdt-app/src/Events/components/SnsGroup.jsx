@@ -8,6 +8,7 @@ function SnsGroup({
   disabledOptions,
   url,
   setUrl,
+  required = true,
 }) {
   const options = [
     {
@@ -51,7 +52,7 @@ function SnsGroup({
         placeholder="Enter URL"
         value={url}
         onChange={(event) => setUrl(event.target.value)}
-        required
+        required={required}
       />
       <button
         type="button"

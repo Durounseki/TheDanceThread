@@ -24,7 +24,7 @@ export default function createPrismaClient(env) {
 				createUser: queries.createUser,
 				getUsers: queries.getUsers,
 				getUserById: queries.getUserById,
-				updateUser: queries.updateUser,
+				updateUser: queries.updateUserInfo,
 				deleteUser: queries.deleteUser,
 			},
 			style: {
@@ -44,6 +44,11 @@ export default function createPrismaClient(env) {
 			},
 			flyer: {
 				getFlyerKey: queries.getFlyerKey,
+			},
+			profilePic: {
+				getProfilePicKey: queries.getProfilePicKey,
+				updateProfilePic: queries.updateProfilePic,
+				deleteProfilePic: queries.deleteProfilePic,
 			},
 		},
 	});

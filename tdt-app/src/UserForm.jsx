@@ -5,7 +5,8 @@ import CountrySelect from "./Events/components/CountrySelect.jsx";
 import CustomCheckbox from "./Events/components/CustomCheckbox.jsx";
 
 const UserForm = ({
-  id,
+  user,
+  setUser,
   name,
   setName,
   email,
@@ -20,14 +21,16 @@ const UserForm = ({
   setSnsGroups,
   avatar,
   profilePic,
+  setProfilePic,
   setEditMode,
 }) => {
   const [styleOptions, setStyleOptions] = useState([]);
   const textAreaRef = useRef(null);
   const [otherStyle, setOtherStyle] = useState("");
+  const [showFileUpload, setShowFileUpload] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    const apiUrl = import.meta.env.VITE_API_URL;
     const fetchData = async () => {
       try {
         const response = await fetch(`${apiUrl}/styles`);
@@ -89,6 +92,14 @@ const UserForm = ({
     );
   };
 
+  const handleSnsUrl = (groupId, newUrl) => {
+    setSnsGroups((prevSnsGroups) =>
+      prevSnsGroups.map((group) =>
+        group.id === groupId ? { ...group, url: newUrl } : group
+      )
+    );
+  };
+
   const handleStyleCheck = (event) => {
     const { id, checked } = event.target;
     if (checked) {
@@ -138,112 +149,209 @@ const UserForm = ({
     setEditMode(false);
   };
 
+  const handleShowFileUpload = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setShowFileUpload(!showFileUpload);
+  };
+
   const handleSaveProfile = async (event) => {
     event.preventDefault();
-    setEditMode(false);
-    console.log("Profile updated!");
+    const formData = new FormData(event.target);
+    snsGroups.forEach((sns) => formData.append("sns-id[]", sns.id));
+    try {
+      const response = await fetch(`${apiUrl}/users/${user.id}`, {
+        method: "PATCH",
+        body: formData,
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("data", data);
+        setUser({
+          ...user,
+          name: data.name,
+          email: data.email,
+          country: data.country,
+          bio: data.bio,
+          styles: data.styles,
+          sns: data.sns,
+        });
+        setEditMode(false);
+      } else {
+        console.error("Error updating user");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleUpdatePicture = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    try {
+      const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
+        method: "PATCH",
+        body: formData,
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUser({
+          ...user,
+          profilePic: data.profilePic,
+        });
+      } else {
+        console.error("Error updating user profile picture");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleDeletePicture = async (event) => {
+    event.preventDefault();
+    console.log("Picture deleted");
   };
 
   return (
-    <form className="user-form" onSubmit={handleSaveProfile}>
-      <figure className="profile-picture edit">
-        {profilePic ? (
-          <img src={profilePic.src} alt={profilePic.alt} />
-        ) : (
-          <div dangerouslySetInnerHTML={{ __html: avatar }} />
-        )}
-        <i className="fa-solid fa-pencil"></i>
-      </figure>
-      <div className="edit-profile-submit">
-        <button type="submit">Save</button>
-        <button onClick={handleCancelEdit}>Cancel</button>
-      </div>
-      <div className="form-separator"></div>
-      <h3 className="form-section-header">About me</h3>
-      <label htmlFor="name">Name:</label>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        id="name"
-        name="name"
-      />
-      <label htmlFor="email">Email:</label>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        id="email"
-        name="email"
-      />
-      <CountrySelect value={country} onSelect={setCountry} />
-      <label htmlFor="bio">Bio:</label>
-      <textarea
-        id="description"
-        name="description"
-        placeholder="Dance, share, celebrate yourself!"
-        ref={textAreaRef}
-        value={bio}
-        onChange={(e) => setBio(e.target.value)}
-      ></textarea>
+    <>
+      <form
+        className="user-form profile-pic-form"
+        encType="multipart/form"
+        onSubmit={handleUpdatePicture}
+      >
+        <figure className="profile-picture edit">
+          {profilePic ? (
+            <img src={profilePic.src} alt={profilePic.alt} />
+          ) : (
+            <div dangerouslySetInnerHTML={{ __html: avatar }} />
+          )}
+          <a href="#" onClick={handleShowFileUpload}></a>
+        </figure>
 
-      <h3 className="form-section-header">Social Media</h3>
-      <div className="sns-container">
-        {snsGroups.map((group) => (
-          <SnsGroup
-            key={group.id}
-            onRemove={() => handleRemoveSnsLink(group.id)}
-            canRemove={snsGroups.length > 1}
-            platform={group.platform}
-            setPlatform={(newPlatform) =>
-              handleSnsPlatformChange(group.id, newPlatform)
-            }
-            disabledOptions={getDisabledOptions(group.id)}
-          />
-        ))}
-        {snsGroups.length < 4 && (
-          <button
-            type="button"
-            className="event-form-button"
-            id="add-sns"
-            onClick={handleAddSnsLink}
-          >
-            Add Link
-          </button>
+        <div className="edit-profile-pic-submit">
+          {!showFileUpload && (
+            <button onClick={handleShowFileUpload}>Update Picture</button>
+          )}
+          {showFileUpload && (
+            <button onClick={handleShowFileUpload}>Cancel</button>
+          )}
+          <button onClick={handleDeletePicture}>Delete Picture</button>
+        </div>
+        {showFileUpload && (
+          <>
+            <label htmlFor="profilePic">Upload:</label>
+            <input
+              type="file"
+              accept="image/*"
+              id="profilePic"
+              name="profilePic"
+            />
+            <button className="event-form-button" type="submit">
+              Update Picture
+            </button>
+          </>
         )}
-      </div>
-      <div className="form-separator"></div>
-      <h3 className="form-section-header">Dance Styles</h3>
-
-      <div className="form-checkbox-container">
-        {styleOptions.map((style) => (
-          <CustomCheckbox
-            key={style.id}
-            style={style}
-            onCheck={handleStyleCheck}
-          />
-        ))}
-      </div>
-      <label htmlFor="other">Other</label>
-      <div className="other-style-container">
+      </form>
+      <form
+        className="user-form"
+        encType="multipart/form-data"
+        onSubmit={handleSaveProfile}
+      >
+        <h3 className="form-section-header">About me</h3>
+        <label htmlFor="name">Name:</label>
         <input
           type="text"
-          id="other"
-          name="other-style"
-          value={otherStyle}
-          onChange={(event) => setOtherStyle(event.target.value)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          id="name"
+          name="name"
         />
-        <button
-          type="button"
-          id="user-add-style"
-          className="event-form-button"
-          onClick={handleOtherStyle}
-        >
-          Add Style
-        </button>
-      </div>
-      <div className="form-separator"></div>
-    </form>
+        <label htmlFor="email">Email:</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          id="email"
+          name="email"
+        />
+        <CountrySelect value={country} onSelect={setCountry} />
+        <label htmlFor="bio">Bio:</label>
+        <textarea
+          id="bio"
+          name="bio"
+          placeholder="Dance, share, celebrate yourself!"
+          ref={textAreaRef}
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+        ></textarea>
+        <div className="form-separator"></div>
+        <h3 className="form-section-header">Social Media</h3>
+        <div className="sns-container">
+          {snsGroups.map((group) => (
+            <SnsGroup
+              key={group.id}
+              onRemove={() => handleRemoveSnsLink(group.id)}
+              canRemove={snsGroups.length > 1}
+              platform={group.platform}
+              setPlatform={(newPlatform) =>
+                handleSnsPlatformChange(group.id, newPlatform)
+              }
+              disabledOptions={getDisabledOptions(group.id)}
+              required={false}
+              url={group.url}
+              setUrl={(newUrl) => handleSnsUrl(group.id, newUrl)}
+            />
+          ))}
+          {snsGroups.length < 4 && (
+            <button
+              type="button"
+              className="event-form-button"
+              id="add-sns"
+              onClick={handleAddSnsLink}
+            >
+              Add Link
+            </button>
+          )}
+        </div>
+        <div className="form-separator"></div>
+        <h3 className="form-section-header">Dance Styles</h3>
+
+        <div className="form-checkbox-container">
+          {styleOptions.map((style) => (
+            <CustomCheckbox
+              key={style.id}
+              style={style}
+              onCheck={handleStyleCheck}
+            />
+          ))}
+        </div>
+        <label htmlFor="other">Other</label>
+        <div className="other-style-container">
+          <input
+            type="text"
+            id="other"
+            name="other-style"
+            value={otherStyle}
+            onChange={(event) => setOtherStyle(event.target.value)}
+          />
+          <button
+            type="button"
+            id="user-add-style"
+            className="event-form-button"
+            onClick={handleOtherStyle}
+          >
+            Add Style
+          </button>
+        </div>
+        <div className="form-separator"></div>
+        <div className="edit-profile-submit">
+          <button type="submit">Save</button>
+          <button onClick={handleCancelEdit}>Cancel</button>
+        </div>
+      </form>
+    </>
   );
 };
 

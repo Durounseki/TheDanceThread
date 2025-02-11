@@ -140,7 +140,7 @@ function prepareEventData(eventInfo) {
 			snsIds = [eventInfo['sns-id[]']];
 		}
 	}
-	let eventSns = [];
+	let eveuser = [];
 	snsPlatforms.forEach((platform, index) => {
 		eventSns.push({
 			id: eventInfo['sns-id[]'] ? snsIds[index] : '',
@@ -582,7 +582,7 @@ export async function getUserById(userId) {
 	}
 }
 
-function prepareUserData(userInfo, key) {
+function prepareUserData(userInfo) {
 	let snsPlatforms;
 	let snsUrls;
 	let snsIds;
@@ -599,9 +599,9 @@ function prepareUserData(userInfo, key) {
 			snsIds = [userInfo['sns-id[]']];
 		}
 	}
-	let eventSns = [];
+	let userSns = [];
 	snsPlatforms.forEach((platform, index) => {
-		eventSns.push({
+		userSns.push({
 			id: userInfo['sns-id[]'] ? snsIds[index] : '',
 			name: platform,
 			url: snsUrls[index],
@@ -619,55 +619,75 @@ function prepareUserData(userInfo, key) {
 		email: userInfo['email'],
 		country: userInfo['country'],
 		bio: userInfo['bio'],
-		styles: {
-			connectOrCreate: styles.map((style) => ({
-				where: {
-					name: style,
-				},
-				create: {
-					name: style,
-				},
-			})),
-		},
-		sns: {
-			connectOrCreate: eventSns.map((sns) => ({
-				where: { id: sns.id },
-				create: { name: sns.name, url: sns.url, faClass: sns.faClass },
-			})),
-		},
+		styles: styles[0]
+			? {
+					set: [],
+					connectOrCreate: styles.map((style) => ({
+						where: {
+							name: style,
+						},
+						create: {
+							name: style,
+						},
+					})),
+			  }
+			: {
+					set: [],
+			  },
+		sns: userSns[0]
+			? {
+					deleteMany: {},
+					connectOrCreate: userSns.map((sns) => ({
+						where: { id: sns.id },
+						create: { name: sns.name, url: sns.url, faClass: sns.faClass },
+					})),
+			  }
+			: { deleteMany: {} },
 	};
-	if (key) {
-		data.profilePic = {
-			upsert: {
-				update: {
-					alt: userInfo['name'],
-					src: key,
-				},
-				create: {
-					alt: userInfo['name'],
-					src: key,
-				},
-			},
-		};
-	}
 	return data;
 }
 
-export async function updateUser(userId, userInfo, key) {
-	const data = prepareUserData(userInfo, key);
-
+export async function updateUserInfo(userId, userInfo) {
+	const data = prepareUserData(userInfo);
+	console.log('data=', JSON.stringify(data, null, 4));
 	try {
 		const user = await this.update({
 			where: { id: userId },
 			data: data,
-			select: {
-				id: true,
+			include: {
+				styles: true,
+				sns: true,
 			},
 		});
-		return user.id;
+		return user;
 	} catch (error) {
 		console.error('Error updating user:', error);
 		throw new Error('Failed to update user');
+	}
+}
+
+export async function updateProfilePic(userId, key) {
+	try {
+		const profilePic = await this.update({
+			where: { userId: userId },
+			data: { src: key },
+		});
+		return true;
+	} catch (error) {
+		console.error('Error updating profile pic:', error);
+		throw new Error('Failed to update profile pic');
+	}
+}
+
+export async function deleteProfilePic(userId, key) {
+	try {
+		await this.delete({
+			where: { userId: userId },
+		});
+		return true;
+	} catch (error) {
+		console.error('Error deleting profile pic', error);
+		throw new Error('Failed to delete profile pic');
 	}
 }
 
@@ -680,5 +700,20 @@ export async function deleteUser(userId) {
 	} catch (error) {
 		console.error('Error deleting user:', error);
 		throw new Error('Failed to delete user');
+	}
+}
+
+export async function getProfilePicKey(userId) {
+	try {
+		const key = await this.findUnique({
+			where: {
+				userId: userId,
+			},
+			select: { src: true },
+		});
+		return key;
+	} catch (error) {
+		console.error('Error finding profilePic key', error);
+		throw new Error('Failed to find profilePic key');
 	}
 }

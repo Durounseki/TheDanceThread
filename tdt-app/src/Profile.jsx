@@ -12,7 +12,7 @@ const Profile = () => {
   const [showDeleteEventModal, setShowDeleteEventModal] = useState(false);
   const [showDeleteUserModal, setShowDeleteUserModal] = useState(false);
   const [eventId, setEventId] = useState(null);
-  const { user, logout } = useAuth();
+  const { user, setUser, logout } = useAuth();
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState("");
@@ -28,6 +28,7 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log(user);
     setName(user.name);
     setEmail(user.email);
     setCountry(user.country);
@@ -40,6 +41,7 @@ const Profile = () => {
         id: sns.id,
         platform: sns.name,
         url: sns.url,
+        faClass: sns.faClass,
       }))
     );
     setLoading(false);
@@ -92,21 +94,26 @@ const Profile = () => {
               <section className="user-banner">
                 <Link to={`/profile`}>
                   <figure className="profile-picture">
-                    {profilePic ? (
-                      <img src={profilePic.src} alt={profilePic.alt} />
+                    {user.profilePic ? (
+                      <img
+                        src={user.profilePic.src}
+                        alt={user.profilePic.alt}
+                      />
                     ) : (
-                      <div dangerouslySetInnerHTML={{ __html: avatar }} />
+                      <div dangerouslySetInnerHTML={{ __html: user.avatar }} />
                     )}
                   </figure>
                 </Link>
-                <h1 className="user-name">{name}</h1>
-                <p className="user-email">{email}</p>
-                <button className="user-button" onClick={handleEditProfile}>
-                  Edit
-                </button>
-                <button className="user-button" onClick={handleLogOut}>
-                  Logout
-                </button>
+                <h1 className="user-name">{user.name}</h1>
+                <p className="user-email">{user.email}</p>
+                <div className="user-banner-buttons">
+                  <button className="user-button" onClick={handleEditProfile}>
+                    Edit
+                  </button>
+                  <button className="user-button" onClick={handleLogOut}>
+                    Logout
+                  </button>
+                </div>
                 <button
                   className="user-button delete-account"
                   onClick={handleDeleteAccount}
@@ -116,9 +123,9 @@ const Profile = () => {
               </section>
               <section className="user-social-media">
                 <span className="user-section-title">Social Media</span>
-                {snsGroups.length > 0 ? (
+                {user.sns.length > 0 ? (
                   <div className="user-sns">
-                    {snsGroups.map((sns) => (
+                    {user.sns.map((sns) => (
                       <a key={sns.id} href={sns.url} aria-label={sns.name}>
                         <i className={sns.faClass}></i>
                       </a>
@@ -130,16 +137,16 @@ const Profile = () => {
               </section>
               <section className="user-bio">
                 <span className="user-section-title">Bio</span>
-                {country && <p>From: {country}</p>}
-                {bio && <p>{bio}</p>}
-                {!country && !bio && <p>Nothing here...</p>}
+                {user.country && <p>From: {user.country}</p>}
+                {user.bio && <p>{user.bio}</p>}
+                {!user.country && !user.bio && <p>Nothing here...</p>}
               </section>
               <section className="user-styles">
                 <span className="user-section-title">Dance Styles</span>
-                {styles.length > 0 ? (
-                  styles.map((style) => (
-                    <span key={style} className="dance-style">
-                      {style.charAt(0).toUpperCase() + style.slice(1)}
+                {user.styles.length > 0 ? (
+                  user.styles.map((style) => (
+                    <span key={style.id} className="dance-style">
+                      {style.name.charAt(0).toUpperCase() + style.name.slice(1)}
                     </span>
                   ))
                 ) : (
@@ -149,15 +156,23 @@ const Profile = () => {
             </>
           ) : (
             <UserForm
-              id={user.id}
+              user={user}
+              setUser={setUser}
               name={name}
+              setName={setName}
               email={email}
+              setEmail={setEmail}
               country={country}
+              setCountry={setCountry}
               bio={bio}
+              setBio={setBio}
               avatar={avatar}
               profilePic={profilePic}
+              setProfilePic={setProfilePic}
               styles={styles}
+              setStyles={setStyles}
               snsGroups={snsGroups.length > 0 ? snsGroups : defaultSnsGroups}
+              setSnsGroups={setSnsGroups}
               setEditMode={setEditMode}
             />
           )}
