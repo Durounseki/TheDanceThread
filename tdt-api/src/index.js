@@ -400,13 +400,15 @@ app.patch('api/users/:id', authenticate, async (c) => {
 
 app.patch('api/users/:id/profile-pic', authenticate, async (c) => {
 	const data = await c.req.parseBody();
+	console.log(data);
 	const file = data.profilePic;
+	console.log(file);
 	const id = c.req.param('id');
 	const userId = c.get('userId');
 	if (id !== userId) {
 		return c.json({ message: 'unauthorized!' }, 401);
 	}
-	if (key) {
+	if (!file) {
 		return c.json({ message: 'No image selected' }, 400);
 	}
 	try {
@@ -419,7 +421,7 @@ app.patch('api/users/:id/profile-pic', authenticate, async (c) => {
 		const key = `${Date.now()}-${file.name}`;
 		await c.env.TDT_BUCKET.put(key, file.stream());
 
-		await prisma.profilePic.updateProfilePic(userId, key);
+		const profilePic = await prisma.profilePic.updateProfilePic(userId, key);
 
 		const s3 = c.get('s3');
 		const command = new GetObjectCommand({
@@ -427,9 +429,8 @@ app.patch('api/users/:id/profile-pic', authenticate, async (c) => {
 			Key: key,
 		});
 		const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-
-		user.profilePic.src = url;
-		return c.json(user, 200);
+		profilePic.src = url;
+		return c.json(profilePic, 200);
 	} catch (error) {
 		console.error('Error updating user:', error);
 		return c.json({ error: 'Failed to update user' }, 500);

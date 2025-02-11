@@ -672,7 +672,7 @@ export async function updateProfilePic(userId, key) {
 			where: { userId: userId },
 			data: { src: key },
 		});
-		return true;
+		return profilePic;
 	} catch (error) {
 		console.error('Error updating profile pic:', error);
 		throw new Error('Failed to update profile pic');

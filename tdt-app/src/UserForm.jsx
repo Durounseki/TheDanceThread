@@ -197,9 +197,10 @@ const UserForm = ({
       });
       if (response.ok) {
         const data = await response.json();
+        console.log("data", data);
         setUser({
           ...user,
-          profilePic: data.profilePic,
+          profilePic: data,
         });
       } else {
         console.error("Error updating user profile picture");
@@ -227,7 +228,6 @@ const UserForm = ({
           ) : (
             <div dangerouslySetInnerHTML={{ __html: avatar }} />
           )}
-          <a href="#" onClick={handleShowFileUpload}></a>
         </figure>
 
         <div className="edit-profile-pic-submit">
