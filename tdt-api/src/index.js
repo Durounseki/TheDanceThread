@@ -88,19 +88,24 @@ app.get('/api/events/:id', async (c) => {
 		}
 		const s3 = c.get('s3');
 
-		const command = new GetObjectCommand({
+		const flyerCommand = new GetObjectCommand({
 			Bucket: c.env.S3_BUCKET,
 			Key: event.flyer.src,
 		});
 
-		const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+		const url = await getSignedUrl(s3, flyerCommand, { expiresIn: 3600 });
 
 		event.flyer.src = url;
 
-		// if (event.creatorId) {
-		// 	const avatar = createUserAvatar(event.creatorId);
-		// 	event.createdBy.avatar = avatar;
-		// }
+		if (event.creatorId) {
+			const profilePicCommand = new GetObjectCommand({
+				Bucket: c.env.S3_BUCKET,
+				Key: event.createdBy.profilePic.src,
+			});
+
+			const url = await getSignedUrl(s3, profilePicCommand, { expiresIn: 3600 });
+			event.createdBy.profilePic.src = url;
+		}
 
 		return c.json(event);
 	} catch (error) {
@@ -327,16 +332,18 @@ app.get('api/auth/protected', authenticate, async (c) => {
 	const userId = c.get('userId');
 	const prisma = c.get('prisma');
 	const user = await prisma.user.getUserById(userId);
-	const s3 = c.get('s3');
+	if (user.profilePic) {
+		const s3 = c.get('s3');
 
-	const command = new GetObjectCommand({
-		Bucket: c.env.S3_BUCKET,
-		Key: user.profilePic.src,
-	});
+		const command = new GetObjectCommand({
+			Bucket: c.env.S3_BUCKET,
+			Key: user.profilePic.src,
+		});
 
-	const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+		const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
 
-	user.profilePic.src = url;
+		user.profilePic.src = url;
+	}
 	return c.json(user);
 });
 
@@ -402,6 +409,7 @@ app.patch('api/users/:id/profile-pic', authenticate, async (c) => {
 	const data = await c.req.parseBody();
 	console.log(data);
 	const file = data.profilePic;
+	const alt = data.alt;
 	console.log(file);
 	const id = c.req.param('id');
 	const userId = c.get('userId');
@@ -412,16 +420,19 @@ app.patch('api/users/:id/profile-pic', authenticate, async (c) => {
 		return c.json({ message: 'No image selected' }, 400);
 	}
 	try {
+		console.log('updating profilePic');
 		const prisma = c.get('prisma');
-
+		console.log('retrieve old key');
 		const oldKey = await prisma.profilePic.getProfilePicKey(userId);
+		console.log(oldKey);
 		if (oldKey) {
+			console.log('deleting Old key');
 			await c.env.TDT_BUCKET.delete(oldKey.src);
 		}
 		const key = `${Date.now()}-${file.name}`;
 		await c.env.TDT_BUCKET.put(key, file.stream());
-
-		const profilePic = await prisma.profilePic.updateProfilePic(userId, key);
+		console.log('creating new profile pic');
+		const profilePic = await prisma.profilePic.updateProfilePic(userId, key, alt);
 
 		const s3 = c.get('s3');
 		const command = new GetObjectCommand({
@@ -441,7 +452,7 @@ app.delete('api/users/:id', authenticate, async (c) => {
 	const userId = c.req.param('id');
 	try {
 		const prisma = c.get('prisma');
-		await prisma.event.deleteEvent(userId);
+		await prisma.user.deleteUser(userId);
 		return c.json({ message: 'User deleted' }, 200);
 	} catch (error) {
 		console.error('Error deleting user', error);
@@ -453,8 +464,14 @@ app.delete('api/users/:id/profile-pic', authenticate, async (c) => {
 	const userId = c.req.param('id');
 	try {
 		const prisma = c.get('prisma');
-		await prisma.profilePic.deleteProfilePic(userId);
-		return c.json({ message: 'Profile pic deleted' }, 200);
+		const key = await prisma.profilePic.getProfilePicKey(userId);
+		if (key) {
+			await prisma.profilePic.deleteProfilePic(userId);
+			await c.env.TDT_BUCKET.delete(key.src);
+			return c.json({ message: 'Profile pic deleted' }, 200);
+		} else {
+			return c.json({ message: 'User has no profile picture!' }, 400);
+		}
 	} catch (error) {
 		console.error('Error deleting profile pic', error);
 		return c.json({ error: 'Failed to delete profile pic' }, 500);

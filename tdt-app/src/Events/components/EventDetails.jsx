@@ -26,6 +26,7 @@ const useEvent = (eventId) => {
 
 const EventDetails = ({ eventId }) => {
   const { event, loading } = useEvent(eventId);
+  console.log(event.createdBy);
 
   if (!loading) {
     return (
@@ -35,9 +36,16 @@ const EventDetails = ({ eventId }) => {
           {event.createdBy && (
             <>
               <figure className="profile-picture">
-                <div
-                  dangerouslySetInnerHTML={{ __html: event.createdBy.avatar }}
-                />
+                {event.createdBy.profilePic ? (
+                  <img
+                    src={event.createdBy.profilePic.src}
+                    alt={event.createdBy.profilePic.alt}
+                  />
+                ) : (
+                  <div
+                    dangerouslySetInnerHTML={{ __html: event.createdBy.avatar }}
+                  />
+                )}
               </figure>
               <div>
                 <h2>Posted by</h2>

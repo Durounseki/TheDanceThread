@@ -23,7 +23,6 @@ const Profile = () => {
   const [profilePic, setProfilePic] = useState(undefined);
   const [styles, setStyles] = useState([]);
   const [snsGroups, setSnsGroups] = useState([]);
-  const defaultSnsGroups = [{ id: uuidv4(), platform: "website", url: "" }];
 
   const navigate = useNavigate();
 
@@ -31,19 +30,23 @@ const Profile = () => {
     console.log(user);
     setName(user.name);
     setEmail(user.email);
-    setCountry(user.country);
-    setBio(user.bio);
+    setCountry(user.country || "");
+    setBio(user.bio || "");
     setAvatar(user.avatar);
     setProfilePic(user.profilePic);
     setStyles(user.styles.map((style) => style.name));
-    setSnsGroups(
-      user.sns.map((sns) => ({
-        id: sns.id,
-        platform: sns.name,
-        url: sns.url,
-        faClass: sns.faClass,
-      }))
-    );
+    if (user.sns.length > 0) {
+      setSnsGroups(
+        user.sns.map((sns) => ({
+          id: sns.id,
+          platform: sns.name,
+          url: sns.url,
+          faClass: sns.faClass,
+        }))
+      );
+    } else {
+      setSnsGroups([{ id: uuidv4(), platform: "website", url: "" }]);
+    }
     setLoading(false);
   }, [user]);
 
@@ -168,10 +171,9 @@ const Profile = () => {
               setBio={setBio}
               avatar={avatar}
               profilePic={profilePic}
-              setProfilePic={setProfilePic}
               styles={styles}
               setStyles={setStyles}
-              snsGroups={snsGroups.length > 0 ? snsGroups : defaultSnsGroups}
+              snsGroups={snsGroups}
               setSnsGroups={setSnsGroups}
               setEditMode={setEditMode}
             />

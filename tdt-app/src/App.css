@@ -798,6 +798,13 @@ input[type="date"] {
   box-shadow: 2px 2px 2px#000000cc;
 }
 
+.edit-profile-pic-submit button.disabled {
+  pointer-events: none;
+  color: #7d7d7d;
+  box-shadow: none;
+  border: 1px solid #505050;
+}
+
 .event-form-button:hover,
 .edit-profile-submit button:hover,
 .edit-profile-pic-submit button:hover,
@@ -1110,6 +1117,7 @@ label input:checked ~ .custom-checkbox {
   margin: 0;
   width: 60px;
   height: 60px;
+  box-sizing: border-box;
   border: 1px solid #505050;
   border-radius: 50%;
   box-shadow: 4px 4px 4px #000000cc;
@@ -1121,6 +1129,14 @@ label input:checked ~ .custom-checkbox {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+  div {
+    width: 100%;
+    height: 100%;
+  }
+  svg {
+    width: 100%;
+    height: 100%;
   }
 }
 

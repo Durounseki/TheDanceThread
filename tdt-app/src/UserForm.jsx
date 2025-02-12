@@ -21,7 +21,6 @@ const UserForm = ({
   setSnsGroups,
   avatar,
   profilePic,
-  setProfilePic,
   setEditMode,
 }) => {
   const [styleOptions, setStyleOptions] = useState([]);
@@ -29,6 +28,7 @@ const UserForm = ({
   const [otherStyle, setOtherStyle] = useState("");
   const [showFileUpload, setShowFileUpload] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
+  console.log("snsGroups inside form:", snsGroups);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -189,6 +189,7 @@ const UserForm = ({
   const handleUpdatePicture = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
+    formData.append("alt", name);
     try {
       const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
         method: "PATCH",
@@ -212,7 +213,21 @@ const UserForm = ({
 
   const handleDeletePicture = async (event) => {
     event.preventDefault();
-    console.log("Picture deleted");
+    try {
+      const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (response.ok) {
+        setUser({
+          ...user,
+          profilePic: undefined,
+        });
+        console.log("Profile pic removed!");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
@@ -237,7 +252,12 @@ const UserForm = ({
           {showFileUpload && (
             <button onClick={handleShowFileUpload}>Cancel</button>
           )}
-          <button onClick={handleDeletePicture}>Delete Picture</button>
+          <button
+            className={!profilePic ? "disabled" : ""}
+            onClick={handleDeletePicture}
+          >
+            Delete Picture
+          </button>
         </div>
         {showFileUpload && (
           <>
@@ -299,9 +319,9 @@ const UserForm = ({
                 handleSnsPlatformChange(group.id, newPlatform)
               }
               disabledOptions={getDisabledOptions(group.id)}
-              required={false}
               url={group.url}
               setUrl={(newUrl) => handleSnsUrl(group.id, newUrl)}
+              required={false}
             />
           ))}
           {snsGroups.length < 4 && (

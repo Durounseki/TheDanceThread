@@ -109,9 +109,8 @@ export async function getEventById(eventId) {
 					},
 				},
 				createdBy: {
-					select: {
-						id: true,
-						name: true,
+					include: {
+						profilePic: true,
 					},
 				},
 			},
@@ -140,7 +139,7 @@ function prepareEventData(eventInfo) {
 			snsIds = [eventInfo['sns-id[]']];
 		}
 	}
-	let eveuser = [];
+	let eventSns = [];
 	snsPlatforms.forEach((platform, index) => {
 		eventSns.push({
 			id: eventInfo['sns-id[]'] ? snsIds[index] : '',
@@ -666,11 +665,16 @@ export async function updateUserInfo(userId, userInfo) {
 	}
 }
 
-export async function updateProfilePic(userId, key) {
+export async function updateProfilePic(userId, key, alt) {
 	try {
-		const profilePic = await this.update({
+		const profilePic = await this.upsert({
 			where: { userId: userId },
-			data: { src: key },
+			update: { src: key },
+			create: {
+				userId: userId,
+				src: key,
+				alt: alt,
+			},
 		});
 		return profilePic;
 	} catch (error) {
