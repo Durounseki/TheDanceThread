@@ -2,7 +2,7 @@ import EventForm from "./components/EventForm";
 const CreateEvent = () => {
   return (
     <>
-      <h2>Add New Event</h2>
+      <h1 className="create-event-title">Add New Event</h1>
       <EventForm />
     </>
   );

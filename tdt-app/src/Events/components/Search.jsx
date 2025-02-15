@@ -64,7 +64,7 @@ const SearchEvent = ({ setFeaturedEventId, setEventIds }) => {
   }, [searchParams, apiUrl, setEventIds, setFeaturedEventId]);
 
   return (
-    <search>
+    <search className="event-search">
       <form onSubmit={handleSubmit} className="search-container">
         <div className="searchbar">
           <div className="search" aria-label="Search">

@@ -5,12 +5,14 @@ const ConfirmUserDelete = ({ userId, showModal }) => {
   const navigate = useNavigate();
   const handleDelete = async () => {
     try {
-      await fetch(`${apiUrl}/users/${userId}`, {
+      const response = await fetch(`${apiUrl}/users/${userId}`, {
         method: "DELETE",
         credentials: "include",
       });
-      showModal(false);
-      navigate(`/profile`);
+      if (response.ok) {
+        navigate("/");
+        showModal(false);
+      }
     } catch (error) {
       console.error("Failed to remove user", error);
     }

@@ -203,6 +203,7 @@ const UserForm = ({
           ...user,
           profilePic: data,
         });
+        setShowFileUpload(false);
       } else {
         console.error("Error updating user profile picture");
       }

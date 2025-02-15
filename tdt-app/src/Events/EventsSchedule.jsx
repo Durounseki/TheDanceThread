@@ -8,6 +8,7 @@ import EventBanner from "./components/EventBanner.jsx";
 
 const EventsSchedule = () => {
   const { id: eventId } = useParams();
+  console.log(eventId);
   const [featuredEventId, setFeaturedEventId] = useState(null);
   const [eventIds, setEventIds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,14 +41,11 @@ const EventsSchedule = () => {
     return (
       <>
         <main className="event-dashboard">
-          <aside className="event-schedule">
-            <SearchEvent
-              setFeaturedEventId={setFeaturedEventId}
-              setEventIds={setEventIds}
-            />
-            <h2>Dance Events</h2>
-            <EventSchedule eventIds={eventIds} />
-          </aside>
+          <SearchEvent
+            setFeaturedEventId={setFeaturedEventId}
+            setEventIds={setEventIds}
+          />
+          <div className="schedule-separator"></div>
           <article className="event-container">
             <section className="event-details-container">
               {featuredEventId ? (
@@ -57,6 +55,10 @@ const EventsSchedule = () => {
               )}
             </section>
           </article>
+          <aside className="event-schedule">
+            <h2>Dance Events</h2>
+            <EventSchedule eventIds={eventIds} />
+          </aside>
         </main>
         {featuredEventId && <EventBanner eventId={featuredEventId} />}
 

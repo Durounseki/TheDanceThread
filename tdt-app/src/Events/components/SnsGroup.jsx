@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 function SnsGroup({
@@ -10,24 +11,39 @@ function SnsGroup({
   setUrl,
   required = true,
 }) {
+  const [isMobile, setIsMobile] = useState(false);
   const options = [
     {
       value: "website",
       text: "Website",
+      faClass: "fa-solid fa-globe",
     },
     {
       value: "facebook",
       text: "Facebook",
+      faClass: "fa-brands fa-facebook",
     },
     {
       value: "instagram",
       text: "Instagram",
+      faClass: "fa-brands fa-instagram",
     },
     {
       value: "youtube",
       text: "Youtube",
+      faClass: "fa-brands fa-youtube",
     },
   ];
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  });
 
   return (
     <div className="sns-group">
@@ -59,7 +75,7 @@ function SnsGroup({
         onClick={onRemove}
         className={`remove-sns` + (canRemove ? "" : " disabled")}
       >
-        Remove
+        {isMobile ? <i className="fa-solid fa-circle-xmark"></i> : "Remove"}
       </button>
     </div>
   );
