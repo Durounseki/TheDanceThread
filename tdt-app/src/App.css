@@ -14,6 +14,27 @@ header {
   z-index: 1;
   height: 100px;
   box-sizing: border-box;
+  ul {
+    margin: 0;
+    align-items: center;
+    .profile-picture {
+      width: 40px;
+      height: 40px;
+    }
+    li:not(.profile-tab) {
+      border: 1px solid #505050;
+      padding: 6px 12px;
+      border-radius: 16px;
+      background-color: #202020;
+    }
+  }
+  ul.profile-actions {
+    li {
+      border: none;
+      padding: 0;
+      background: none;
+    }
+  }
 }
 
 ul {
@@ -1313,6 +1334,15 @@ label input:checked ~ .custom-checkbox {
 @media (max-width: 600px) {
   header {
     height: auto;
+    ul {
+      gap: 8px;
+      li:not(.profile-tab) {
+        padding: 4px 8px;
+      }
+    }
+    ul.profile-actions {
+      padding: 6px 12px;
+    }
   }
   .home-page {
     justify-content: center;
@@ -1411,6 +1441,18 @@ label input:checked ~ .custom-checkbox {
       padding-left: 8px;
       align-self: start;
       text-align: left;
+    }
+  }
+  .event-banner {
+    .event-actions {
+      ul {
+        grid-template-columns: repeat(3, max-content);
+        justify-content: center;
+        text-align: center;
+        li:last-child {
+          grid-column: 1/4;
+        }
+      }
     }
   }
 }

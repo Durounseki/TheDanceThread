@@ -68,9 +68,20 @@ const Header = ({ showLogin }) => {
                 </li>
               )}
               {user && (
-                <li ref={profileMenuRef}>
+                <li className="profile-tab" ref={profileMenuRef}>
                   <a href="#" onClick={toggleProfileMenu}>
-                    Profile
+                    <figure className="profile-picture">
+                      {user.profilePic ? (
+                        <img
+                          src={user.profilePic.src}
+                          alt={user.profilePic.alt}
+                        />
+                      ) : (
+                        <div
+                          dangerouslySetInnerHTML={{ __html: user.avatar }}
+                        />
+                      )}
+                    </figure>
                   </a>
                   {openProfileMenu && (
                     <ul className="profile-actions">

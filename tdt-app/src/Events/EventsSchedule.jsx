@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import SearchEvent from "./components/Search.jsx";
 import EventSchedule from "./components/EventSchedule.jsx";
@@ -12,6 +12,7 @@ const EventsSchedule = () => {
   const [featuredEventId, setFeaturedEventId] = useState(null);
   const [eventIds, setEventIds] = useState([]);
   const [loading, setLoading] = useState(true);
+  const eventRef = useRef(null);
 
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -37,6 +38,12 @@ const EventsSchedule = () => {
     }
   }, [eventIds, featuredEventId, eventId]);
 
+  useEffect(() => {
+    if (eventId && eventRef.current) {
+      eventRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+
   if (!loading) {
     return (
       <>
@@ -47,7 +54,7 @@ const EventsSchedule = () => {
           />
           <div className="schedule-separator"></div>
           <article className="event-container">
-            <section className="event-details-container">
+            <section className="event-details-container" ref={eventRef}>
               {featuredEventId ? (
                 <EventDetails eventId={featuredEventId} />
               ) : (
