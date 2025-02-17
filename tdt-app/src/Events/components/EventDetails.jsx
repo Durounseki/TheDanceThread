@@ -1,10 +1,7 @@
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
 
-const EventDetails = ({ event, isLoading }) => {
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
+const EventDetails = ({ event }) => {
   return (
     <>
       <h1 className="event-name">{event.name.toUpperCase()}</h1>

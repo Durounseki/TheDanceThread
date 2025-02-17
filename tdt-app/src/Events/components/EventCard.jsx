@@ -51,7 +51,6 @@ const EventCard = ({ eventInfo, canEdit = false, showModal, setEventId }) => {
     try {
       await navigator.clipboard.writeText(url);
       setShared(true);
-      console.log(`Copying ${url}`);
       setTimeout(() => {
         setShared(false);
       }, 1000);
@@ -147,11 +146,6 @@ const EventCard = ({ eventInfo, canEdit = false, showModal, setEventId }) => {
       )}
     </div>
   );
-};
-
-EventCard.propTypes = {
-  eventId: PropTypes.string.isRequired,
-  canEdit: PropTypes.bool,
 };
 
 export default EventCard;

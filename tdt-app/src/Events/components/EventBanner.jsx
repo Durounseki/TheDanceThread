@@ -33,7 +33,6 @@ const EventBanner = ({ event, isLoading }) => {
       } else {
         setLike(false);
       }
-      console.log(event.totalAttendees);
       if (event.totalAttendees > 0) {
         const attending = event.attendees.find(
           (item) => item.user.id === user.id
@@ -44,7 +43,6 @@ const EventBanner = ({ event, isLoading }) => {
           setAttend(false);
         }
       } else {
-        console.log("setting attendance to false");
         setAttend(false);
       }
     }
@@ -95,7 +93,6 @@ const EventBanner = ({ event, isLoading }) => {
     try {
       await navigator.clipboard.writeText(url);
       setShared(true);
-      console.log(`Copying ${url}`);
       setTimeout(() => {
         setShared(false);
       }, 1000);
@@ -175,10 +172,6 @@ const EventBanner = ({ event, isLoading }) => {
       </div>
     );
   }
-};
-
-EventBanner.propTypes = {
-  eventId: PropTypes.string.isRequired,
 };
 
 export default EventBanner;

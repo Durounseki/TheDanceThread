@@ -9,7 +9,6 @@ import { useEvents, useEvent } from "../eventQueries.js";
 
 const EventsSchedule = () => {
   const { id: eventId } = useParams();
-  console.log(eventId);
   const eventRef = useRef(null);
   const [searchParams] = useSearchParams();
   const country = searchParams.get("country");
@@ -23,13 +22,12 @@ const EventsSchedule = () => {
   const { data: featuredEvent, isLoading: featuredEventLoading } = useEvent(
     eventId || (events && events.length > 0 ? events[0].id : null)
   );
-  console.log("featuredEvent:", featuredEvent);
 
   useEffect(() => {
-    if (eventId && eventRef.current) {
-      eventRef.current.scrollIntoView({ behavior: "smooth" });
+    if (eventId) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  });
+  }, [eventId]);
 
   return (
     <>
@@ -38,7 +36,9 @@ const EventsSchedule = () => {
         <div className="schedule-separator"></div>
         <article className="event-container">
           <section className="event-details-container" ref={eventRef}>
-            {featuredEvent ? (
+            {featuredEventLoading ? (
+              <p>Loading...</p>
+            ) : featuredEvent ? (
               <EventDetails
                 event={featuredEvent}
                 isLoading={featuredEventLoading}

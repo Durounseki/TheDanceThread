@@ -9,8 +9,6 @@ const UserEvents = ({ user, canEdit = false, showModal, setEventId }) => {
     events,
     { enabled: !!user && !!events }
   );
-  console.log("all events:", events);
-  console.log("user events:", userEvents);
   return (
     <>
       <div className="events-created">

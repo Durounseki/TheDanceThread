@@ -57,7 +57,6 @@ function EventForm() {
       try {
         const response = await fetch(`${apiUrl}/events/${eventId}`);
         const data = await response.json();
-        console.log(data);
         setName(data.name);
         setDate(new Date(data.date).toISOString().substring(0, 10));
         setDescription(data.description);
@@ -87,7 +86,7 @@ function EventForm() {
           .replace(/^\d+-/, "");
         setFlyer({ ...data.flyer, fileName: flyerFileName });
       } catch (error) {
-        console.log("Failed to fetch event info:", error);
+        console.error("Failed to fetch event info:", error);
       }
     };
     if (eventId) {

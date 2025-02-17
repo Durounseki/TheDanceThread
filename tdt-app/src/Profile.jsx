@@ -27,7 +27,6 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(user);
     setName(user.name);
     setEmail(user.email);
     setCountry(user.country || "");
@@ -59,7 +58,6 @@ const Profile = () => {
   const handleDeleteAccount = async (event) => {
     event.preventDefault();
     setShowDeleteUserModal(true);
-    console.log("Account deleted successfully!");
   };
 
   const handleEditProfile = (event) => {
