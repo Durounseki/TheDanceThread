@@ -1,5 +1,7 @@
 import { createAvatar } from '@dicebear/core';
 import { shapes } from '@dicebear/collection';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const snsFaClass = {
 	website: 'fa-solid fa-globe',
@@ -20,4 +22,20 @@ function createUserAvatar(userId) {
 	return avatar;
 }
 
-export { snsFaClass, createUserAvatar };
+async function generateSignedUrl(s3, bucket, key) {
+	if (!key) return null;
+	const command = new GetObjectCommand({
+		Bucket: bucket,
+		Key: key,
+	});
+
+	try {
+		const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+		return url;
+	} catch (error) {
+		console.error(`Error generating signed url for ${key}`, error);
+		return null;
+	}
+}
+
+export { snsFaClass, createUserAvatar, generateSignedUrl };

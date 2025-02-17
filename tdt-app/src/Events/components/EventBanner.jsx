@@ -3,31 +3,8 @@ import dayjs from "dayjs";
 import PropTypes from "prop-types";
 import useAuth from "../../useAuth";
 
-const useEvent = (eventId) => {
-  const [event, setEvent] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const apiUrl = import.meta.env.VITE_API_URL;
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/events/${eventId}`);
-        const data = await response.json();
-        setEvent(data);
-      } catch (error) {
-        console.log("Failed to fetch event:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [apiUrl, eventId]);
-
-  return { event, loading };
-};
-
-const EventBanner = ({ eventId }) => {
+const EventBanner = ({ event, isLoading }) => {
   const { user } = useAuth();
-  const { event, loading } = useEvent(eventId);
   const [bookmark, setBookmark] = useState(false);
   const [shared, setShared] = useState(false);
   const [like, setLike] = useState(false);
@@ -35,7 +12,7 @@ const EventBanner = ({ eventId }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    if (!loading && user) {
+    if (!isLoading && user) {
       if (event.totalSaves > 0) {
         const bookmarked = event.saves.find((item) => item.user.id === user.id);
         if (bookmarked) {
@@ -71,7 +48,7 @@ const EventBanner = ({ eventId }) => {
         setAttend(false);
       }
     }
-  }, [event, loading, user]);
+  }, [event, isLoading, user]);
   const handleBookmark = async (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -146,7 +123,7 @@ const EventBanner = ({ eventId }) => {
       console.error("Failed to like event", error);
     }
   };
-  if (!loading) {
+  if (!isLoading) {
     return (
       <div className="event-banner">
         <div className="event-date">

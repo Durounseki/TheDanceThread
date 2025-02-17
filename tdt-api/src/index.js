@@ -7,8 +7,7 @@ import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import createPrismaClient from './db/client.js';
 import { cors } from 'hono/cors';
-import { createUserAvatar } from './utils.js';
-// import { createUserAvatar } from './utils.js';
+import { createUserAvatar, generateSignedUrl } from './utils.js';
 
 const app = new Hono();
 
@@ -53,6 +52,11 @@ app.get('/api/events', async (c) => {
 	try {
 		const prisma = c.get('prisma');
 		const events = await prisma.event.getEvents(country, style, date);
+		const s3 = c.get('s3');
+		const bucket = c.env.S3_BUCKET;
+		for (const event of events) {
+			event.flyer.src = await generateSignedUrl(s3, bucket, event.flyer.src);
+		}
 		return c.json(events);
 	} catch (error) {
 		console.error('Error fetching events:', error);
@@ -87,24 +91,11 @@ app.get('/api/events/:id', async (c) => {
 			return c.json({ error: 'Event not found' }, 404);
 		}
 		const s3 = c.get('s3');
-
-		const flyerCommand = new GetObjectCommand({
-			Bucket: c.env.S3_BUCKET,
-			Key: event.flyer.src,
-		});
-
-		const url = await getSignedUrl(s3, flyerCommand, { expiresIn: 3600 });
-
-		event.flyer.src = url;
+		const bucket = c.env.S3_BUCKET;
+		event.flyer.src = await generateSignedUrl(s3, bucket, event.flyer.src);
 
 		if (event.creatorId) {
-			const profilePicCommand = new GetObjectCommand({
-				Bucket: c.env.S3_BUCKET,
-				Key: event.createdBy.profilePic.src,
-			});
-
-			const url = await getSignedUrl(s3, profilePicCommand, { expiresIn: 3600 });
-			event.createdBy.profilePic.src = url;
+			event.createdBy.profilePic.src = await generateSignedUrl(s3, bucket, event.createdBy.profilePic.src);
 		}
 
 		return c.json(event);

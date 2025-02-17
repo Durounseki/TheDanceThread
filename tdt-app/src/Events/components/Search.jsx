@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import CountrySearch from "./CountrySearch";
 import StyleSearch from "./StyleSearch";
+import { useEvents } from "../../eventQueries";
 
-const SearchEvent = ({ setFeaturedEventId, setEventIds }) => {
+const SearchEvent = () => {
   const [countryQuery, setCountryQuery] = useState("");
   const [styleQuery, setStyleQuery] = useState("");
   const [dateQuery, setDateQuery] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
+  const { refetch } = useEvents();
   const navigate = useNavigate();
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     setCountryQuery(searchParams.get("country") || "");
@@ -27,12 +28,17 @@ const SearchEvent = ({ setFeaturedEventId, setEventIds }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const queryParams = new URLSearchParams();
-    if (countryQuery) queryParams.append("country", countryQuery.name);
-    if (styleQuery) queryParams.append("style", styleQuery);
-    if (dateQuery) queryParams.append("date", dateQuery);
+    if (countryQuery)
+      queryParams.set(
+        "country",
+        countryQuery.name ? countryQuery.name : countryQuery
+      );
+    if (styleQuery) queryParams.set("style", styleQuery);
+    if (dateQuery) queryParams.set("date", dateQuery);
     const queryString = queryParams.toString();
     const url = `/events?${queryString ? `${queryString}` : ""}`;
-    navigate(url);
+    navigate(url, { replace: true });
+    refetch();
   };
 
   const handleReset = () => {
@@ -41,27 +47,6 @@ const SearchEvent = ({ setFeaturedEventId, setEventIds }) => {
     setDateQuery("");
     navigate("/events");
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const queryString = searchParams.toString();
-      const url = `${apiUrl}/events?${queryString ? `${queryString}` : ""}`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        setEventIds(data.map((event) => event.id));
-
-        if (data.length > 0) {
-          setFeaturedEventId(data[0].id);
-        } else {
-          setFeaturedEventId(null);
-        }
-      } catch (error) {
-        console.error("Failed to fetch events:", error);
-      }
-    };
-    fetchData();
-  }, [searchParams, apiUrl, setEventIds, setFeaturedEventId]);
 
   return (
     <search className="event-search">

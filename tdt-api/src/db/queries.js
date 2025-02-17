@@ -37,6 +37,12 @@ export async function getEvents(country, style, date) {
 			orderBy: { date: 'asc' },
 			select: {
 				id: true,
+				name: true,
+				date: true,
+				country: true,
+				sns: true,
+				flyer: true,
+				venues: true,
 			},
 		});
 		return events;

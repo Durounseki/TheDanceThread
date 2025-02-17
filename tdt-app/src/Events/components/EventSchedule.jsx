@@ -1,11 +1,29 @@
 import PropTypes from "prop-types";
 import EventCard from "./EventCard.jsx";
 
-const EventSchedule = ({ eventIds }) => {
+const EventSchedule = ({ events, isLoading }) => {
+  if (isLoading) {
+    return (
+      <section className="event-cards">
+        <div className="event-card-container">
+          <div className="event-card"></div>
+        </div>
+        <div className="event-card-container">
+          <div className="event-card"></div>
+        </div>
+        <div className="event-card-container">
+          <div className="event-card"></div>
+        </div>
+        <div className="event-card-container">
+          <div className="event-card"></div>
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="event-cards">
-      {eventIds && eventIds.length > 0 ? (
-        eventIds.map((eventId) => <EventCard key={eventId} eventId={eventId} />)
+      {events && events.length > 0 ? (
+        events.map((event) => <EventCard key={event.id} eventInfo={event} />)
       ) : (
         <p className="search-not-found">
           Sorry, there are no results that match{" "}
@@ -14,10 +32,6 @@ const EventSchedule = ({ eventIds }) => {
       )}
     </section>
   );
-};
-
-EventSchedule.propTypes = {
-  eventIds: PropTypes.arrayOf(PropTypes.string.isRequired),
 };
 
 export default EventSchedule;
