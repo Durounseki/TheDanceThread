@@ -5,7 +5,7 @@ import EventSchedule from "./components/EventSchedule.jsx";
 import EventDetails from "./components/EventDetails.jsx";
 import EventNotFound from "./components/EventNotFound.jsx";
 import EventBanner from "./components/EventBanner.jsx";
-import { useEvents, useFirstEvent } from "../eventQueries.js";
+import { useEvents, useEvent } from "../eventQueries.js";
 
 const EventsSchedule = () => {
   const { id: eventId } = useParams();
@@ -20,8 +20,9 @@ const EventsSchedule = () => {
     style,
     date
   );
-  const { data: featuredEvent, isLoading: featuredEventLoading } =
-    useFirstEvent(events, eventId);
+  const { data: featuredEvent, isLoading: featuredEventLoading } = useEvent(
+    eventId || (events && events.length > 0 ? events[0].id : null)
+  );
   console.log("featuredEvent:", featuredEvent);
 
   useEffect(() => {

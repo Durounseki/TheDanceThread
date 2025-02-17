@@ -1,16 +1,26 @@
 import { Link } from "react-router-dom";
 import EventCard from "./Events/components/EventCard";
+import { useEvents, useUserEvents } from "./eventQueries";
 
 const UserEvents = ({ user, canEdit = false, showModal, setEventId }) => {
+  const { data: events, isLoading: eventsLoading } = useEvents();
+  const { data: userEvents, isLoading: userEventsLoading } = useUserEvents(
+    user,
+    events,
+    { enabled: !!user && !!events }
+  );
+  console.log("all events:", events);
+  console.log("user events:", userEvents);
   return (
     <>
       <div className="events-created">
         <span className="events-section-title">Events Created</span>
-        {user.eventsCreated.length > 0 &&
-          user.eventsCreated.map((event) => (
+        {userEvents &&
+          userEvents.created.length > 0 &&
+          userEvents.created.map((event) => (
             <EventCard
               key={event.id}
-              eventId={event.id}
+              eventInfo={event}
               canEdit={canEdit}
               showModal={showModal}
               setEventId={setEventId}
@@ -22,10 +32,11 @@ const UserEvents = ({ user, canEdit = false, showModal, setEventId }) => {
         </Link>
       </div>
       <div className="events-going">
-        <span className="events-section-title">Events I'm Going To</span>
-        {user.eventsAttending.length > 0 &&
-          user.eventsAttending.map((event) => (
-            <EventCard key={event.id} eventId={event.eventId} />
+        <span className="events-section-title">Events I&apos;m Going To</span>
+        {userEvents &&
+          userEvents.attending.length > 0 &&
+          userEvents.attending.map((event) => (
+            <EventCard key={event.id} eventInfo={event} />
           ))}
       </div>
     </>

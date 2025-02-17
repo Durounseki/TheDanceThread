@@ -33,20 +33,25 @@ export const useEvent = (eventId) => {
       const data = await response.json();
       return data;
     },
+    enable: !!eventId,
   });
 };
 
-export const useFirstEvent = (events, eventId) => {
-  console.log("eventId in hook:", eventId);
+export const useUserEvents = (user, events) => {
   return useQuery({
-    queryKey: ["featuredEventId", eventId],
+    queryKey: ["userEvents", user.id],
     queryFn: () => {
-      if (eventId) {
-        return events.find((event) => event.id === eventId);
-      } else {
-        return events[0];
-      }
+      const created = events.filter((event) =>
+        user.eventsCreated.some((createdEvent) => createdEvent.id === event.id)
+      );
+      const attending = events.filter((event) =>
+        user.eventsAttending.some(
+          (attendingEvent) => attendingEvent.eventId === event.id
+        )
+      );
+
+      return { created, attending };
     },
-    enabled: !!events,
+    enabled: !!user && !!events,
   });
 };
