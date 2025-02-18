@@ -143,7 +143,6 @@ app.delete('api/events/:id', authenticate, async (c) => {
 	try {
 		const prisma = c.get('prisma');
 		const creatorId = await prisma.event.getCreatorId(eventId);
-		console.log(creatorId, userId);
 		if (userId !== creatorId.creatorId) {
 			return c.json({ message: 'Unauthorized!' }, 401);
 		} else {
@@ -401,10 +400,8 @@ app.patch('api/users/:id', authenticate, async (c) => {
 
 app.patch('api/users/:id/profile-pic', authenticate, async (c) => {
 	const data = await c.req.parseBody();
-	console.log(data);
 	const file = data.profilePic;
 	const alt = data.alt;
-	console.log(file);
 	const id = c.req.param('id');
 	const userId = c.get('userId');
 	if (id !== userId) {
@@ -414,18 +411,13 @@ app.patch('api/users/:id/profile-pic', authenticate, async (c) => {
 		return c.json({ message: 'No image selected' }, 400);
 	}
 	try {
-		console.log('updating profilePic');
 		const prisma = c.get('prisma');
-		console.log('retrieve old key');
 		const oldKey = await prisma.profilePic.getProfilePicKey(userId);
-		console.log(oldKey);
 		if (oldKey) {
-			console.log('deleting Old key');
 			await c.env.TDT_BUCKET.delete(oldKey.src);
 		}
 		const key = `${Date.now()}-${file.name}`;
 		await c.env.TDT_BUCKET.put(key, file.stream());
-		console.log('creating new profile pic');
 		const profilePic = await prisma.profilePic.updateProfilePic(userId, key, alt);
 
 		const s3 = c.get('s3');

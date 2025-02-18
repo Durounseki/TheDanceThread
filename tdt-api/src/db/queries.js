@@ -666,7 +666,6 @@ function prepareUserData(userInfo) {
 
 export async function updateUserInfo(userId, userInfo) {
 	const data = prepareUserData(userInfo);
-	console.log('data=', JSON.stringify(data, null, 4));
 	try {
 		const user = await this.update({
 			where: { id: userId },
