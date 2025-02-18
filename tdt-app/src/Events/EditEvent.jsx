@@ -1,10 +1,12 @@
 import EventForm from "./components/EventForm";
 const EditEvent = () => {
   return (
-    <>
-      <h2>Edit your event</h2>
-      <EventForm />
-    </>
+    <main className="edit-event">
+      <article>
+        <h2>Edit your event</h2>
+        <EventForm />
+      </article>
+    </main>
   );
 };
 

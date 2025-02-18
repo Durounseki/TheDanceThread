@@ -4,18 +4,21 @@ This is the prototype of The Dance Thread a social platform where dancers can fi
 
 ## To do
 
-- [ ] Edit user.
-- [ ] Delete user.
+- [x] Edit user.
+- [x] Delete user.
 - [ ] Sanitize data.
-- [ ] Add a home page explore events and create event options.
-- [ ] Style the header.
-- [ ] Add css styles for mobile version
-- [ ] Refactor event page to fetch all the events at once.
-- [ ] Cache events on client side to avoid sending the request to the server too often.
-- [ ] Add google map.
-- [ ] Show avatar after login.
-- [ ] Handle protected routes properly.
+- [ ] Resize images.
+- [x] Add a home page explore events and create event options.
+- [x] Style the header.
+- [x] Add css styles for mobile version
+- [x] Refactor event page to fetch all the events at once.
+- [x] Cache events on client side to avoid sending the request to the server too often.
+- [x] Add Skeletons for loading states.
+- [ ] Optimistic updates
 - [ ] Reload event components on event update.
+- [ ] Add google map.
+- [x] Show avatar after login.
+- [ ] Handle protected routes properly.
 - [ ] Prevent opening delete user and delete event at the same time.
 - [x] Fetch avatars for each user.
 - [x] Add avatars to users.

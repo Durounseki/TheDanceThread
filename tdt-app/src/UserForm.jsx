@@ -28,7 +28,6 @@ const UserForm = ({
   const [otherStyle, setOtherStyle] = useState("");
   const [showFileUpload, setShowFileUpload] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
-  console.log("snsGroups inside form:", snsGroups);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -167,7 +166,6 @@ const UserForm = ({
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("data", data);
         setUser({
           ...user,
           name: data.name,
@@ -198,7 +196,6 @@ const UserForm = ({
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("data", data);
         setUser({
           ...user,
           profilePic: data,
@@ -224,7 +221,6 @@ const UserForm = ({
           ...user,
           profilePic: undefined,
         });
-        console.log("Profile pic removed!");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -248,7 +244,7 @@ const UserForm = ({
 
         <div className="edit-profile-pic-submit">
           {!showFileUpload && (
-            <button onClick={handleShowFileUpload}>Update Picture</button>
+            <button onClick={handleShowFileUpload}>Update</button>
           )}
           {showFileUpload && (
             <button onClick={handleShowFileUpload}>Cancel</button>
@@ -257,7 +253,7 @@ const UserForm = ({
             className={!profilePic ? "disabled" : ""}
             onClick={handleDeletePicture}
           >
-            Delete Picture
+            Delete
           </button>
         </div>
         {showFileUpload && (

@@ -37,6 +37,7 @@ const VenueInput = ({
         id="venue-name"
         name="venue-name[]"
         value={venueName}
+        placeholder="Enter the venue name"
         onChange={(e) => setVenueName(e.target.value)}
         required
       />

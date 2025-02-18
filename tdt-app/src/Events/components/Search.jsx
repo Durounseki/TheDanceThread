@@ -56,13 +56,6 @@ const SearchEvent = () => {
             <i className="fa-solid fa-magnifying-glass"></i>
           </div>
           <CountrySearch onSelect={handleCountryInput} />
-          <button
-            type="reset"
-            className={"clear-search" + `${countryQuery !== "" ? " show" : ""}`}
-            onClick={handleReset}
-          >
-            <i className="fa-solid fa-circle-xmark"></i>
-          </button>
         </div>
         <div className="filter-container">
           <p>Filter by</p>
@@ -77,9 +70,23 @@ const SearchEvent = () => {
               value={dateQuery}
               onChange={(e) => setDateQuery(e.target.value)}
             />
-            <button type="submit" className="submit-search">
-              Filter
-            </button>
+            <div className="search-buttons">
+              <button
+                type="reset"
+                onClick={handleReset}
+                className={
+                  "clear-search" +
+                  `${
+                    countryQuery + styleQuery + dateQuery !== "" ? " show" : ""
+                  }`
+                }
+              >
+                Clear
+              </button>
+              <button type="submit" className="submit-search">
+                Filter
+              </button>
+            </div>
           </div>
         </div>
       </form>

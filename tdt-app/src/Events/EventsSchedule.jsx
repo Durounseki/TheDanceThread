@@ -36,16 +36,10 @@ const EventsSchedule = () => {
         <div className="schedule-separator"></div>
         <article className="event-container">
           <section className="event-details-container" ref={eventRef}>
-            {featuredEventLoading ? (
-              <p>Loading...</p>
-            ) : featuredEvent ? (
-              <EventDetails
-                event={featuredEvent}
-                isLoading={featuredEventLoading}
-              />
-            ) : (
-              <EventNotFound />
-            )}
+            <EventDetails
+              event={featuredEvent}
+              isLoading={featuredEventLoading}
+            />
           </section>
         </article>
         <aside className="event-schedule">

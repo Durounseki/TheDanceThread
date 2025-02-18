@@ -5,18 +5,11 @@ const EventSchedule = ({ events, isLoading }) => {
   if (isLoading) {
     return (
       <section className="event-cards">
-        <div className="event-card-container">
-          <div className="event-card"></div>
-        </div>
-        <div className="event-card-container">
-          <div className="event-card"></div>
-        </div>
-        <div className="event-card-container">
-          <div className="event-card"></div>
-        </div>
-        <div className="event-card-container">
-          <div className="event-card"></div>
-        </div>
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="event-card-container">
+            <div className="event-card"></div>
+          </div>
+        ))}
       </section>
     );
   }

@@ -40,7 +40,9 @@ export async function getEvents(country, style, date) {
 				name: true,
 				date: true,
 				country: true,
-				sns: true,
+				sns: {
+					orderBy: { name: 'asc' },
+				},
 				flyer: true,
 				venues: true,
 			},
@@ -68,6 +70,9 @@ export async function getEventById(eventId) {
 						id: true,
 						name: true,
 					},
+					orderBy: {
+						name: 'asc',
+					},
 				},
 				sns: {
 					select: {
@@ -75,6 +80,9 @@ export async function getEventById(eventId) {
 						name: true,
 						url: true,
 						faClass: true,
+					},
+					orderBy: {
+						name: 'asc',
 					},
 				},
 				flyer: {
@@ -482,7 +490,7 @@ export async function removeAttendee(eventId) {
 
 export async function getStyles() {
 	try {
-		const styles = await this.findMany();
+		const styles = await this.findMany({ orderBy: { name: 'asc' } });
 		return styles;
 	} catch (error) {
 		console.error('Error finding styles', error);
@@ -556,7 +564,7 @@ export async function getUsers(name, country, style) {
 				name: true,
 				avatar: true,
 				profilePic: true,
-				styles: true,
+				styles: { orderBy: { name: 'asc' } },
 			},
 		});
 		return users;
@@ -571,8 +579,12 @@ export async function getUserById(userId) {
 		const user = await this.findUnique({
 			where: { id: userId },
 			include: {
-				styles: true,
-				sns: true,
+				styles: {
+					orderBy: { name: 'asc' },
+				},
+				sns: {
+					orderBy: { name: 'asc' },
+				},
 				eventsCreated: true,
 				eventsAttending: true,
 				likedEvents: true,
@@ -660,8 +672,8 @@ export async function updateUserInfo(userId, userInfo) {
 			where: { id: userId },
 			data: data,
 			include: {
-				styles: true,
-				sns: true,
+				styles: { orderBy: { name: 'asc' } },
+				sns: { orderBy: { name: 'asc' } },
 			},
 		});
 		return user;

@@ -98,7 +98,7 @@ function EventForm() {
     const textArea = textAreaRef.current;
     const resizeTextArea = () => {
       textArea.style.height = "auto";
-      textArea.style.height = `${textArea.scrollHeight}px`;
+      textArea.style.height = `calc(${textArea.scrollHeight}px + 1em)`;
     };
     textArea.addEventListener("input", resizeTextArea);
 
@@ -245,151 +245,137 @@ function EventForm() {
   }
 
   return (
-    <div className="event-form-container">
-      <form
-        onSubmit={handleSubmit}
-        encType="multipart/form-data"
-        className="create-event-form"
-      >
-        <label htmlFor="name">Event Name:</label>
+    <form onSubmit={handleSubmit} encType="multipart/form-data">
+      <label htmlFor="name">Event Name:</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        required
+        placeholder="The Dance Thread"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <label htmlFor="date">Date:</label>
+      <input
+        type="date"
+        id="date"
+        name="date"
+        required
+        ref={dateRef}
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        className={date === "" ? "empty" : ""}
+      />
+      <label htmlFor="description">Description:</label>
+      <textarea
+        id="description"
+        name="description"
+        placeholder="Dance, share, celebrate yourself!"
+        ref={textAreaRef}
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      ></textarea>
+
+      <div className="form-separator"></div>
+      <h3 className="form-section-header">Dance Styles</h3>
+
+      <div className="form-checkbox-container">
+        {styleOptions.map((style) => (
+          <CustomCheckbox
+            key={style.id}
+            style={style}
+            onCheck={handleStyleCheck}
+          />
+        ))}
+      </div>
+
+      <label htmlFor="other">Other</label>
+      <div className="other-style-container">
         <input
           type="text"
-          id="name"
-          name="name"
-          required
-          placeholder="The Dance Thread"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          id="other"
+          name="other-style"
+          value={otherStyle}
+          placeholder="Add another style..."
+          onChange={(event) => setOtherStyle(event.target.value)}
         />
-        <label htmlFor="date">Date:</label>
-        <input
-          type="date"
-          id="date"
-          name="date"
-          required
-          ref={dateRef}
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
-        <label htmlFor="description">Description:</label>
-        <textarea
-          id="description"
-          name="description"
-          placeholder="Dance, share, celebrate yourself!"
-          ref={textAreaRef}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        ></textarea>
+        <button type="button" id="user-add-style" onClick={handleOtherStyle}>
+          Add Style
+        </button>
+      </div>
 
-        <div className="form-separator"></div>
-        <h3 className="form-section-header">Dance Styles</h3>
+      <div className="form-separator"></div>
+      <VenueInput
+        country={country}
+        setCountry={setCountry}
+        city={city}
+        setCity={setCity}
+        venueName={venueName}
+        setVenueName={setVenueName}
+        venueUrl={venueUrl}
+        setVenueUrl={setVenueUrl}
+      />
 
-        <div className="form-checkbox-container">
-          {styleOptions.map((style) => (
-            <CustomCheckbox
-              key={style.id}
-              style={style}
-              onCheck={handleStyleCheck}
-            />
-          ))}
-        </div>
+      <div className="form-separator"></div>
+      <h3 className="form-section-header">Social Media</h3>
 
-        <label htmlFor="other">Other</label>
-        <div className="other-style-container">
-          <input
-            type="text"
-            id="other"
-            name="other-style"
-            value={otherStyle}
-            onChange={(event) => setOtherStyle(event.target.value)}
+      <div className="sns-container">
+        {snsGroups.map((group) => (
+          <SnsGroup
+            key={group.id}
+            onRemove={() => handleRemoveSnsLink(group.id)}
+            canRemove={snsGroups.length > 1}
+            platform={group.platform}
+            setPlatform={(newPlatform) =>
+              handleSnsPlatformChange(group.id, newPlatform)
+            }
+            disabledOptions={getDisabledOptions(group.id)}
+            url={group.url}
+            setUrl={(newUrl) => handleSnsUrl(group.id, newUrl)}
           />
-          <button
-            type="button"
-            id="user-add-style"
-            className="event-form-button"
-            onClick={handleOtherStyle}
-          >
-            Add Style
+        ))}
+        {snsGroups.length < 4 && (
+          <button type="button" id="add-sns" onClick={handleAddSnsLink}>
+            Add Link
           </button>
-        </div>
-
-        <div className="form-separator"></div>
-        <VenueInput
-          country={country}
-          setCountry={setCountry}
-          city={city}
-          setCity={setCity}
-          venueName={venueName}
-          setVenueName={setVenueName}
-          venueUrl={venueUrl}
-          setVenueUrl={setVenueUrl}
-        />
-
-        <div className="form-separator"></div>
-        <h3 className="form-section-header">Social Media</h3>
-
-        <div className="sns-container">
-          {snsGroups.map((group) => (
-            <SnsGroup
-              key={group.id}
-              onRemove={() => handleRemoveSnsLink(group.id)}
-              canRemove={snsGroups.length > 1}
-              platform={group.platform}
-              setPlatform={(newPlatform) =>
-                handleSnsPlatformChange(group.id, newPlatform)
-              }
-              disabledOptions={getDisabledOptions(group.id)}
-              url={group.url}
-              setUrl={(newUrl) => handleSnsUrl(group.id, newUrl)}
-            />
-          ))}
-          {snsGroups.length < 4 && (
-            <button
-              type="button"
-              className="event-form-button"
-              id="add-sns"
-              onClick={handleAddSnsLink}
-            >
-              Add Link
-            </button>
-          )}
-        </div>
-
-        <div className="form-separator"></div>
-        <h3 className="form-section-header">Flyer</h3>
-        {flyer && (
-          <>
-            <div className="event-thumb">
-              <img src={flyer.src} alt={flyer.alt} />
-            </div>
-            <a
-              href={flyer.src}
-              rel="noopener noreferrer"
-              target="_blank"
-              className="flyer-filename"
-            >
-              {flyer.fileName}
-            </a>
-          </>
         )}
-        <label htmlFor="flyer">Upload Image:</label>
-        <input type="file" accept="image/*" id="flyer" name="flyer" />
-        {eventId ? (
-          <div className="edit-form-buttons">
-            <button onClick={handleCancel} className="event-form-button">
-              Cancel
-            </button>
-            <button type="submit" className="event-form-button">
-              {eventId ? "Save" : "Add Event"}
-            </button>
+      </div>
+
+      <div className="form-separator"></div>
+      <h3 className="form-section-header">Flyer</h3>
+      {flyer && (
+        <>
+          <div className="event-thumb">
+            <img src={flyer.src} alt={flyer.alt} />
           </div>
-        ) : (
-          <button type="submit" className="event-form-button">
-            {eventId ? "Save" : "Add Event"}
+          <a
+            href={flyer.src}
+            rel="noopener noreferrer"
+            target="_blank"
+            className="flyer-filename"
+          >
+            {flyer.fileName}
+          </a>
+        </>
+      )}
+      <label htmlFor="flyer">Upload Image:</label>
+      <input type="file" accept="image/*" id="flyer" name="flyer" />
+      {eventId ? (
+        <div className="edit-form-buttons">
+          <button onClick={handleCancel} className="event-form-action">
+            Cancel
           </button>
-        )}
-      </form>
-    </div>
+          <button type="submit" className="event-form-action">
+            Save
+          </button>
+        </div>
+      ) : (
+        <button type="submit" className="event-form-action">
+          Add Event
+        </button>
+      )}
+    </form>
   );
 }
 

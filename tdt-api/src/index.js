@@ -39,7 +39,10 @@ app.use('*', async (c, next) => {
 app.use(
 	'/api/*',
 	cors({
-		origin: (origin, c) => c.env.APP_URL || 'http://localhost:8787',
+		origin: (origin, c) => {
+			const allowedOrigins = c.env.ALLOWED_ORIGINS.split(' ');
+			return allowedOrigins.includes(origin) ? origin : c.env.APP_URL;
+		},
 		allowMethods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
 		credentials: true,
 	})
@@ -467,31 +470,6 @@ app.delete('api/users/:id/profile-pic', authenticate, async (c) => {
 		console.error('Error deleting profile pic', error);
 		return c.json({ error: 'Failed to delete profile pic' }, 500);
 	}
-});
-
-app.get('/temp/users/avatars', async (c) => {
-	const prisma = c.get('prisma');
-	const userIds = await prisma.user.findMany({
-		select: { id: true },
-	});
-	const avatars = userIds.map((user) => createUserAvatar(user.id));
-	try {
-		const result = await Promise.all(
-			avatars.map(async (avatar, index) => {
-				await prisma.user.update({
-					where: { id: userIds[index].id },
-					data: {
-						avatar: avatar,
-						createdAt: new Date(),
-					},
-				});
-			})
-		);
-		console.log(result);
-	} catch (error) {
-		c.json({ error: "Error updating users' avatar" }, 500);
-	}
-	return c.json(avatars, 200);
 });
 
 export default app;

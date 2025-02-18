@@ -120,7 +120,7 @@ const EventBanner = ({ event, isLoading }) => {
       console.error("Failed to like event", error);
     }
   };
-  if (!isLoading) {
+  if (!isLoading && user) {
     return (
       <div className="event-banner">
         <div className="event-date">
@@ -128,49 +128,49 @@ const EventBanner = ({ event, isLoading }) => {
           <p>{dayjs(event.date).format("YYYY MMMM D")}</p>
         </div>
         <h2 className="event-name">{event.name.toUpperCase()}</h2>
-        {user && (
-          <div className="event-actions">
-            <ul>
-              <li>
-                <a href="#" onClick={handleBookmark}>
-                  {!bookmark ? (
-                    <i className="fa-regular fa-bookmark"></i>
-                  ) : (
-                    <i className="fa-solid fa-bookmark"></i>
-                  )}
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={handleLike}>
-                  {!like ? (
-                    <i className="fa-regular fa-heart"></i>
-                  ) : (
-                    <i className="fa-solid fa-heart"></i>
-                  )}
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={handleShare}>
-                  <i className="fa-solid fa-link"></i>
-                </a>
-              </li>
-              <li>
-                {!attend ? (
-                  <button onClick={handleAttend}>Attend</button>
+        <div className="event-actions">
+          <ul>
+            <li>
+              <a href="#" onClick={handleBookmark}>
+                {!bookmark ? (
+                  <i className="fa-regular fa-bookmark"></i>
                 ) : (
-                  <div className="event-attendance">
-                    <h2>Going</h2>
-                    <a href="#" onClick={handleAttend}>
-                      Cancel
-                    </a>
-                  </div>
+                  <i className="fa-solid fa-bookmark"></i>
                 )}
-              </li>
-            </ul>
-          </div>
-        )}
+              </a>
+            </li>
+            <li>
+              <a href="#" onClick={handleLike}>
+                {!like ? (
+                  <i className="fa-regular fa-heart"></i>
+                ) : (
+                  <i className="fa-solid fa-heart"></i>
+                )}
+              </a>
+            </li>
+            <li>
+              <a href="#" onClick={handleShare}>
+                <i className="fa-solid fa-link"></i>
+              </a>
+            </li>
+            <li>
+              {!attend ? (
+                <button onClick={handleAttend}>Attend</button>
+              ) : (
+                <div className="event-attendance">
+                  <h2>Going</h2>
+                  <a href="#" onClick={handleAttend}>
+                    Cancel
+                  </a>
+                </div>
+              )}
+            </li>
+          </ul>
+        </div>
       </div>
     );
+  } else {
+    return <></>;
   }
 };
 
