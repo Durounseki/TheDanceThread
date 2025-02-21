@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
 import useAuth from "../../useAuth";
+import ProgressiveImage from "../../ProgressiveImage";
 
 const EventCard = ({ eventInfo, canEdit = false, showModal, setEventId }) => {
   const { user } = useAuth();
@@ -82,7 +83,11 @@ const EventCard = ({ eventInfo, canEdit = false, showModal, setEventId }) => {
           <p>{dayjs(new Date(eventInfo.date)).format("D")}</p>
         </div>
         <div className="event-thumb">
-          <img src={eventInfo.flyer.src} alt={eventInfo.flyer.alt} />
+          <ProgressiveImage
+            imageKey={eventInfo.flyer.src}
+            alt={eventInfo.flyer.alt}
+            size="small"
+          />
         </div>
         <div className="event-details">
           <p className="event-name">{eventInfo.name}</p>

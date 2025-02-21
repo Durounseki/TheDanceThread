@@ -7,6 +7,7 @@ import UserForm from "./UserForm.jsx";
 import ConfirmEventDelete from "./ConfirmEventDelete.jsx";
 import ConfirmUserDelete from "./ConfirmUserDelete.jsx";
 import Modal from "./Modal.jsx";
+import ProgressiveImage from "./ProgressiveImage.jsx";
 
 const Profile = () => {
   const [showDeleteEventModal, setShowDeleteEventModal] = useState(false);
@@ -96,9 +97,10 @@ const Profile = () => {
                 <Link to={`/profile`}>
                   <figure className="profile-picture">
                     {user.profilePic ? (
-                      <img
-                        src={user.profilePic.src}
+                      <ProgressiveImage
+                        key={user.profilePic.src}
                         alt={user.profilePic.alt}
+                        size="small"
                       />
                     ) : (
                       <div dangerouslySetInnerHTML={{ __html: user.avatar }} />

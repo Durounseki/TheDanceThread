@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import CustomCheckbox from "./CustomCheckbox";
 import VenueInput from "./VenueInput";
 import useAuth from "../../useAuth";
+import ProgressiveImage from "../../ProgressiveImage";
 
 function EventForm() {
   const navigate = useNavigate();
@@ -347,7 +348,11 @@ function EventForm() {
       {flyer && (
         <>
           <div className="event-thumb">
-            <img src={flyer.src} alt={flyer.alt} />
+            <ProgressiveImage
+              imageKey={flyer.src}
+              alt={flyer.alt}
+              size="small"
+            />
           </div>
           <a
             href={flyer.src}

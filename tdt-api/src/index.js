@@ -55,11 +55,6 @@ app.get('/api/events', async (c) => {
 	try {
 		const prisma = c.get('prisma');
 		const events = await prisma.event.getEvents(country, style, date);
-		const s3 = c.get('s3');
-		const bucket = c.env.S3_BUCKET;
-		for (const event of events) {
-			event.flyer.src = await generateSignedUrl(s3, bucket, event.flyer.src);
-		}
 		return c.json(events);
 	} catch (error) {
 		console.error('Error fetching events:', error);
@@ -92,13 +87,6 @@ app.get('/api/events/:id', async (c) => {
 		const event = await prisma.event.getEventById(id);
 		if (!event) {
 			return c.json({ error: 'Event not found' }, 404);
-		}
-		const s3 = c.get('s3');
-		const bucket = c.env.S3_BUCKET;
-		event.flyer.src = await generateSignedUrl(s3, bucket, event.flyer.src);
-
-		if (event.creatorId) {
-			event.createdBy.profilePic.src = await generateSignedUrl(s3, bucket, event.createdBy.profilePic.src);
 		}
 
 		return c.json(event);
@@ -325,18 +313,6 @@ app.get('api/auth/protected', authenticate, async (c) => {
 	const userId = c.get('userId');
 	const prisma = c.get('prisma');
 	const user = await prisma.user.getUserById(userId);
-	if (user.profilePic) {
-		const s3 = c.get('s3');
-
-		const command = new GetObjectCommand({
-			Bucket: c.env.S3_BUCKET,
-			Key: user.profilePic.src,
-		});
-
-		const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-
-		user.profilePic.src = url;
-	}
 	return c.json(user);
 });
 
@@ -364,16 +340,6 @@ app.get('api/users/:id', async (c) => {
 	try {
 		const prisma = c.get('prisma');
 		const user = await prisma.user.getUserById(userId);
-		const s3 = c.get('s3');
-
-		const command = new GetObjectCommand({
-			Bucket: c.env.S3_BUCKET,
-			Key: user.profilePic.src,
-		});
-
-		const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-
-		user.profilePic.src = url;
 		return c.json(user, 200);
 	} catch (error) {
 		console.error('Error fetching user:', error);

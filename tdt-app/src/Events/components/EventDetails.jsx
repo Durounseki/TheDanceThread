@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
 import EventNotFound from "./EventNotFound";
+import ProgressiveImage from "../../ProgressiveImage";
+import ResponsiveImage from "../../ResponsiveImage";
 
 const EventDetails = ({ event, isLoading }) => {
   if (isLoading) {
@@ -27,8 +29,10 @@ const EventDetails = ({ event, isLoading }) => {
           </p>
         </div>
 
-        <div className="event-image">
-          <div className="skeleton-image" />
+        <div className="event-image-container">
+          <div className="event-image">
+            <div className="skeleton-image" />
+          </div>
         </div>
         <div className="event-date">
           <i className="fa-regular fa-calendar"></i>
@@ -81,9 +85,10 @@ const EventDetails = ({ event, isLoading }) => {
           <>
             <figure className="profile-picture">
               {event.createdBy.profilePic ? (
-                <img
-                  src={event.createdBy.profilePic.src}
+                <ProgressiveImage
+                  imageKey={event.createdBy.profilePic.src}
                   alt={event.createdBy.profilePic.alt}
+                  size="small"
                 />
               ) : (
                 <div
@@ -117,8 +122,10 @@ const EventDetails = ({ event, isLoading }) => {
         </p>
       </div>
 
-      <div className="event-image">
-        <img src={event.flyer.src} alt={event.flyer.alt} />
+      <div className="event-image-container">
+        <div className="event-image">
+          <ResponsiveImage imageKey={event.flyer.src} alt={event.flyer.alt} />
+        </div>
       </div>
       <div className="event-date">
         <i className="fa-regular fa-calendar"></i>

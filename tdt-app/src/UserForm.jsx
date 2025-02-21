@@ -3,6 +3,7 @@ import SnsGroup from "./Events/components/SnsGroup.jsx";
 import { v4 as uuidv4 } from "uuid";
 import CountrySelect from "./Events/components/CountrySelect.jsx";
 import CustomCheckbox from "./Events/components/CustomCheckbox.jsx";
+import ProgressiveImage from "./ProgressiveImage.jsx";
 
 const UserForm = ({
   user,
@@ -236,7 +237,11 @@ const UserForm = ({
       >
         <figure className="profile-picture edit">
           {profilePic ? (
-            <img src={profilePic.src} alt={profilePic.alt} />
+            <ProgressiveImage
+              imageKey={profilePic.src}
+              alt={profilePic.alt}
+              size="small"
+            />
           ) : (
             <div dangerouslySetInnerHTML={{ __html: avatar }} />
           )}

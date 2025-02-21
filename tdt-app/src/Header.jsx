@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import mainLogo from "./assets/tdt-logo-dark.png";
 import useAuth from "./useAuth.jsx";
 import { useState, useEffect, useRef } from "react";
+import ProgressiveImage from "./ProgressiveImage.jsx";
 const Header = ({ showLogin }) => {
   const { user, logout } = useAuth();
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
@@ -72,9 +73,10 @@ const Header = ({ showLogin }) => {
                   <a href="#" onClick={toggleProfileMenu}>
                     <figure className="profile-picture">
                       {user.profilePic ? (
-                        <img
-                          src={user.profilePic.src}
+                        <ProgressiveImage
+                          key={user.profilePic.src}
                           alt={user.profilePic.alt}
+                          size="small"
                         />
                       ) : (
                         <div

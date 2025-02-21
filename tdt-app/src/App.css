@@ -312,8 +312,8 @@ footer {
   }
   .skeleton-image {
     background-color: #202020;
-    min-width: 400px;
-    min-height: 400px;
+    width: 100%;
+    height: 100%;
     border-radius: 24px;
   }
 }
@@ -360,19 +360,37 @@ footer {
   }
 }
 
-.event-image {
-  overflow: hidden;
-  display: flex;
+.event-image-container {
+  width: 100%;
+  position: relative;
   grid-column: 1/3;
-  img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    margin: auto;
-    border-radius: 24px;
-  }
   margin: 24px auto;
+  .event-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      margin: auto;
+      border-radius: 24px;
+    }
+  }
+}
+
+.event-image-container::before {
+  content: "";
+  background-color: #181818;
+  border-radius: 24px;
+  display: block;
+  width: 100%;
+  padding-top: 100%;
 }
 
 .event-date,
@@ -516,6 +534,7 @@ footer {
 }
 
 .event-card .event-date {
+  width: 40px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -1546,4 +1565,13 @@ label input:checked ~ .custom-checkbox {
       width: 100%;
     }
   }
+}
+
+.loading-img {
+  filter: blur(10px);
+  clip-path: inset(0);
+}
+.loaded-img {
+  filter: blur(0px);
+  transition: filter 0.5s linear;
 }
