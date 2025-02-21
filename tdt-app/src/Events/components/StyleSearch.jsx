@@ -24,13 +24,15 @@ const StyleSearch = ({ onSelect }) => {
   };
 
   return (
-    <AutocompleteInput
-      options={styleOptions}
-      onSelect={handleSelect}
-      placeholder={"Search by dance style"}
-      inputName={"style-search"}
-      label={"Style"}
-    />
+    styleOptions && (
+      <AutocompleteInput
+        options={styleOptions}
+        onSelect={handleSelect}
+        placeholder={"Search by dance style"}
+        inputName={"style-search"}
+        label={"Style"}
+      />
+    )
   );
 };
 

@@ -49,9 +49,14 @@ function EventForm() {
     { id: uuidv4(), platform: "website", url: "" },
   ]);
   const [flyer, setFlyer] = useState(undefined);
+  const [thumbnail, setThumbnail] = useState("");
+  const [flyerError, setFlyerError] = useState(null);
+  const MAX_FILE_SIZE = 1024 * 1024;
   const textAreaRef = useRef(null);
+  const MAX_DESCRIPTION_LENGTH = 2000;
   const dateRef = useRef(null);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const imgUrl = import.meta.env.VITE_IMAGES_URL;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,13 +84,13 @@ function EventForm() {
             url: sns.url,
           }))
         );
-        const flyerUrl = new URL(data.flyer.src);
-        const flyerPathname = flyerUrl.pathname;
-        const flyerFileName = flyerPathname
-          .split("/")
-          .pop()
-          .replace(/^\d+-/, "");
-        setFlyer({ ...data.flyer, fileName: flyerFileName });
+        const thumbnailUrl = imgUrl + data.flyer.src;
+        const thumbnailFileName = data.flyer.src.replace(/^\d+-/, "");
+        setThumbnail({
+          ...data.flyer,
+          href: thumbnailUrl,
+          fileName: thumbnailFileName,
+        });
       } catch (error) {
         console.error("Failed to fetch event info:", error);
       }
@@ -198,6 +203,35 @@ function EventForm() {
     return disabledOptions;
   };
 
+  const handleFlyerChange = (event) => {
+    setFlyerError(null);
+    const file = event.target.files[0];
+
+    if (!file) {
+      setFlyer(null);
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      setFlyerError(
+        `File size exceeds the limit of ${MAX_FILE_SIZE / (1024 * 1024)}MB.`
+      );
+      event.target.value = "";
+      return;
+    }
+
+    setFlyer(file);
+  };
+
+  const handleDescriptionChange = (event) => {
+    const text = event.target.value;
+    if (text.length > MAX_DESCRIPTION_LENGTH) {
+      event.target.value = text.slice(0, MAX_DESCRIPTION_LENGTH);
+      return;
+    }
+    setDescription(text);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -275,8 +309,11 @@ function EventForm() {
         placeholder="Dance, share, celebrate yourself!"
         ref={textAreaRef}
         value={description}
-        onChange={(e) => setDescription(e.target.value)}
+        onChange={handleDescriptionChange}
       ></textarea>
+      <p className="character-counter">
+        {description.length}/{MAX_DESCRIPTION_LENGTH}
+      </p>
 
       <div className="form-separator"></div>
       <h3 className="form-section-header">Dance Styles</h3>
@@ -345,27 +382,37 @@ function EventForm() {
 
       <div className="form-separator"></div>
       <h3 className="form-section-header">Flyer</h3>
-      {flyer && (
+      {thumbnail && (
         <>
           <div className="event-thumb">
             <ProgressiveImage
-              imageKey={flyer.src}
-              alt={flyer.alt}
+              imageKey={thumbnail.src}
+              alt={thumbnail.alt}
               size="small"
             />
           </div>
           <a
-            href={flyer.src}
+            href={thumbnail.href}
             rel="noopener noreferrer"
             target="_blank"
             className="flyer-filename"
           >
-            {flyer.fileName}
+            {thumbnail.fileName}
           </a>
         </>
       )}
+
       <label htmlFor="flyer">Upload Image:</label>
-      <input type="file" accept="image/*" id="flyer" name="flyer" />
+      <input
+        type="file"
+        accept="image/*"
+        id="flyer"
+        name="flyer"
+        onChange={handleFlyerChange}
+        className={flyerError ? "input-error" : ""}
+      />
+      {flyerError && <p className="form-error">{flyerError}</p>}
+
       {eventId ? (
         <div className="edit-form-buttons">
           <button onClick={handleCancel} className="event-form-action">

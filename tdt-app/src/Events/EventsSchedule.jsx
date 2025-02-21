@@ -3,7 +3,6 @@ import { useParams, useSearchParams } from "react-router-dom";
 import SearchEvent from "./components/Search.jsx";
 import EventSchedule from "./components/EventSchedule.jsx";
 import EventDetails from "./components/EventDetails.jsx";
-import EventNotFound from "./components/EventNotFound.jsx";
 import EventBanner from "./components/EventBanner.jsx";
 import { useEvents, useEvent } from "../eventQueries.js";
 
@@ -24,8 +23,8 @@ const EventsSchedule = () => {
   );
 
   useEffect(() => {
-    if (eventId) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    if (eventId && eventRef.current) {
+      eventRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [eventId]);
 

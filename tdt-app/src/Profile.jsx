@@ -98,7 +98,7 @@ const Profile = () => {
                   <figure className="profile-picture">
                     {user.profilePic ? (
                       <ProgressiveImage
-                        key={user.profilePic.src}
+                        imageKey={user.profilePic.src}
                         alt={user.profilePic.alt}
                         size="small"
                       />
