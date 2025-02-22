@@ -3,11 +3,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import CountrySearch from "./CountrySearch";
 import StyleSearch from "./StyleSearch";
 import { useEvents } from "../../eventQueries";
+import DatePicker from "react-datepicker";
+import "../../DatePicker.css";
 
 const SearchEvent = () => {
   const [countryQuery, setCountryQuery] = useState("");
   const [styleQuery, setStyleQuery] = useState("");
-  const [dateQuery, setDateQuery] = useState("");
+  const [dateQuery, setDateQuery] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const { refetch } = useEvents();
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ const SearchEvent = () => {
   useEffect(() => {
     setCountryQuery(searchParams.get("country") || "");
     setStyleQuery(searchParams.get("style") || "");
-    setDateQuery(searchParams.get("date") || "");
+    setDateQuery(searchParams.get("date") || null);
   }, [searchParams]);
 
   const handleCountryInput = (option) => {
@@ -48,6 +50,8 @@ const SearchEvent = () => {
     navigate("/events");
   };
 
+  console.log("dateQuery:", dateQuery);
+
   return (
     <search className="event-search">
       <form onSubmit={handleSubmit} className="search-container">
@@ -62,14 +66,27 @@ const SearchEvent = () => {
           <div className="search-filter">
             <StyleSearch onSelect={handleStyleInput} />
             <label htmlFor="date-search">Date:</label>
-            <input
+            <DatePicker
+              id="date-search"
+              name="date-search"
+              selected={dateQuery}
+              onChange={(date) => setDateQuery(date)}
+              dateFormat="MM/yyyy"
+              showMonthYearPicker
+              showIcon
+              icon="fa fa-calendar"
+              toggleCalendarOnIconClick
+              isClearable
+              placeholderText="MM/YYYY"
+            />
+            {/* <input
               type="month"
               id="date-search"
               name="date-search"
               className={dateQuery === "" ? "empty" : ""}
               value={dateQuery}
               onChange={(e) => setDateQuery(e.target.value)}
-            />
+            /> */}
             <div className="search-buttons">
               <button
                 type="reset"

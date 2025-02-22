@@ -890,7 +890,11 @@ form {
     border: solid 1px #a6dbff;
     outline: none;
   }
-  button:not(.remove-sns) {
+  button:not(
+      .remove-sns,
+      .react-datepicker__close-icon,
+      .react-datepicker__navigation
+    ) {
     grid-column: 2;
     margin-left: auto;
     background-color: #202020;

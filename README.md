@@ -6,15 +6,19 @@ This is the prototype of The Dance Thread a social platform where dancers can fi
 
 - [x] Edit user.
 - [x] Delete user.
-- [ ] Sanitize data.
-- [ ] Resize images.
+- [x] Sanitize event data.
+- [ ] Sanitize user data.
+- [ ] Enable google auth in production.
+- [ ] Create browser independent form inputs.
+- [x] Resize images.
 - [x] Add a home page explore events and create event options.
 - [x] Style the header.
 - [x] Add css styles for mobile version
 - [x] Refactor event page to fetch all the events at once.
 - [x] Cache events on client side to avoid sending the request to the server too often.
 - [x] Add Skeletons for loading states.
-- [ ] Optimistic updates
+- [ ] Show status and error messages.
+- [ ] Optimistic updates.
 - [ ] Reload event components on event update.
 - [ ] Add google map.
 - [x] Show avatar after login.
