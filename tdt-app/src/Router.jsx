@@ -7,10 +7,11 @@ import CreateEvent from "./Events/CreateEvent.jsx";
 import EditEvent from "./Events/EditEvent.jsx";
 import ErrorPage from "./ErrorPage.jsx";
 import EventsSchedule from "./Events/EventsSchedule.jsx";
-import Login from "./Login.jsx";
+import LoginPage from "./LoginPage.jsx";
 import Profile from "./Profile.jsx";
 import TermsOfService from "./TermsOfService.jsx";
 import PrivacyPolicy from "./PrivacyPolicy.jsx";
+import ProtectedRoute from "./ProtectedRoute.jsx";
 
 const Router = () => {
   const { user, loading } = useAuth();
@@ -21,12 +22,33 @@ const Router = () => {
           <Route index element={<Home />} />
           <Route path="/events" element={<Events />}>
             <Route index element={<EventsSchedule />} />
-            <Route path="create" element={<CreateEvent />} />
+            <Route
+              path="create"
+              element={
+                <ProtectedRoute user={user} route="/events">
+                  <CreateEvent />
+                </ProtectedRoute>
+              }
+            />
             <Route path=":id" element={<EventsSchedule />} />
-            <Route path=":id/edit" element={<EditEvent />} />
+            <Route
+              path=":id/edit"
+              element={
+                <ProtectedRoute user={user} route="/events">
+                  <EditEvent />
+                </ProtectedRoute>
+              }
+            />
           </Route>
-          {!user && <Route path="/login" element={<Login />} />}
-          {user && <Route path="/profile" element={<Profile />} />}
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute user={user} route="/login">
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="*" element={<ErrorPage />} />

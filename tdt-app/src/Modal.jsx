@@ -1,7 +1,16 @@
-const Modal = ({ children }) => {
+const Modal = ({ closeModal, children }) => {
+  const handleClose = (event) => {
+    event.preventDefault();
+    closeModal(false);
+  };
   return (
     <div className="modal-backdrop">
-      <div className="modal-content">{children}</div>
+      <div className="modal-content">
+        <button className="close-button" onClick={handleClose}>
+          <i className="fa-solid fa-circle-xmark"></i>
+        </button>
+        {children}
+      </div>
     </div>
   );
 };

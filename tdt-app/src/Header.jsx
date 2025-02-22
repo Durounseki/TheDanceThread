@@ -87,12 +87,12 @@ const Header = ({ showLogin }) => {
                   </a>
                   {openProfileMenu && (
                     <ul className="profile-actions">
-                      <li>
+                      <li className="profile-action">
                         <a href="#" onClick={handleOpenProfile}>
                           Edit
                         </a>
                       </li>
-                      <li>
+                      <li className="profile-action">
                         <a href="#" onClick={handleLogOut}>
                           Logout
                         </a>

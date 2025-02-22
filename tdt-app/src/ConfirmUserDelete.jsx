@@ -25,9 +25,6 @@ const ConfirmUserDelete = ({ userId, showModal }) => {
   return (
     <>
       <div className="confirm-delete">
-        <button className="close-button" onClick={handleClose}>
-          <i className="fa-solid fa-circle-xmark"></i>
-        </button>
         <h2>Are you sure?</h2>
         <p>This action cannot be undone</p>
         <div className="confirm-delete-actions">

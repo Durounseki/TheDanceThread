@@ -84,6 +84,11 @@ header {
       border-radius: 20px;
       background-color: #202020;
     }
+    li:not(.profile-tab, .profile-action):hover {
+      border-color: #a6dbff;
+      background-color: #a6dbff;
+      color: #202020;
+    }
   }
   ul.profile-actions {
     li {
@@ -1155,10 +1160,6 @@ label input:checked ~ .custom-checkbox {
   border-radius: 8px;
   border: 1px solid #505050;
   box-shadow: 4px 4px 4px #000000cc;
-  a {
-    color: #a6dbff;
-    text-decoration: underline;
-  }
 }
 
 .login-form-container {
@@ -1170,6 +1171,10 @@ label input:checked ~ .custom-checkbox {
   p {
     font-size: 12px;
     margin-top: 32px;
+  }
+  a {
+    color: #a6dbff;
+    text-decoration: underline;
   }
 }
 
@@ -1213,16 +1218,31 @@ label input:checked ~ .custom-checkbox {
   transition: all 0.3s ease-in-out;
 }
 
-.login-form-container button.close-button,
+.modal-content {
+  position: relative;
+  .close-button {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    padding: 0px;
+    background-color: #181818;
+    border: none;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+  }
+  .close-button:hover {
+    cursor: pointer;
+    color: #a6dbff;
+  }
+}
+
 .confirm-delete button.close-button {
   padding: 0px;
   border: none;
   position: absolute;
-  top: -16px;
-  right: -24px;
-  i {
-    font-size: 10px;
-  }
 }
 
 .confirm-delete-actions {
@@ -1451,6 +1471,55 @@ label input:checked ~ .custom-checkbox {
   transition: all 0.3s ease-in-out;
 }
 
+.loading-img {
+  filter: blur(10px);
+  clip-path: inset(0);
+}
+.loaded-img {
+  filter: blur(0px);
+  transition: filter 0.5s linear;
+}
+
+.form-error {
+  color: #ffaaaa;
+  margin: 0;
+  grid-column: 2;
+}
+
+.input-error {
+  border-color: #ffaaaa;
+}
+
+.character-counter {
+  grid-column: 2;
+  text-align: right;
+  width: 100%;
+  margin: 0;
+  color: #7d7d7d;
+}
+
+.error-page-content {
+  flex: 1;
+  align-self: stretch;
+}
+.error-page-message a {
+  color: #a6dbff;
+  text-decoration: underline;
+}
+
+.login-page {
+  flex: 1;
+  padding: 24px 16px;
+  .login-content {
+    margin: auto;
+    background-color: #141414;
+    padding: 28px 36px;
+    border-radius: 8px;
+    border: 1px solid #505050;
+    box-shadow: 4px 4px 4px #000000cc;
+  }
+}
+
 @media (max-width: 600px) {
   header {
     height: auto;
@@ -1578,39 +1647,4 @@ label input:checked ~ .custom-checkbox {
       width: 100%;
     }
   }
-}
-
-.loading-img {
-  filter: blur(10px);
-  clip-path: inset(0);
-}
-.loaded-img {
-  filter: blur(0px);
-  transition: filter 0.5s linear;
-}
-
-.form-error {
-  color: #ffaaaa;
-  margin: 0;
-  grid-column: 2;
-}
-
-.input-error {
-  border-color: #ffaaaa;
-}
-
-.character-counter {
-  grid-column: 2;
-  text-align: right;
-  width: 100%;
-  margin: 0;
-  color: #7d7d7d;
-}
-
-.error-page-content {
-  flex: 1;
-  align-self: stretch;
-}
-.error-page-message a {
-  color: #a6dbff;
 }

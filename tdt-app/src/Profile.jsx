@@ -73,7 +73,7 @@ const Profile = () => {
   return user ? (
     <>
       {showDeleteEventModal && (
-        <Modal>
+        <Modal closeModal={setShowDeleteEventModal}>
           <ConfirmEventDelete
             eventId={eventId}
             showModal={setShowDeleteEventModal}
@@ -82,7 +82,7 @@ const Profile = () => {
         </Modal>
       )}
       {showDeleteUserModal && (
-        <Modal>
+        <Modal closeModal={setShowDeleteUserModal}>
           <ConfirmUserDelete
             userId={user.id}
             showModal={setShowDeleteUserModal}

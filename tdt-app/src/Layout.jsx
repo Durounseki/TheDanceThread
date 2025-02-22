@@ -7,6 +7,7 @@ import Login from "./Login.jsx";
 
 const Layout = ({ loading }) => {
   const [showLogin, setShowLogin] = useState(false);
+  console.log(showLogin);
   const location = useLocation();
   const isHome = location.pathname === "/";
   return (
@@ -14,8 +15,8 @@ const Layout = ({ loading }) => {
       {!isHome && <Header showLogin={setShowLogin} />}
       {loading ? <p>Loading...</p> : <Outlet showLogin={setShowLogin} />}
       {showLogin && (
-        <Modal>
-          <Login closeLogin={setShowLogin} />
+        <Modal closeModal={setShowLogin}>
+          <Login />
         </Modal>
       )}
       {!isHome && <Footer showLogin={setShowLogin} />}

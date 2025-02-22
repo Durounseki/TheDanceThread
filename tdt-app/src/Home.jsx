@@ -34,8 +34,8 @@ const Home = () => {
         </ul>
       </div>
       {showLogin && (
-        <Modal>
-          <Login closeLogin={setShowLogin} />
+        <Modal closeModal={setShowLogin}>
+          <Login />
         </Modal>
       )}
     </main>
