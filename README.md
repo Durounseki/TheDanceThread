@@ -4,12 +4,19 @@ This is the prototype of The Dance Thread a social platform where dancers can fi
 
 ## To do
 
+- [ ] Optimistic updates.
+- [ ] Reload event components on event update.
+- [ ] Show status and error messages.
+- [ ] Prevent opening delete user and delete event at the same time.
+- [ ] Handle protected routes properly.
+- [ ] Enable google auth in production.
+- [ ] Add google map.
+- [ ] Add event dance styles.
 - [x] Edit user.
 - [x] Delete user.
 - [x] Sanitize event data.
-- [ ] Sanitize user data.
-- [ ] Enable google auth in production.
-- [ ] Create browser independent form inputs.
+- [x] Sanitize user data.
+- [x] Create browser independent form inputs.
 - [x] Resize images.
 - [x] Add a home page explore events and create event options.
 - [x] Style the header.
@@ -17,13 +24,7 @@ This is the prototype of The Dance Thread a social platform where dancers can fi
 - [x] Refactor event page to fetch all the events at once.
 - [x] Cache events on client side to avoid sending the request to the server too often.
 - [x] Add Skeletons for loading states.
-- [ ] Show status and error messages.
-- [ ] Optimistic updates.
-- [ ] Reload event components on event update.
-- [ ] Add google map.
 - [x] Show avatar after login.
-- [ ] Handle protected routes properly.
-- [ ] Prevent opening delete user and delete event at the same time.
 - [x] Fetch avatars for each user.
 - [x] Add avatars to users.
 - [x] Edit event.

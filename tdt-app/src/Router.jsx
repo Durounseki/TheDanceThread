@@ -21,9 +21,9 @@ const Router = () => {
           <Route index element={<Home />} />
           <Route path="/events" element={<Events />}>
             <Route index element={<EventsSchedule />} />
+            <Route path="create" element={<CreateEvent />} />
             <Route path=":id" element={<EventsSchedule />} />
-            {user && <Route path="create" element={<CreateEvent />} />}
-            {user && <Route path=":id/edit" element={<EditEvent />} />}
+            <Route path=":id/edit" element={<EditEvent />} />
           </Route>
           {!user && <Route path="/login" element={<Login />} />}
           {user && <Route path="/profile" element={<Profile />} />}
