@@ -6,12 +6,15 @@ import CustomCheckbox from "./CustomCheckbox";
 import VenueInput from "./VenueInput";
 import useAuth from "../../useAuth";
 import ProgressiveImage from "../../ProgressiveImage";
+import DatePicker from "react-datepicker";
+import { addYears } from "date-fns";
+import "../../DatePicker.css";
 
 function EventForm() {
   const navigate = useNavigate();
   const { id: eventId } = useParams();
   const [name, setName] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(null);
   const [description, setDescription] = useState("");
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
@@ -54,7 +57,6 @@ function EventForm() {
   const MAX_FILE_SIZE = 1024 * 1024;
   const textAreaRef = useRef(null);
   const MAX_DESCRIPTION_LENGTH = 2000;
-  const dateRef = useRef(null);
   const apiUrl = import.meta.env.VITE_API_URL;
   const imgUrl = import.meta.env.VITE_IMAGES_URL;
 
@@ -110,17 +112,6 @@ function EventForm() {
 
     resizeTextArea();
     return () => textArea.removeEventListener("input", resizeTextArea);
-  }, []);
-
-  useEffect(() => {
-    const today = new Date();
-    const minDate = today.toISOString().split("T")[0];
-    today.setFullYear(today.getFullYear() + 2);
-    const maxDate = today.toISOString().split("T")[0];
-    if (dateRef.current) {
-      dateRef.current.min = minDate;
-      dateRef.current.max = maxDate;
-    }
   }, []);
 
   const handleStyleCheck = (event) => {
@@ -292,16 +283,23 @@ function EventForm() {
         onChange={(e) => setName(e.target.value)}
       />
       <label htmlFor="date">Date:</label>
-      <input
-        type="date"
-        id="date"
-        name="date"
-        required
-        ref={dateRef}
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-        className={date === "" ? "empty" : ""}
-      />
+      <div className="event-datepicker-container">
+        <DatePicker
+          id="date"
+          name="date"
+          autoComplete="off"
+          selected={date}
+          onChange={(dateValue) => setDate(dateValue)}
+          showIcon
+          icon="fa fa-calendar"
+          toggleCalendarOnIconClick
+          isClearable
+          placeholderText="YYYY/MM/DD"
+          dateFormat="yyyy/MM/dd"
+          minDate={new Date()}
+          maxDate={addYears(new Date(), 2)}
+        />
+      </div>
       <label htmlFor="description">Description:</label>
       <textarea
         id="description"

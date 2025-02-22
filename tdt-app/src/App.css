@@ -392,7 +392,9 @@ footer {
   width: 100%;
   padding-top: 100%;
 }
-
+.event-datepicker-container {
+  width: 100%;
+}
 .event-date,
 .event-venue {
   display: flex;
@@ -667,6 +669,7 @@ footer {
   align-items: center;
   flex: 1;
   align-self: stretch;
+  border: 1px solid #303030;
   #country-search:focus {
     border: solid 1px #20202000;
     background-color: #1d1d1d;
@@ -730,7 +733,7 @@ footer {
   gap: 8px;
   input {
     background-color: #202020;
-    border: solid 1px #20202000;
+    border: solid 1px #303030;
     padding: 8px 16px;
     border-radius: 20px;
     height: 40px;
@@ -907,6 +910,7 @@ form {
   .event-form-action {
     margin-top: 24px;
     min-width: 100px;
+    cursor: pointer;
   }
 }
 
@@ -1032,7 +1036,8 @@ input[type="date"] {
 .edit-profile-submit button:hover,
 .edit-profile-pic-submit button:hover,
 .user-button:hover,
-.edit-event-buttons button:hover {
+.edit-event-buttons button:hover,
+.event-form-action:hover {
   background-color: #a6dbff;
   color: #141414;
   cursor: pointer;

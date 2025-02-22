@@ -16,6 +16,7 @@
 .react-datepicker-wrapper {
   display: flex;
   background-color: #202020;
+  border: 1px solid #303030;
   color: #fff5ff;
   padding: 4px 20px;
   border-radius: 30px;

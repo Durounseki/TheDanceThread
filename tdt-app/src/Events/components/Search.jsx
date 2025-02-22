@@ -66,19 +66,22 @@ const SearchEvent = () => {
           <div className="search-filter">
             <StyleSearch onSelect={handleStyleInput} />
             <label htmlFor="date-search">Date:</label>
-            <DatePicker
-              id="date-search"
-              name="date-search"
-              selected={dateQuery}
-              onChange={(date) => setDateQuery(date)}
-              dateFormat="MM/yyyy"
-              showMonthYearPicker
-              showIcon
-              icon="fa fa-calendar"
-              toggleCalendarOnIconClick
-              isClearable
-              placeholderText="MM/YYYY"
-            />
+            <div className="filter-datepicker-container">
+              <DatePicker
+                id="date-search"
+                autoComplete="off"
+                name="date-search"
+                selected={dateQuery}
+                onChange={(date) => setDateQuery(date)}
+                dateFormat="MM/yyyy"
+                showMonthYearPicker
+                showIcon
+                icon="fa fa-calendar"
+                toggleCalendarOnIconClick
+                isClearable
+                placeholderText="MM/YYYY"
+              />
+            </div>
             {/* <input
               type="month"
               id="date-search"
