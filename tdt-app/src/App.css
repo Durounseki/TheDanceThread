@@ -1037,7 +1037,8 @@ input[type="date"] {
 .edit-profile-pic-submit button:hover,
 .user-button:hover,
 .edit-event-buttons button:hover,
-.event-form-action:hover {
+.event-form-action:hover,
+#user-add-style:hover {
   background-color: #a6dbff;
   color: #141414;
   cursor: pointer;

@@ -28,6 +28,9 @@ const UserForm = ({
   const textAreaRef = useRef(null);
   const [otherStyle, setOtherStyle] = useState("");
   const [showFileUpload, setShowFileUpload] = useState(false);
+  const [fileError, setFileError] = useState(null);
+  const MAX_FILE_SIZE = 1024 * 1024;
+  const MAX_BIO_LENGTH = 2000;
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -185,6 +188,28 @@ const UserForm = ({
     }
   };
 
+  const handleBioChange = (event) => {
+    const text = event.target.value;
+    if (text.length > MAX_BIO_LENGTH) {
+      event.target.value = text.slice(0, MAX_BIO_LENGTH);
+      return;
+    }
+    setBio(text);
+  };
+
+  const handleFileChange = (event) => {
+    setFileError(null);
+    const file = event.target.files[0];
+
+    if (file.size > MAX_FILE_SIZE) {
+      setFileError(
+        `File size exceeds the limit of ${MAX_FILE_SIZE / (1024 * 1024)}MB.`
+      );
+      event.target.value = "";
+      return;
+    }
+  };
+
   const handleUpdatePicture = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -269,7 +294,11 @@ const UserForm = ({
               accept="image/*"
               id="profilePic"
               name="profilePic"
+              onChange={handleFileChange}
+              className={fileError ? "input-error" : ""}
             />
+            {fileError && <p className="form-error">{fileError}</p>}
+
             <button className="event-form-button" type="submit">
               Update Picture
             </button>
@@ -306,8 +335,11 @@ const UserForm = ({
           placeholder="Dance, share, celebrate yourself!"
           ref={textAreaRef}
           value={bio}
-          onChange={(e) => setBio(e.target.value)}
+          onChange={handleBioChange}
         ></textarea>
+        <p className="character-counter">
+          {bio.length}/{MAX_BIO_LENGTH}
+        </p>
         <div className="form-separator"></div>
         <h3 className="form-section-header">Social Media</h3>
         <div className="sns-container">

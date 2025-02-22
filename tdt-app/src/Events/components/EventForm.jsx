@@ -53,7 +53,7 @@ function EventForm() {
   ]);
   const [flyer, setFlyer] = useState(undefined);
   const [thumbnail, setThumbnail] = useState("");
-  const [flyerError, setFlyerError] = useState(null);
+  const [fileError, setFileError] = useState(null);
   const MAX_FILE_SIZE = 1024 * 1024;
   const textAreaRef = useRef(null);
   const MAX_DESCRIPTION_LENGTH = 2000;
@@ -194,8 +194,8 @@ function EventForm() {
     return disabledOptions;
   };
 
-  const handleFlyerChange = (event) => {
-    setFlyerError(null);
+  const handleFileChange = (event) => {
+    setFileError(null);
     const file = event.target.files[0];
 
     if (!file) {
@@ -204,7 +204,7 @@ function EventForm() {
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      setFlyerError(
+      setFileError(
         `File size exceeds the limit of ${MAX_FILE_SIZE / (1024 * 1024)}MB.`
       );
       event.target.value = "";
@@ -406,10 +406,10 @@ function EventForm() {
         accept="image/*"
         id="flyer"
         name="flyer"
-        onChange={handleFlyerChange}
-        className={flyerError ? "input-error" : ""}
+        onChange={handleFileChange}
+        className={fileError ? "input-error" : ""}
       />
-      {flyerError && <p className="form-error">{flyerError}</p>}
+      {fileError && <p className="form-error">{fileError}</p>}
 
       {eventId ? (
         <div className="edit-form-buttons">

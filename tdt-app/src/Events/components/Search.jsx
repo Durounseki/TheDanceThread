@@ -50,8 +50,6 @@ const SearchEvent = () => {
     navigate("/events");
   };
 
-  console.log("dateQuery:", dateQuery);
-
   return (
     <search className="event-search">
       <form onSubmit={handleSubmit} className="search-container">
