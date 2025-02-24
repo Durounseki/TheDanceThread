@@ -7,7 +7,6 @@ import Login from "./Login.jsx";
 
 const Layout = ({ loading }) => {
   const [showLogin, setShowLogin] = useState(false);
-  console.log(showLogin);
   const location = useLocation();
   const isHome = location.pathname === "/";
   return (

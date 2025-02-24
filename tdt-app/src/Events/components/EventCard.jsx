@@ -2,48 +2,34 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
-import useAuth from "../../useAuth";
 import ProgressiveImage from "../../ProgressiveImage";
+import { useAuthenticateUser } from "../../userQueries";
+import { useBookmarkEvent } from "../../userMutations";
 
 const EventCard = ({ eventInfo, canEdit = false, showModal, setEventId }) => {
-  const { user } = useAuth();
+  const { data: user, isLoading: userLoading } = useAuthenticateUser();
   const [bookmark, setBookmark] = useState(false);
+  const bookmarkMutation = useBookmarkEvent(eventInfo.id);
   const [shared, setShared] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && !userLoading) {
+      setBookmark(user.savedEvents.includes(eventInfo.id));
+    }
+  }, [user, eventInfo, userLoading]);
+
   const handleSelectEvent = () => {
     navigate(`/events/${eventInfo.id}`);
   };
-  useEffect(() => {
-    if (eventInfo.totalSaves > 0 && user) {
-      const bookmarked = eventInfo.saves.find(
-        (item) => item.user.id === user.id
-      );
-      if (bookmarked) {
-        setBookmark(true);
-      }
-    }
-  }, [eventInfo, user]);
+
   const handleBookmark = async (event) => {
     event.preventDefault();
     event.stopPropagation();
-    try {
-      if (!bookmark) {
-        await fetch(`${apiUrl}/events/${eventInfo.id}/saves`, {
-          method: "POST",
-          credentials: "include",
-        });
-      } else {
-        await fetch(`${apiUrl}/events/${eventInfo.id}/saves`, {
-          method: "DELETE",
-          credentials: "include",
-        });
-      }
-      setBookmark(!bookmark);
-    } catch (error) {
-      console.error("Failed to bookmark event", error);
-    }
+    bookmarkMutation.mutate(bookmark);
   };
+
   const handleShare = async (event) => {
     event.preventDefault();
     event.stopPropagation();

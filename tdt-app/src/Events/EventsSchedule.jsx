@@ -47,7 +47,10 @@ const EventsSchedule = () => {
         </aside>
       </main>
       {featuredEvent && (
-        <EventBanner event={featuredEvent} isLoading={featuredEventLoading} />
+        <EventBanner
+          eventInfo={featuredEvent}
+          isLoading={featuredEventLoading}
+        />
       )}
 
       {/* <Outlet /> */}

@@ -586,12 +586,24 @@ export async function getUserById(userId) {
 					orderBy: { name: 'asc' },
 				},
 				eventsCreated: true,
-				eventsAttending: true,
-				likedEvents: true,
-				savedEvents: true,
+				eventsAttending: {
+					select: {
+						eventId: true,
+						type: true,
+					},
+				},
+				likedEvents: {
+					select: { eventId: true },
+				},
+				savedEvents: {
+					select: { eventId: true },
+				},
 				profilePic: true,
 			},
 		});
+
+		user.likedEvents = user.likedEvents.map((item) => item.eventId);
+		user.savedEvents = user.savedEvents.map((item) => item.eventId);
 		return user;
 	} catch (error) {
 		console.error('Error retrieving user', error);
