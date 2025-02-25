@@ -1,7 +1,10 @@
 import useAuth from "./useAuth";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuthenticateUser } from "./userQueries";
+import { useLogout } from "./userMutations";
 const Footer = ({ showLogin }) => {
-  const { user, logout } = useAuth();
+  const { data: user, isLoading: userLoading } = useAuthenticateUser();
+  const logoutMutation = useLogout();
   const navigate = useNavigate();
   const handleShowLogin = (event) => {
     event.preventDefault();
@@ -10,7 +13,7 @@ const Footer = ({ showLogin }) => {
   const handleLogOut = async (event) => {
     event.preventDefault();
     navigate("/");
-    await logout();
+    logoutMutation.mutate(user.id);
   };
   const handleNewEvent = () => {
     navigate("/events/create");

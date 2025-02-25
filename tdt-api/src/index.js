@@ -310,6 +310,7 @@ async function authenticate(c, next) {
 }
 
 app.get('api/auth/protected', authenticate, async (c) => {
+	console.log(c.req.origin);
 	const userId = c.get('userId');
 	const prisma = c.get('prisma');
 	const user = await prisma.user.getUserById(userId);

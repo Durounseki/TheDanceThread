@@ -1,4 +1,4 @@
-import useAuth from "./useAuth.jsx";
+// import useAuth from "./useAuth.jsx";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./Layout.jsx";
 import Home from "./Home.jsx";
@@ -14,18 +14,17 @@ import PrivacyPolicy from "./PrivacyPolicy.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 
 const Router = () => {
-  const { user, loading } = useAuth();
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout loading={loading} />}>
+        <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="/events" element={<Events />}>
             <Route index element={<EventsSchedule />} />
             <Route
               path="create"
               element={
-                <ProtectedRoute user={user} route="/events">
+                <ProtectedRoute route="/events">
                   <CreateEvent />
                 </ProtectedRoute>
               }
@@ -34,7 +33,7 @@ const Router = () => {
             <Route
               path=":id/edit"
               element={
-                <ProtectedRoute user={user} route="/events">
+                <ProtectedRoute route="/events">
                   <EditEvent />
                 </ProtectedRoute>
               }
@@ -44,7 +43,7 @@ const Router = () => {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute user={user} route="/login">
+              <ProtectedRoute route="/login">
                 <Profile />
               </ProtectedRoute>
             }

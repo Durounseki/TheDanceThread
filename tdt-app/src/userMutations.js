@@ -1,6 +1,28 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 const apiUrl = import.meta.env.VITE_API_URL;
 
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`${apiUrl}/auth/logout`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Error logging out");
+      }
+    },
+    onError: (err) => {
+      console.error("Failed to logout:", err);
+    },
+    onSuccess: (userId) => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["userEvents", userId] });
+    },
+  });
+};
+
 export const useBookmarkEvent = (eventId) => {
   const queryClient = useQueryClient();
   return useMutation({

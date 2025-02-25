@@ -5,14 +5,15 @@ import Modal from "./Modal.jsx";
 import { useState } from "react";
 import Login from "./Login.jsx";
 
-const Layout = ({ loading }) => {
+const Layout = () => {
   const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === "/";
+  console.log("isHome?", isHome);
   return (
     <>
       {!isHome && <Header showLogin={setShowLogin} />}
-      {loading ? <p>Loading...</p> : <Outlet showLogin={setShowLogin} />}
+      <Outlet showLogin={setShowLogin} />
       {showLogin && (
         <Modal closeModal={setShowLogin}>
           <Login />

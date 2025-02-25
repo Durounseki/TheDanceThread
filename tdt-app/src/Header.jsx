@@ -3,8 +3,11 @@ import mainLogo from "./assets/tdt-logo-dark.png";
 import useAuth from "./useAuth.jsx";
 import { useState, useEffect, useRef } from "react";
 import ProgressiveImage from "./ProgressiveImage.jsx";
+import { useAuthenticateUser } from "./userQueries.js";
+import { useLogout } from "./userMutations.js";
 const Header = ({ showLogin }) => {
-  const { user, logout } = useAuth();
+  const { data: user, isLoading: userLoading } = useAuthenticateUser();
+  const logoutMutation = useLogout();
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
   const profileMenuRef = useRef(null);
   const navigate = useNavigate();
@@ -20,7 +23,7 @@ const Header = ({ showLogin }) => {
   const handleLogOut = async (event) => {
     event.preventDefault();
     navigate("/");
-    await logout();
+    logoutMutation.mutate(user.id);
   };
   const handleOpenProfile = (event) => {
     event.preventDefault();

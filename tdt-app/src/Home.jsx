@@ -3,9 +3,10 @@ import { useState } from "react";
 import TDTLogo from "./TDTLogo.jsx";
 import Modal from "./Modal.jsx";
 import Login from "./Login.jsx";
-import useAuth from "./useAuth.jsx";
+// import useAuth from "./useAuth.jsx";
+import { useAuthenticateUser, useCurrentUser } from "./userQueries.js";
 const Home = () => {
-  const { user } = useAuth();
+  const { data: user, isLoading: userLoading } = useAuthenticateUser();
   const [showLogin, setShowLogin] = useState(false);
   const navigate = useNavigate();
   const handleNewEvent = (event) => {
@@ -16,6 +17,9 @@ const Home = () => {
       setShowLogin(true);
     }
   };
+  if (userLoading) {
+    return <p>Loading...</p>;
+  }
   return (
     <main className="home-page">
       <h1>WELCOME TO</h1>

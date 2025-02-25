@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -11,11 +11,17 @@ export const useAuthenticateUser = () => {
         credentials: "include",
       });
       if (!response.ok) {
-        throw new Error("Failed to fetch user");
+        console.log("User is not authenticated");
+        return null;
       }
       const data = await response.json();
       return data;
     },
     retry: false,
   });
+};
+
+export const useCurrentUser = () => {
+  const queryClient = useQueryClient();
+  return queryClient.getQueryData(["currentUser"]);
 };

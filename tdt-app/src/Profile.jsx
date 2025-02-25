@@ -8,52 +8,58 @@ import ConfirmEventDelete from "./ConfirmEventDelete.jsx";
 import ConfirmUserDelete from "./ConfirmUserDelete.jsx";
 import Modal from "./Modal.jsx";
 import ProgressiveImage from "./ProgressiveImage.jsx";
+import { useCurrentUser } from "./userQueries.js";
+import { useLogout } from "./userMutations.js";
 
 const Profile = () => {
   const [showDeleteEventModal, setShowDeleteEventModal] = useState(false);
   const [showDeleteUserModal, setShowDeleteUserModal] = useState(false);
   const [eventId, setEventId] = useState(null);
-  const { user, setUser, logout } = useAuth();
-  const [loading, setLoading] = useState(true);
+  const user = useCurrentUser();
+  const logoutMutation = useLogout();
+  // const { user, setUser, logout } = useAuth();
+  // const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [country, setCountry] = useState("");
-  const [bio, setBio] = useState("");
-  const [avatar, setAvatar] = useState("");
-  const [profilePic, setProfilePic] = useState(undefined);
-  const [styles, setStyles] = useState([]);
-  const [snsGroups, setSnsGroups] = useState([]);
+  // const [name, setName] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [country, setCountry] = useState("");
+  // const [bio, setBio] = useState("");
+  // const [avatar, setAvatar] = useState("");
+  // const [profilePic, setProfilePic] = useState(undefined);
+  // const [styles, setStyles] = useState([]);
+  // const [snsGroups, setSnsGroups] = useState([]);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setName(user.name);
-    setEmail(user.email);
-    setCountry(user.country || "");
-    setBio(user.bio || "");
-    setAvatar(user.avatar);
-    setProfilePic(user.profilePic);
-    setStyles(user.styles.map((style) => style.name));
-    if (user.sns.length > 0) {
-      setSnsGroups(
-        user.sns.map((sns) => ({
-          id: sns.id,
-          platform: sns.name,
-          url: sns.url,
-          faClass: sns.faClass,
-        }))
-      );
-    } else {
-      setSnsGroups([{ id: uuidv4(), platform: "website", url: "" }]);
-    }
-    setLoading(false);
-  }, [user]);
+  // useEffect(() => {
+  //   if(user && !userLoading){
+  //     setName(user.name);
+  //     setEmail(user.email);
+  //     setCountry(user.country || "");
+  //     setBio(user.bio || "");
+  //     setAvatar(user.avatar);
+  //     setProfilePic(user.profilePic);
+  //     setStyles(user.styles.map((style) => style.name));
+  //     if (user.sns.length > 0) {
+  //       setSnsGroups(
+  //         user.sns.map((sns) => ({
+  //           id: sns.id,
+  //           platform: sns.name,
+  //           url: sns.url,
+  //           faClass: sns.faClass,
+  //         }))
+  //       );
+  //     } else {
+  //       setSnsGroups([{ id: uuidv4(), platform: "website", url: "" }]);
+  //     }
+  //   }
+  //   setLoading(false);
+  // }, [user, userLoading]);
 
   const handleLogOut = async (event) => {
     event.preventDefault();
     navigate("/");
-    await logout();
+    logoutMutation.mutate(user.id);
   };
 
   const handleDeleteAccount = async (event) => {
@@ -66,11 +72,7 @@ const Profile = () => {
     setEditMode(true);
   };
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  return user ? (
+  return (
     <>
       {showDeleteEventModal && (
         <Modal closeModal={setShowDeleteEventModal}>
@@ -158,25 +160,7 @@ const Profile = () => {
               </section>
             </>
           ) : (
-            <UserForm
-              user={user}
-              setUser={setUser}
-              name={name}
-              setName={setName}
-              email={email}
-              setEmail={setEmail}
-              country={country}
-              setCountry={setCountry}
-              bio={bio}
-              setBio={setBio}
-              avatar={avatar}
-              profilePic={profilePic}
-              styles={styles}
-              setStyles={setStyles}
-              snsGroups={snsGroups}
-              setSnsGroups={setSnsGroups}
-              setEditMode={setEditMode}
-            />
+            <UserForm user={user} setEditMode={setEditMode} />
           )}
         </div>
         <section className="user-events">
@@ -189,8 +173,6 @@ const Profile = () => {
         </section>
       </article>
     </>
-  ) : (
-    <p>Please log in first.</p>
   );
 };
 
