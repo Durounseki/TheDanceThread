@@ -1,5 +1,7 @@
 import CountrySelect from "./CountrySelect";
 import CitySelect from "./CitySelect";
+import { useEffect, useState } from "react";
+import { useCountries, useCities } from "../../otherQueries";
 
 const VenueInput = ({
   country,
@@ -11,6 +13,36 @@ const VenueInput = ({
   venueUrl,
   setVenueUrl,
 }) => {
+  const { data: countryOptions } = useCountries();
+  const { data: cityOptions } = useCities(country ? country.code : null, {
+    enabled: !!country,
+  });
+  useEffect(() => {
+    if (
+      countryOptions &&
+      countryOptions.length > 0 &&
+      country &&
+      typeof country === "string"
+    ) {
+      setCountry(
+        countryOptions.find(
+          (option) => option.name.toLowerCase() === country.toLowerCase()
+        )
+      );
+    }
+    if (
+      cityOptions &&
+      cityOptions.length > 0 &&
+      city &&
+      typeof city === "string"
+    ) {
+      setCity(
+        cityOptions.find(
+          (option) => option.name.toLowerCase() === city.toLowerCase()
+        )
+      );
+    }
+  }, [city, cityOptions, country, countryOptions, setCity, setCountry]);
   const handleCountrySelect = (option) => {
     setCountry(option);
     setCity("");

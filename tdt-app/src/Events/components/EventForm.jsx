@@ -4,15 +4,20 @@ import SnsGroup from "./SnsGroup";
 import { v4 as uuidv4 } from "uuid";
 import CustomCheckbox from "./CustomCheckbox";
 import VenueInput from "./VenueInput";
-import useAuth from "../../useAuth";
 import ProgressiveImage from "../../ProgressiveImage";
 import DatePicker from "react-datepicker";
 import { addYears } from "date-fns";
 import "../../DatePicker.css";
+import { useAuthenticateUser } from "../../userQueries";
+import { useEvent } from "../../eventQueries";
+import { useCreateEvent, useSaveEvent } from "../../eventMutations";
 
 function EventForm() {
   const navigate = useNavigate();
   const { id: eventId } = useParams();
+  const { data: currentEvent, isLoading: eventLoading } = useEvent(eventId);
+  const createEvent = useCreateEvent();
+  const saveEvent = useSaveEvent();
   const [name, setName] = useState("");
   const [date, setDate] = useState(null);
   const [description, setDescription] = useState("");
@@ -20,7 +25,7 @@ function EventForm() {
   const [city, setCity] = useState("");
   const [venueName, setVenueName] = useState("");
   const [venueUrl, setVenueUrl] = useState("");
-  const { user, loading } = useAuth();
+  const { data: user, isLoading: userLoading } = useAuthenticateUser();
   const [styleOptions, setStyleOptions] = useState([
     {
       id: uuidv4(),
@@ -57,53 +62,44 @@ function EventForm() {
   const MAX_FILE_SIZE = 1024 * 1024;
   const textAreaRef = useRef(null);
   const MAX_DESCRIPTION_LENGTH = 2000;
-  const apiUrl = import.meta.env.VITE_API_URL;
   const imgUrl = import.meta.env.VITE_IMAGES_URL;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/events/${eventId}`);
-        const data = await response.json();
-        setName(data.name);
-        setDate(new Date(data.date).toISOString().substring(0, 10));
-        setDescription(data.description);
-        setCountry(data.country);
-        setCity(data.city);
-        setVenueName(data.venues[0].name);
-        setVenueUrl(data.venues[0].url);
-        setStyleOptions(
-          styleOptions.map((option) =>
-            data.styles.map((style) => style.name).includes(option.value)
-              ? { ...option, checked: true }
-              : option
-          )
-        );
-        setSnsGroups(
-          data.sns.map((sns) => ({
-            id: sns.id,
-            platform: sns.name,
-            url: sns.url,
-          }))
-        );
-        const thumbnailUrl = imgUrl + data.flyer.src;
-        const thumbnailFileName = data.flyer.src.replace(/^\d+-/, "");
-        setThumbnail({
-          ...data.flyer,
-          href: thumbnailUrl,
-          fileName: thumbnailFileName,
-        });
-      } catch (error) {
-        console.error("Failed to fetch event info:", error);
-      }
-    };
-    if (eventId) {
-      fetchData();
+    if (currentEvent) {
+      setName(currentEvent.name);
+      setDate(new Date(currentEvent.date).toISOString().substring(0, 10));
+      setDescription(currentEvent.description);
+      setCountry(currentEvent.country);
+      setCity(currentEvent.city);
+      setVenueName(currentEvent.venues[0].name);
+      setVenueUrl(currentEvent.venues[0].url);
+      setStyleOptions(
+        styleOptions.map((option) =>
+          currentEvent.styles.map((style) => style.name).includes(option.value)
+            ? { ...option, checked: true }
+            : option
+        )
+      );
+      setSnsGroups(
+        currentEvent.sns.map((sns) => ({
+          id: sns.id,
+          platform: sns.name,
+          url: sns.url,
+        }))
+      );
+      const thumbnailUrl = imgUrl + currentEvent.flyer.src;
+      const thumbnailFileName = currentEvent.flyer.src.replace(/^\d+-/, "");
+      setThumbnail({
+        ...currentEvent.flyer,
+        href: thumbnailUrl,
+        fileName: thumbnailFileName,
+      });
     }
-  }, [eventId, apiUrl]);
+  }, [currentEvent]);
 
   useEffect(() => {
     const textArea = textAreaRef.current;
+    if (!textArea) return;
     const resizeTextArea = () => {
       textArea.style.height = "auto";
       textArea.style.height = `calc(${textArea.scrollHeight}px + 1em)`;
@@ -230,34 +226,19 @@ function EventForm() {
     if (user) {
       formData.append("creatorId", user.id);
     }
-
-    try {
-      let response;
-
-      if (eventId) {
-        snsGroups.forEach((sns) => formData.append("sns-id[]", sns.id));
-        formData.append("id", eventId);
-        response = await fetch(`${apiUrl}/events/${eventId}`, {
-          method: "PATCH",
-          body: formData,
-          credentials: "include",
-        });
-      } else {
-        response = await fetch(`${apiUrl}/events`, {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-        });
-      }
-      if (response.ok) {
-        const responseData = await response.json();
-        navigate(`/events/${responseData.id}`);
-      } else {
-        console.error("Error creating event");
-      }
-    } catch (error) {
-      console.error("Error:", error);
+    let data;
+    if (eventId) {
+      snsGroups.forEach((sns) => formData.append("sns-id[]", sns.id));
+      formData.append("id", eventId);
+      data = await saveEvent.mutateAsync({
+        formData: formData,
+        event: currentEvent,
+      });
+    } else {
+      data = await createEvent.mutateAsync(formData);
     }
+    console.log(data);
+    navigate(`/events/${data.id}`);
   };
 
   const handleCancel = (event) => {
@@ -266,7 +247,7 @@ function EventForm() {
     navigate("/profile");
   };
 
-  if (loading) {
+  if (userLoading || eventLoading) {
     return <div>Loading ...</div>;
   }
 

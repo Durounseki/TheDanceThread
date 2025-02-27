@@ -9,7 +9,6 @@ const Layout = () => {
   const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === "/";
-  console.log("isHome?", isHome);
   return (
     <>
       {!isHome && <Header showLogin={setShowLogin} />}

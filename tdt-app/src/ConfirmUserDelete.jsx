@@ -1,21 +1,13 @@
 import { useNavigate } from "react-router-dom";
+import { useDeleteUser } from "./userMutations";
 
 const ConfirmUserDelete = ({ userId, showModal }) => {
-  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
+  const deleteUser = useDeleteUser();
   const handleDelete = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/users/${userId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      if (response.ok) {
-        navigate("/");
-        showModal(false);
-      }
-    } catch (error) {
-      console.error("Failed to remove user", error);
-    }
+    deleteUser.mutate(userId);
+    navigate("/");
+    showModal(false);
   };
   const handleClose = (event) => {
     event.preventDefault();

@@ -1,19 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useDeleteEvent } from "./eventMutations";
 
-const ConfirmEventDelete = ({ eventId, showModal, setEventId }) => {
-  const apiUrl = import.meta.env.VITE_API_URL;
-  const navigate = useNavigate();
-  const handleDelete = async () => {
-    try {
-      await fetch(`${apiUrl}/events/${eventId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      showModal(false);
-      navigate(`/profile`);
-    } catch (error) {
-      console.error("Failed to remove event", error);
-    }
+const ConfirmEventDelete = ({ eventId, userId, showModal, setEventId }) => {
+  const deleteEvent = useDeleteEvent();
+  const handleDelete = async (event) => {
+    event.preventDefault();
+    await deleteEvent.mutateAsync({ eventId, userId });
+    showModal(false);
   };
   const handleClose = (event) => {
     event.preventDefault();

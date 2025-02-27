@@ -74,6 +74,7 @@ const Profile = () => {
         <Modal closeModal={setShowDeleteEventModal}>
           <ConfirmEventDelete
             eventId={eventId}
+            userId={user.id}
             showModal={setShowDeleteEventModal}
             setEventId={setEventId}
           />

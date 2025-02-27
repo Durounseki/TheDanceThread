@@ -3,8 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const useEvents = (country, style, date) => {
+  let parameters = {};
+  if (country) parameters.country = country;
+  if (style) parameters.style = style;
+  if (date) parameters.date = date;
   return useQuery({
-    queryKey: ["events", { country, style, date }],
+    queryKey:
+      Object.keys(parameters).length === 0
+        ? ["events"]
+        : ["events", parameters],
     queryFn: async () => {
       const queryParams = new URLSearchParams();
       if (country) queryParams.append("country", country);
@@ -23,6 +30,7 @@ export const useEvents = (country, style, date) => {
 };
 
 export const useEvent = (eventId) => {
+  if (!eventId) return {};
   return useQuery({
     queryKey: ["event", eventId],
     queryFn: async () => {

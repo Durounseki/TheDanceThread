@@ -215,8 +215,9 @@ export const useSaveProfile = () => {
         sns: sns ? sns : [],
       });
     },
-    onError: (err, context) => {
-      queryClient.setQueryData(["currentUser"], context.currentUser);
+    onError: (err, variables) => {
+      const { user } = variables;
+      queryClient.setQueryData(["currentUser"], user);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
@@ -258,6 +259,25 @@ export const useDeletePicture = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+};
+
+export const useDeleteUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId) => {
+      const response = await fetch(`${apiUrl}/users/${userId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Error deleting user");
+      }
+    },
+    onSettled: (userId) => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["userEvents", userId] });
     },
   });
 };
