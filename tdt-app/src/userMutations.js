@@ -186,3 +186,78 @@ export const useAttendEvent = (eventId) => {
     },
   });
 };
+
+export const useSaveProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (variables) => {
+      const { formData, user } = variables;
+      const response = await fetch(`${apiUrl}/users/${user.id}`, {
+        method: "PATCH",
+        body: formData,
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Error updating profile");
+      }
+    },
+    onMutate: async (variables) => {
+      const { formData, user } = variables;
+      const { name, email, country, bio, styles, sns } = formData;
+      await queryClient.cancelQueries({ queryKey: ["currentUser"] });
+      queryClient.setQueryData(["currentUser"], {
+        ...user,
+        name: name,
+        email: email,
+        country: country ? country : "",
+        bio: bio ? bio : "",
+        styles: styles ? styles : [],
+        sns: sns ? sns : [],
+      });
+    },
+    onError: (err, context) => {
+      queryClient.setQueryData(["currentUser"], context.currentUser);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+};
+
+export const useUpdatePicture = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (variables) => {
+      const { user, formData } = variables;
+      const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
+        method: "PATCH",
+        body: formData,
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Error updating profile picture");
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+};
+
+export const useDeletePicture = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (user) => {
+      const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Error deleting profile picture");
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+};

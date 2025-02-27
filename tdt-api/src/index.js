@@ -387,13 +387,6 @@ app.patch('api/users/:id/profile-pic', authenticate, async (c) => {
 		await c.env.TDT_BUCKET.put(key, file.stream());
 		const profilePic = await prisma.profilePic.updateProfilePic(userId, key, alt);
 
-		const s3 = c.get('s3');
-		const command = new GetObjectCommand({
-			Bucket: c.env.S3_BUCKET,
-			Key: key,
-		});
-		const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-		profilePic.src = url;
 		return c.json(profilePic, 200);
 	} catch (error) {
 		console.error('Error updating user:', error);

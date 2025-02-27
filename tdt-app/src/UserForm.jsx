@@ -4,54 +4,58 @@ import { v4 as uuidv4 } from "uuid";
 import CountrySelect from "./Events/components/CountrySelect.jsx";
 import CustomCheckbox from "./Events/components/CustomCheckbox.jsx";
 import ProgressiveImage from "./ProgressiveImage.jsx";
+import { useDanceStyles } from "./otherQueries.js";
+import { useSaveProfile } from "./userMutations.js";
+import { useUpdatePicture, useDeletePicture } from "./userMutations.js";
 
-const UserForm = ({
-  user,
-  setUser,
-  name,
-  setName,
-  email,
-  setEmail,
-  country,
-  setCountry,
-  bio,
-  setBio,
-  styles,
-  setStyles,
-  snsGroups,
-  setSnsGroups,
-  avatar,
-  profilePic,
-  setEditMode,
-}) => {
+const UserForm = ({ user, setEditMode }) => {
+  console.log(user);
+  const { data: danceStyles } = useDanceStyles();
+  const saveProfile = useSaveProfile();
+  const updatePicture = useUpdatePicture();
+  const deletePicture = useDeletePicture();
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+  const [country, setCountry] = useState(user.country);
+  const [bio, setBio] = useState(user.bio);
   const [styleOptions, setStyleOptions] = useState([]);
+  const [snsGroups, setSnsGroups] = useState(user.sns);
   const textAreaRef = useRef(null);
   const [otherStyle, setOtherStyle] = useState("");
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [fileError, setFileError] = useState(null);
   const MAX_FILE_SIZE = 1024 * 1024;
   const MAX_BIO_LENGTH = 2000;
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/styles`);
-        const data = await response.json();
-        setStyleOptions(
-          data.map((style) => ({
-            id: style.id,
-            value: style.name,
-            text: style.name.charAt(0).toUpperCase() + style.name.slice(1),
-            checked: styles.includes(style.name) ? true : false,
-          }))
-        );
-      } catch (error) {
-        console.error("Failed to fetch styles:", error);
-      }
-    };
-    fetchData();
-  }, []);
+    if (danceStyles) {
+      setStyleOptions(
+        danceStyles.map((style) => ({
+          id: style.id,
+          value: style.name,
+          text: style.name.charAt(0).toUpperCase() + style.name.slice(1),
+          checked: user.styles.find((item) => item.name === style.name)
+            ? true
+            : false,
+        }))
+      );
+    }
+  }, [danceStyles, user]);
+
+  useEffect(() => {
+    if (user.sns.length > 0) {
+      setSnsGroups(
+        user.sns.map((sns) => ({
+          id: sns.id,
+          platform: sns.name,
+          url: sns.url,
+          faClass: sns.faClass,
+        }))
+      );
+    } else {
+      setSnsGroups([{ id: uuidv4(), platform: "website", url: "" }]);
+    }
+  }, [user]);
 
   useEffect(() => {
     const textArea = textAreaRef.current;
@@ -162,30 +166,32 @@ const UserForm = ({
     event.preventDefault();
     const formData = new FormData(event.target);
     snsGroups.forEach((sns) => formData.append("sns-id[]", sns.id));
-    try {
-      const response = await fetch(`${apiUrl}/users/${user.id}`, {
-        method: "PATCH",
-        body: formData,
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setUser({
-          ...user,
-          name: data.name,
-          email: data.email,
-          country: data.country,
-          bio: data.bio,
-          styles: data.styles,
-          sns: data.sns,
-        });
-        setEditMode(false);
-      } else {
-        console.error("Error updating user");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    saveProfile.mutate({ user, formData });
+    setEditMode(false);
+    // try {
+    //   const response = await fetch(`${apiUrl}/users/${user.id}`, {
+    //     method: "PATCH",
+    //     body: formData,
+    //     credentials: "include",
+    //   });
+    //   if (response.ok) {
+    //     const data = await response.json();
+    //     setUser({
+    //       ...user,
+    //       name: data.name,
+    //       email: data.email,
+    //       country: data.country,
+    //       bio: data.bio,
+    //       styles: data.styles,
+    //       sns: data.sns,
+    //     });
+    //     setEditMode(false);
+    //   } else {
+    //     console.error("Error updating user");
+    //   }
+    // } catch (error) {
+    //   console.error("Error:", error);
+    // }
   };
 
   const handleBioChange = (event) => {
@@ -214,43 +220,47 @@ const UserForm = ({
     event.preventDefault();
     const formData = new FormData(event.target);
     formData.append("alt", name);
-    try {
-      const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
-        method: "PATCH",
-        body: formData,
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setUser({
-          ...user,
-          profilePic: data,
-        });
-        setShowFileUpload(false);
-      } else {
-        console.error("Error updating user profile picture");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    updatePicture.mutate({ user, formData });
+    setShowFileUpload(false);
+    // try {
+    //   const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
+    //     method: "PATCH",
+    //     body: formData,
+    //     credentials: "include",
+    //   });
+    //   if (response.ok) {
+    //     const data = await response.json();
+    //     setUser({
+    //       ...user,
+    //       profilePic: data,
+    //     });
+    //     setShowFileUpload(false);
+    //   } else {
+    //     console.error("Error updating user profile picture");
+    //   }
+    // } catch (error) {
+    //   console.error("Error:", error);
+    // }
   };
 
   const handleDeletePicture = async (event) => {
     event.preventDefault();
-    try {
-      const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      if (response.ok) {
-        setUser({
-          ...user,
-          profilePic: undefined,
-        });
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    deletePicture.mutate(user);
+    setShowFileUpload(false);
+    // try {
+    //   const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
+    //     method: "DELETE",
+    //     credentials: "include",
+    //   });
+    //   if (response.ok) {
+    //     setUser({
+    //       ...user,
+    //       profilePic: undefined,
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.error("Error:", error);
+    // }
   };
 
   return (
@@ -261,14 +271,14 @@ const UserForm = ({
         onSubmit={handleUpdatePicture}
       >
         <figure className="profile-picture edit">
-          {profilePic ? (
+          {user.profilePic ? (
             <ProgressiveImage
-              imageKey={profilePic.src}
-              alt={profilePic.alt}
+              imageKey={user.profilePic.src}
+              alt={user.profilePic.alt}
               size="small"
             />
           ) : (
-            <div dangerouslySetInnerHTML={{ __html: avatar }} />
+            <div dangerouslySetInnerHTML={{ __html: user.avatar }} />
           )}
         </figure>
 
@@ -280,7 +290,7 @@ const UserForm = ({
             <button onClick={handleShowFileUpload}>Cancel</button>
           )}
           <button
-            className={!profilePic ? "disabled" : ""}
+            className={!user.profilePic ? "disabled" : ""}
             onClick={handleDeletePicture}
           >
             Delete
@@ -318,6 +328,7 @@ const UserForm = ({
           onChange={(e) => setName(e.target.value)}
           id="name"
           name="name"
+          required
         />
         <label htmlFor="email">Email:</label>
         <input
@@ -326,6 +337,7 @@ const UserForm = ({
           onChange={(e) => setEmail(e.target.value)}
           id="email"
           name="email"
+          required
         />
         <CountrySelect value={country} onSelect={setCountry} />
         <label htmlFor="bio">Bio:</label>
@@ -334,11 +346,11 @@ const UserForm = ({
           name="bio"
           placeholder="Dance, share, celebrate yourself!"
           ref={textAreaRef}
-          value={bio}
+          value={bio ? bio : ""}
           onChange={handleBioChange}
         ></textarea>
         <p className="character-counter">
-          {bio.length}/{MAX_BIO_LENGTH}
+          {bio ? bio.length : 0}/{MAX_BIO_LENGTH}
         </p>
         <div className="form-separator"></div>
         <h3 className="form-section-header">Social Media</h3>
@@ -389,6 +401,12 @@ const UserForm = ({
             name="other-style"
             value={otherStyle}
             onChange={(event) => setOtherStyle(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                handleOtherStyle(event);
+              }
+            }}
           />
           <button
             type="button"

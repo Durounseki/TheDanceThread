@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import useAuth from "./useAuth.jsx";
 import UserEvents from "./UserEvents.jsx";
 import { v4 as uuidv4 } from "uuid";
 import UserForm from "./UserForm.jsx";
@@ -8,17 +7,15 @@ import ConfirmEventDelete from "./ConfirmEventDelete.jsx";
 import ConfirmUserDelete from "./ConfirmUserDelete.jsx";
 import Modal from "./Modal.jsx";
 import ProgressiveImage from "./ProgressiveImage.jsx";
-import { useCurrentUser } from "./userQueries.js";
+import { useAuthenticateUser } from "./userQueries.js";
 import { useLogout } from "./userMutations.js";
 
 const Profile = () => {
   const [showDeleteEventModal, setShowDeleteEventModal] = useState(false);
   const [showDeleteUserModal, setShowDeleteUserModal] = useState(false);
   const [eventId, setEventId] = useState(null);
-  const user = useCurrentUser();
+  const { data: user } = useAuthenticateUser();
   const logoutMutation = useLogout();
-  // const { user, setUser, logout } = useAuth();
-  // const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
   // const [name, setName] = useState("");
   // const [email, setEmail] = useState("");
@@ -27,34 +24,33 @@ const Profile = () => {
   // const [avatar, setAvatar] = useState("");
   // const [profilePic, setProfilePic] = useState(undefined);
   // const [styles, setStyles] = useState([]);
-  // const [snsGroups, setSnsGroups] = useState([]);
+  const [snsGroups, setSnsGroups] = useState([]);
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if(user && !userLoading){
-  //     setName(user.name);
-  //     setEmail(user.email);
-  //     setCountry(user.country || "");
-  //     setBio(user.bio || "");
-  //     setAvatar(user.avatar);
-  //     setProfilePic(user.profilePic);
-  //     setStyles(user.styles.map((style) => style.name));
-  //     if (user.sns.length > 0) {
-  //       setSnsGroups(
-  //         user.sns.map((sns) => ({
-  //           id: sns.id,
-  //           platform: sns.name,
-  //           url: sns.url,
-  //           faClass: sns.faClass,
-  //         }))
-  //       );
-  //     } else {
-  //       setSnsGroups([{ id: uuidv4(), platform: "website", url: "" }]);
-  //     }
-  //   }
-  //   setLoading(false);
-  // }, [user, userLoading]);
+  useEffect(() => {
+    if (user) {
+      // setName(user.name);
+      // setEmail(user.email);
+      // setCountry(user.country || "");
+      // setBio(user.bio || "");
+      // setAvatar(user.avatar);
+      // setProfilePic(user.profilePic);
+      // setStyles(user.styles.map((style) => style.name));
+      if (user.sns.length > 0) {
+        setSnsGroups(
+          user.sns.map((sns) => ({
+            id: sns.id,
+            platform: sns.name,
+            url: sns.url,
+            faClass: sns.faClass,
+          }))
+        );
+      } else {
+        setSnsGroups([{ id: uuidv4(), platform: "website", url: "" }]);
+      }
+    }
+  }, [user]);
 
   const handleLogOut = async (event) => {
     event.preventDefault();
@@ -131,7 +127,13 @@ const Profile = () => {
                 {user.sns.length > 0 ? (
                   <div className="user-sns">
                     {user.sns.map((sns) => (
-                      <a key={sns.id} href={sns.url} aria-label={sns.name}>
+                      <a
+                        key={sns.id}
+                        href={sns.url}
+                        aria-label={sns.name}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
                         <i className={sns.faClass}></i>
                       </a>
                     ))}
@@ -160,7 +162,11 @@ const Profile = () => {
               </section>
             </>
           ) : (
-            <UserForm user={user} setEditMode={setEditMode} />
+            <UserForm
+              user={user}
+              snsGroups={snsGroups}
+              setEditMode={setEditMode}
+            />
           )}
         </div>
         <section className="user-events">

@@ -31,6 +31,7 @@ const AutocompleteInput = ({
         onInput={handleOptions}
         list={`${inputName.toLowerCase()}-list`}
         placeholder={placeholder}
+        autoComplete="off"
       />
       <datalist id={`${inputName.toLowerCase()}-list`}>
         {options.map((option) => (
