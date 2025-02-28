@@ -64,6 +64,11 @@ app.get('/api/events', async (c) => {
 
 app.post('/api/events', authenticate, async (c) => {
 	const eventInfo = await c.req.parseBody();
+	const honeypot = eventInfo.title;
+	if (honeypot && honeypot !== '') {
+		console.log('Bot detected!');
+		return c.json({ message: 'It seems that you got lost' }, 404);
+	}
 	const file = eventInfo.flyer;
 	try {
 		let key;
@@ -100,6 +105,11 @@ app.patch('/api/events/:id', authenticate, async (c) => {
 	const userId = c.get('userId');
 	const eventId = c.req.param('id');
 	const eventInfo = await c.req.parseBody();
+	const honeypot = eventInfo.title;
+	if (honeypot && honeypot !== '') {
+		console.log('Bot detected!');
+		return c.json({ message: 'It seems that you got lost' }, 404);
+	}
 	const file = eventInfo.flyer;
 	try {
 		const prisma = c.get('prisma');
@@ -126,6 +136,12 @@ app.patch('/api/events/:id', authenticate, async (c) => {
 });
 
 app.delete('api/events/:id', authenticate, async (c) => {
+	const data = await c.req.parseBody();
+	const honeypot = data.eventname;
+	if (honeypot && honeypot !== '') {
+		console.log('Bot detected!');
+		return c.json({ message: 'It seems that you got lost' }, 404);
+	}
 	const userId = c.get('userId');
 	const eventId = c.req.param('id');
 	try {
@@ -405,6 +421,11 @@ app.get('api/users/:id', async (c) => {
 
 app.patch('api/users/:id', authenticate, async (c) => {
 	const userInfo = await c.req.parseBody();
+	const honeypot = userInfo.age;
+	if (honeypot && honeypot !== '') {
+		console.log('Bot detected!');
+		return c.json({ message: 'It seems that you got lost' }, 404);
+	}
 	const id = c.req.param('id');
 	const userId = c.get('userId');
 	if (id !== userId) {
@@ -422,6 +443,11 @@ app.patch('api/users/:id', authenticate, async (c) => {
 
 app.patch('api/users/:id/profile-pic', authenticate, async (c) => {
 	const data = await c.req.parseBody();
+	const honeypot = data.title;
+	if (honeypot && honeypot !== '') {
+		console.log('Bot detected!');
+		return c.json({ message: 'It seems that you got lost' }, 404);
+	}
 	const file = data.profilePic;
 	const alt = data.alt;
 	const id = c.req.param('id');
@@ -451,6 +477,12 @@ app.patch('api/users/:id/profile-pic', authenticate, async (c) => {
 
 app.delete('api/users/:id', authenticate, async (c) => {
 	const userId = c.req.param('id');
+	const data = await c.req.parseBody();
+	const honeypot = data.username;
+	if (honeypot && honeypot !== '') {
+		console.log('Bot detected!');
+		return c.json({ message: 'It seems that you got lost' }, 404);
+	}
 	try {
 		const prisma = c.get('prisma');
 		await prisma.user.deleteUser(userId);
@@ -464,6 +496,12 @@ app.delete('api/users/:id', authenticate, async (c) => {
 
 app.delete('api/users/:id/profile-pic', authenticate, async (c) => {
 	const userId = c.req.param('id');
+	const data = await c.req.parseBody();
+	const honeypot = data.title;
+	if (honeypot && honeypot !== '') {
+		console.log('Bot detected!');
+		return c.json({ message: 'It seems that you got lost' }, 404);
+	}
 	try {
 		const prisma = c.get('prisma');
 		const key = await prisma.profilePic.getProfilePicKey(userId);

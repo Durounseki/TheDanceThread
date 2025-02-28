@@ -18,10 +18,17 @@ const ConfirmEventDelete = ({ eventId, userId, showModal, setEventId }) => {
       <div className="confirm-delete">
         <h2>Are you sure?</h2>
         <p>This action cannot be undone</p>
-        <div className="confirm-delete-actions">
+        <form onSubmit={handleDelete} className="confirm-delete-actions">
+          <input
+            type="text"
+            id="eventname"
+            name="eventname"
+            autoComplete="off"
+            style={{ visibility: "hidden", position: "absolute" }}
+          />
           <button onClick={handleClose}>Cancel</button>
-          <button onClick={handleDelete}>I am sure</button>
-        </div>
+          <button type="submit">I am sure</button>
+        </form>
       </div>
     </>
   );

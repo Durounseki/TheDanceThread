@@ -266,16 +266,19 @@ export const useDeletePicture = () => {
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (userId) => {
+    mutationFn: async (variables) => {
+      const { userId, formData } = variables;
       const response = await fetch(`${apiUrl}/users/${userId}`, {
         method: "DELETE",
+        body: formData,
         credentials: "include",
       });
       if (!response.ok) {
         throw new Error("Error deleting user");
       }
     },
-    onSettled: (data, error, userId) => {
+    onSettled: (data, error, variables) => {
+      const { userId } = variables;
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       queryClient.invalidateQueries({ queryKey: ["userEvents", userId] });
     },

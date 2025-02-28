@@ -167,30 +167,6 @@ const UserForm = ({ user, setEditMode }) => {
     snsGroups.forEach((sns) => formData.append("sns-id[]", sns.id));
     saveProfile.mutate({ user, formData });
     setEditMode(false);
-    // try {
-    //   const response = await fetch(`${apiUrl}/users/${user.id}`, {
-    //     method: "PATCH",
-    //     body: formData,
-    //     credentials: "include",
-    //   });
-    //   if (response.ok) {
-    //     const data = await response.json();
-    //     setUser({
-    //       ...user,
-    //       name: data.name,
-    //       email: data.email,
-    //       country: data.country,
-    //       bio: data.bio,
-    //       styles: data.styles,
-    //       sns: data.sns,
-    //     });
-    //     setEditMode(false);
-    //   } else {
-    //     console.error("Error updating user");
-    //   }
-    // } catch (error) {
-    //   console.error("Error:", error);
-    // }
   };
 
   const handleBioChange = (event) => {
@@ -221,45 +197,13 @@ const UserForm = ({ user, setEditMode }) => {
     formData.append("alt", name);
     updatePicture.mutate({ user, formData });
     setShowFileUpload(false);
-    // try {
-    //   const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
-    //     method: "PATCH",
-    //     body: formData,
-    //     credentials: "include",
-    //   });
-    //   if (response.ok) {
-    //     const data = await response.json();
-    //     setUser({
-    //       ...user,
-    //       profilePic: data,
-    //     });
-    //     setShowFileUpload(false);
-    //   } else {
-    //     console.error("Error updating user profile picture");
-    //   }
-    // } catch (error) {
-    //   console.error("Error:", error);
-    // }
   };
 
   const handleDeletePicture = async (event) => {
     event.preventDefault();
-    deletePicture.mutate(user);
+    const formData = new FormData(event.target);
+    deletePicture.mutate({ user, formData });
     setShowFileUpload(false);
-    // try {
-    //   const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
-    //     method: "DELETE",
-    //     credentials: "include",
-    //   });
-    //   if (response.ok) {
-    //     setUser({
-    //       ...user,
-    //       profilePic: undefined,
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.error("Error:", error);
-    // }
   };
 
   return (
@@ -269,6 +213,13 @@ const UserForm = ({ user, setEditMode }) => {
         encType="multipart/form"
         onSubmit={handleUpdatePicture}
       >
+        <input
+          type="text"
+          id="title"
+          name="title"
+          autoComplete="off"
+          style={{ visibility: "hidden", position: "absolute" }}
+        />
         <figure className="profile-picture edit">
           {user.profilePic ? (
             <ProgressiveImage
@@ -283,12 +234,15 @@ const UserForm = ({ user, setEditMode }) => {
 
         <div className="edit-profile-pic-submit">
           {!showFileUpload && (
-            <button onClick={handleShowFileUpload}>Update</button>
+            <button type="submit" onClick={handleShowFileUpload}>
+              Update
+            </button>
           )}
           {showFileUpload && (
             <button onClick={handleShowFileUpload}>Cancel</button>
           )}
           <button
+            type="submit"
             className={!user.profilePic ? "disabled" : ""}
             onClick={handleDeletePicture}
           >
@@ -319,6 +273,13 @@ const UserForm = ({ user, setEditMode }) => {
         encType="multipart/form-data"
         onSubmit={handleSaveProfile}
       >
+        <input
+          type="text"
+          id="age"
+          name="age"
+          autoComplete="off"
+          style={{ visibility: "hidden", position: "absolute" }}
+        />
         <h3 className="form-section-header">About me</h3>
         <label htmlFor="name">Name:</label>
         <input

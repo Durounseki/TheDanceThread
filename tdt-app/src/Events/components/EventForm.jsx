@@ -256,6 +256,13 @@ function EventForm() {
 
   return (
     <form onSubmit={handleSubmit} encType="multipart/form-data">
+      <input
+        type="text"
+        id="title"
+        name="title"
+        autoComplete="off"
+        style={{ visibility: "hidden", position: "absolute" }}
+      />
       <label htmlFor="name">Event Name:</label>
       <input
         type="text"
