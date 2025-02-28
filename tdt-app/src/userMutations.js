@@ -275,7 +275,7 @@ export const useDeleteUser = () => {
         throw new Error("Error deleting user");
       }
     },
-    onSettled: (userId) => {
+    onSettled: (data, error, userId) => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       queryClient.invalidateQueries({ queryKey: ["userEvents", userId] });
     },

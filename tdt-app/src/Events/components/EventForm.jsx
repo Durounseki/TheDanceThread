@@ -316,6 +316,12 @@ function EventForm() {
           value={otherStyle}
           placeholder="Add another style..."
           onChange={(event) => setOtherStyle(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              handleOtherStyle(event);
+            }
+          }}
         />
         <button type="button" id="user-add-style" onClick={handleOtherStyle}>
           Add Style

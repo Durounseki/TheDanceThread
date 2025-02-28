@@ -399,6 +399,7 @@ app.delete('api/users/:id', authenticate, async (c) => {
 	try {
 		const prisma = c.get('prisma');
 		await prisma.user.deleteUser(userId);
+		deleteCookie(c, 'jwt');
 		return c.json({ message: 'User deleted' }, 200);
 	} catch (error) {
 		console.error('Error deleting user', error);

@@ -30,10 +30,10 @@ export const useEvents = (country, style, date) => {
 };
 
 export const useEvent = (eventId) => {
-  if (!eventId) return {};
   return useQuery({
     queryKey: ["event", eventId],
     queryFn: async () => {
+      if (!eventId) return undefined;
       const response = await fetch(`${apiUrl}/events/${eventId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch event");

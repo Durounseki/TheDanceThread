@@ -601,9 +601,10 @@ export async function getUserById(userId) {
 				profilePic: true,
 			},
 		});
-
-		user.likedEvents = user.likedEvents.map((item) => item.eventId);
-		user.savedEvents = user.savedEvents.map((item) => item.eventId);
+		if (user) {
+			user.likedEvents = user.likedEvents.map((item) => item.eventId);
+			user.savedEvents = user.savedEvents.map((item) => item.eventId);
+		}
 		return user;
 	} catch (error) {
 		console.error('Error retrieving user', error);
