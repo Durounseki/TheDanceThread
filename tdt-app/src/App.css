@@ -1247,7 +1247,6 @@ label input:checked ~ .custom-checkbox {
 
 .confirm-delete-actions {
   display: flex;
-  /* grid-template-columns: repeat(2, 1fr); */
   gap: 16px;
   flex-wrap: wrap;
   button {

@@ -4,16 +4,15 @@ This is the prototype of The Dance Thread a social platform where dancers can fi
 
 ## To do
 
-- [ ] Optimistic updates.
-- [ ] Reload event components on event update.
+- [x] Optimistic updates.
 - [ ] CSRF synchronizing token pattern
 - [ ] JWT Refresh token
 - [ ] Show status and error messages.
-- [ ] Prevent opening delete user and delete event at the same time.
-- [ ] Handle protected routes properly.
 - [ ] Enable google auth in production.
 - [ ] Add google map.
 - [ ] Add event dance styles.
+- [x] Prevent opening delete user and delete event at the same time.
+- [x] Handle protected routes properly.
 - [x] Edit user.
 - [x] Delete user.
 - [x] Sanitize event data.

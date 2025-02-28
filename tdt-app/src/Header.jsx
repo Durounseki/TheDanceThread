@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import mainLogo from "./assets/tdt-logo-dark.png";
-import useAuth from "./useAuth.jsx";
 import { useState, useEffect, useRef } from "react";
 import ProgressiveImage from "./ProgressiveImage.jsx";
 import { useAuthenticateUser } from "./userQueries.js";

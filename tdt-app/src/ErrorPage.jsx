@@ -8,7 +8,6 @@ const ErrorPage = () => {
   const location = useLocation();
 
   useEffect(() => {
-    console.log(location.pathname);
     if (
       !user &&
       (location.pathname.startsWith("/profile") ||
