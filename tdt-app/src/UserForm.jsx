@@ -9,7 +9,6 @@ import { useSaveProfile } from "./userMutations.js";
 import { useUpdatePicture, useDeletePicture } from "./userMutations.js";
 
 const UserForm = ({ user, setEditMode }) => {
-  console.log(user);
   const { data: danceStyles } = useDanceStyles();
   const saveProfile = useSaveProfile();
   const updatePicture = useUpdatePicture();

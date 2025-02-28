@@ -1,9 +1,9 @@
-import useAuth from "./useAuth";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthenticateUser } from "./userQueries";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLogout } from "./userMutations";
 const Footer = ({ showLogin }) => {
-  const { data: user, isLoading: userLoading } = useAuthenticateUser();
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(["currentUser"]);
   const logoutMutation = useLogout();
   const navigate = useNavigate();
   const handleShowLogin = (event) => {

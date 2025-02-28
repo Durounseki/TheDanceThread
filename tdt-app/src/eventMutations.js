@@ -4,10 +4,10 @@ const apiUrl = import.meta.env.VITE_API_URL;
 export const useCreateEvent = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (formData) => {
+    mutationFn: async (variables) => {
       const response = await fetch(`${apiUrl}/events`, {
         method: "POST",
-        body: formData,
+        body: variables.formData,
         credentials: "include",
       });
       if (!response.ok) {
@@ -15,8 +15,11 @@ export const useCreateEvent = () => {
       }
       return response.json();
     },
-    onSettled: () => {
+    onSettled: (data, error, variables) => {
+      const { userId } = variables;
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       queryClient.invalidateQueries({ queryKey: ["events"] });
+      queryClient.invalidateQueries({ queryKey: ["userEvents", userId] });
     },
   });
 };

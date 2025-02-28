@@ -1,9 +1,14 @@
 import { Link } from "react-router-dom";
 import EventCard from "./Events/components/EventCard";
-import { useEvents, useUserEvents } from "./eventQueries";
+import { useUserEvents } from "./eventQueries";
 
-const UserEvents = ({ user, canEdit = false, showModal, setEventId }) => {
-  const { data: events, isLoading: eventsLoading } = useEvents();
+const UserEvents = ({
+  user,
+  events,
+  canEdit = false,
+  showModal,
+  setEventId,
+}) => {
   const { data: userEvents, isLoading: userEventsLoading } = useUserEvents(
     user,
     events,

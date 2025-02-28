@@ -8,7 +8,7 @@ import ProgressiveImage from "../../ProgressiveImage";
 import DatePicker from "react-datepicker";
 import { addYears } from "date-fns";
 import "../../DatePicker.css";
-import { useAuthenticateUser } from "../../userQueries";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEvent } from "../../eventQueries";
 import { useCreateEvent, useSaveEvent } from "../../eventMutations";
 
@@ -25,7 +25,8 @@ function EventForm() {
   const [city, setCity] = useState("");
   const [venueName, setVenueName] = useState("");
   const [venueUrl, setVenueUrl] = useState("");
-  const { data: user, isLoading: userLoading } = useAuthenticateUser();
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(["currentUser"]);
   const [styleOptions, setStyleOptions] = useState([
     {
       id: uuidv4(),
@@ -235,9 +236,11 @@ function EventForm() {
         event: currentEvent,
       });
     } else {
-      data = await createEvent.mutateAsync(formData);
+      data = await createEvent.mutateAsync({
+        formData: formData,
+        userId: user.id,
+      });
     }
-    console.log(data);
     navigate(`/events/${data.id}`);
   };
 
@@ -247,7 +250,7 @@ function EventForm() {
     navigate("/profile");
   };
 
-  if (userLoading || eventLoading) {
+  if (eventLoading) {
     return <div>Loading ...</div>;
   }
 

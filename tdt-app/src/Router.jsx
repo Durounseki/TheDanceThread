@@ -12,8 +12,11 @@ import Profile from "./Profile.jsx";
 import TermsOfService from "./TermsOfService.jsx";
 import PrivacyPolicy from "./PrivacyPolicy.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
+import { useAuthenticateUser } from "./userQueries.js";
 
 const Router = () => {
+  const { data: user, isLoading: userLoading } = useAuthenticateUser();
+  if (userLoading) return <h1>Loading...</h1>;
   return (
     <BrowserRouter>
       <Routes>

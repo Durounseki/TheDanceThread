@@ -7,36 +7,25 @@ import ConfirmEventDelete from "./ConfirmEventDelete.jsx";
 import ConfirmUserDelete from "./ConfirmUserDelete.jsx";
 import Modal from "./Modal.jsx";
 import ProgressiveImage from "./ProgressiveImage.jsx";
-import { useAuthenticateUser } from "./userQueries.js";
 import { useLogout } from "./userMutations.js";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEvents } from "./eventQueries.js";
 
 const Profile = () => {
   const [showDeleteEventModal, setShowDeleteEventModal] = useState(false);
   const [showDeleteUserModal, setShowDeleteUserModal] = useState(false);
   const [eventId, setEventId] = useState(null);
-  const { data: user } = useAuthenticateUser();
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(["currentUser"]);
+  const { data: events, isLoading: eventsLoading } = useEvents();
   const logoutMutation = useLogout();
   const [editMode, setEditMode] = useState(false);
-  // const [name, setName] = useState("");
-  // const [email, setEmail] = useState("");
-  // const [country, setCountry] = useState("");
-  // const [bio, setBio] = useState("");
-  // const [avatar, setAvatar] = useState("");
-  // const [profilePic, setProfilePic] = useState(undefined);
-  // const [styles, setStyles] = useState([]);
   const [snsGroups, setSnsGroups] = useState([]);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
-      // setName(user.name);
-      // setEmail(user.email);
-      // setCountry(user.country || "");
-      // setBio(user.bio || "");
-      // setAvatar(user.avatar);
-      // setProfilePic(user.profilePic);
-      // setStyles(user.styles.map((style) => style.name));
       if (user.sns.length > 0) {
         setSnsGroups(
           user.sns.map((sns) => ({
@@ -67,7 +56,6 @@ const Profile = () => {
     event.preventDefault();
     setEditMode(true);
   };
-
   return (
     <>
       {showDeleteEventModal && (
@@ -170,13 +158,17 @@ const Profile = () => {
             />
           )}
         </div>
+
         <section className="user-events">
-          <UserEvents
-            user={user}
-            canEdit={true}
-            showModal={setShowDeleteEventModal}
-            setEventId={setEventId}
-          />
+          {!eventsLoading && (
+            <UserEvents
+              user={user}
+              events={events}
+              canEdit={true}
+              showModal={setShowDeleteEventModal}
+              setEventId={setEventId}
+            />
+          )}
         </section>
       </article>
     </>

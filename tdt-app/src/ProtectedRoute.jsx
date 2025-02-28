@@ -1,22 +1,10 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuthenticateUser } from "./userQueries";
-import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ProtectedRoute = ({ route, children }) => {
-  const {
-    data: user,
-    isLoading: userLoading,
-    isError,
-    refetch,
-  } = useAuthenticateUser();
-  const location = useLocation();
-  useEffect(() => {
-    refetch();
-  }, [refetch, location.pathname]);
-  if (userLoading) {
-    return <p>Loading...</p>;
-  }
-  if (isError || !user) {
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(["currentUser"]);
+  if (!user) {
     return <Navigate to={route} replace />;
   }
   return children;

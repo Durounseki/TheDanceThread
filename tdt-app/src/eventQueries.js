@@ -57,9 +57,7 @@ export const useUserEvents = (user, events) => {
           (attendingEvent) => attendingEvent.eventId === event.id
         )
       );
-
       return { created, attending };
     },
-    enabled: !!user && !!events,
   });
 };

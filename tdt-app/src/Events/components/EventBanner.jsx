@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
-import useAuth from "../../useAuth";
-import { useAuthenticateUser } from "../../userQueries";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   useBookmarkEvent,
   useLikeEvent,
@@ -10,7 +9,8 @@ import {
 } from "../../userMutations";
 
 const EventBanner = ({ eventInfo, isLoading }) => {
-  const { data: user, isLoading: userLoading } = useAuthenticateUser();
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(["currentUser"]);
   const [bookmark, setBookmark] = useState(false);
   const bookmarkMutation = useBookmarkEvent(eventInfo.id);
   const [shared, setShared] = useState(false);
@@ -18,18 +18,15 @@ const EventBanner = ({ eventInfo, isLoading }) => {
   const likeMutation = useLikeEvent(eventInfo.id);
   const [attend, setAttend] = useState(false);
   const attendMutation = useAttendEvent(eventInfo.id);
-  const apiUrl = import.meta.env.VITE_API_URL;
-  //   console.log("event:", eventInfo);
-  //   console.log("user:", user);
   useEffect(() => {
-    if (user && !userLoading) {
+    if (user) {
       setBookmark(user.savedEvents.includes(eventInfo.id));
       setLike(user.likedEvents.includes(eventInfo.id));
       setAttend(
         user.eventsAttending.find((item) => item.eventId === eventInfo.id)
       );
     }
-  }, [eventInfo, userLoading, user]);
+  }, [eventInfo, user]);
   const handleBookmark = async (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -38,7 +35,6 @@ const EventBanner = ({ eventInfo, isLoading }) => {
   const handleLike = async (event) => {
     event.preventDefault();
     event.stopPropagation();
-    console.log("like:", like);
     likeMutation.mutate(like);
   };
   const handleShare = async (event) => {

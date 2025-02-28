@@ -3,22 +3,22 @@ import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
 import ProgressiveImage from "../../ProgressiveImage";
-import { useAuthenticateUser } from "../../userQueries";
+import { useQueryClient } from "@tanstack/react-query";
 import { useBookmarkEvent } from "../../userMutations";
 
 const EventCard = ({ eventInfo, canEdit = false, showModal, setEventId }) => {
-  const { data: user, isLoading: userLoading } = useAuthenticateUser();
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(["currentUser"]);
   const [bookmark, setBookmark] = useState(false);
   const bookmarkMutation = useBookmarkEvent(eventInfo.id);
   const [shared, setShared] = useState(false);
-  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user && !userLoading) {
+    if (user) {
       setBookmark(user.savedEvents.includes(eventInfo.id));
     }
-  }, [user, eventInfo, userLoading]);
+  }, [user, eventInfo]);
 
   const handleSelectEvent = () => {
     navigate(`/events/${eventInfo.id}`);
