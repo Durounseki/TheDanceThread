@@ -1246,11 +1246,12 @@ label input:checked ~ .custom-checkbox {
 }
 
 .confirm-delete-actions {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  /* grid-template-columns: repeat(2, 1fr); */
   gap: 16px;
+  flex-wrap: wrap;
   button {
-    width: 100%;
+    width: 150px;
     text-align: center;
   }
 }
@@ -1567,7 +1568,11 @@ label input:checked ~ .custom-checkbox {
     }
   }
   .modal-content {
-    max-width: 60%;
+    max-width: 90%;
+    padding: 24px;
+    button {
+      padding: 12px 18px;
+    }
   }
   .profile-container {
     flex-direction: column;
