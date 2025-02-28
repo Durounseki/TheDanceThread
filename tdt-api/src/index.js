@@ -247,10 +247,29 @@ app.get('api/auth/login', (c) => {
 	return c.redirect(authorizeUrl);
 });
 
+async function generateTokens(c, userId) {
+	const jwtSecret = c.get('jwtSecret');
+
+	const accessToken = await new SignJWT({
+		userId,
+	})
+		.setProtectedHeader({ alg: 'HS256' })
+		.setJti(v4())
+		.setIssuedAt()
+		.setExpirationTime(c.env.ACCESS_TOKEN_TTL)
+		.sign(jwtSecret);
+	const refreshToken = crypto.randomUUID();
+	await c.env.TDT_KV.put(refreshToken, userId, { expirationTtl: parseInt(c.env.REFRESH_TOKEN_TTL) });
+
+	return {
+		accessToken,
+		refreshToken,
+	};
+}
+
 app.get('api/auth/callback', async (c) => {
 	const code = c.req.query('code');
 	const google = c.get('google');
-	const jwtSecret = c.get('jwtSecret');
 	const prisma = c.get('prisma');
 	try {
 		const { tokens } = await google.getToken(code);
@@ -270,22 +289,23 @@ app.get('api/auth/callback', async (c) => {
 		} else {
 			userId = storedUser.id;
 		}
-		const token = await new SignJWT({
-			userId,
-		})
-			.setProtectedHeader({ alg: 'HS256' })
-			.setJti(v4())
-			.setIssuedAt()
-			.setExpirationTime('2h')
-			.sign(jwtSecret);
+		const { accessToken, refreshToken } = await generateTokens(c, userId);
 
-		setCookie(c, 'jwt', token, {
+		setCookie(c, 'jwt', accessToken, {
 			httpOnly: true,
-			maxAge: 60 * 60 * 2,
+			maxAge: parseInt(c.env.REFRESH_TOKEN_TTL),
 			sameSite: 'Strict',
 			path: '/',
 			secure: c.env.ENV === 'production',
 		});
+		setCookie(c, 'refreshToken', refreshToken, {
+			httpOnly: true,
+			maxAge: parseInt(c.env.REFRESH_TOKEN_TTL),
+			sameSite: 'Strict',
+			path: '/',
+			secure: c.env.ENV === 'production',
+		});
+
 		return c.redirect(`${c.env.APP_URL}/profile`);
 	} catch (error) {
 		console.error(error);
@@ -295,22 +315,51 @@ app.get('api/auth/callback', async (c) => {
 
 async function authenticate(c, next) {
 	const token = getCookie(c, 'jwt');
+	const refreshToken = getCookie(c, 'refreshToken');
 	const jwtSecret = c.get('jwtSecret');
 	if (!token) {
 		return c.json({ message: 'Unauthorized' }, 401);
 	}
 	try {
 		const payload = await jwtVerify(token, jwtSecret);
+
 		c.set('userId', payload.payload.userId);
 	} catch (error) {
-		console.error(error);
-		return c.json({ message: 'Authentication error', error: error }, 401);
+		if (error.code === 'ERR_JWT_EXPIRED' && refreshToken) {
+			const userId = await c.env.TDT_KV.get(refreshToken, 'text');
+			if (!userId) {
+				return c.json({ message: 'Unauthorized' }, 401);
+			} else {
+				const deleted = await c.env.TDT_KV.delete(refreshToken);
+
+				const { accessToken, refreshToken: newRefreshToken } = await generateTokens(c, userId);
+				setCookie(c, 'jwt', accessToken, {
+					httpOnly: true,
+					maxAge: parseInt(c.env.REFRESH_TOKEN_TTL),
+					sameSite: 'Strict',
+					path: '/',
+					secure: c.env.ENV === 'production',
+				});
+				setCookie(c, 'refreshToken', newRefreshToken, {
+					httpOnly: true,
+					maxAge: parseInt(c.env.REFRESH_TOKEN_TTL),
+					sameSite: 'Strict',
+					path: '/',
+					secure: c.env.ENV === 'production',
+				});
+				c.set('userId', userId);
+
+				return await next();
+			}
+		} else {
+			console.error(error);
+			return c.json({ message: 'Authentication error', error: error }, 401);
+		}
 	}
 	await next();
 }
 
 app.get('api/auth/protected', authenticate, async (c) => {
-	console.log(c.req.origin);
 	const userId = c.get('userId');
 	const prisma = c.get('prisma');
 	const user = await prisma.user.getUserById(userId);
@@ -318,7 +367,13 @@ app.get('api/auth/protected', authenticate, async (c) => {
 });
 
 app.get('api/auth/logout', async (c) => {
+	const refreshToken = getCookie(c, 'refreshToken');
+
+	if (refreshToken) {
+		await c.env.TDT_KV.delete(refreshToken);
+	}
 	deleteCookie(c, 'jwt');
+	deleteCookie(c, 'refreshToken');
 	return c.json({ message: 'Logged out successfully!' }, 200);
 });
 
