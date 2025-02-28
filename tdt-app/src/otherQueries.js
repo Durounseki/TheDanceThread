@@ -54,3 +54,21 @@ export const useCities = (countryCode) => {
     },
   });
 };
+
+export const useCsrfToken = () => {
+  return useQuery({
+    queryKey: ["csrfToken"],
+    queryFn: async () => {
+      const response = await fetch(`${apiUrl}/csrf`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        console.log("Error fetching dance styles");
+        return "";
+      }
+      const data = await response.json();
+      return data;
+    },
+  });
+};

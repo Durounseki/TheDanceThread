@@ -7,6 +7,9 @@ export const useCreateEvent = () => {
     mutationFn: async (variables) => {
       const response = await fetch(`${apiUrl}/events`, {
         method: "POST",
+        headers: {
+          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+        },
         body: variables.formData,
         credentials: "include",
       });
@@ -20,6 +23,7 @@ export const useCreateEvent = () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       queryClient.invalidateQueries({ queryKey: ["events"] });
       queryClient.invalidateQueries({ queryKey: ["userEvents", userId] });
+      queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
   });
 };
@@ -31,6 +35,9 @@ export const useSaveEvent = () => {
       const { formData, event } = variables;
       const response = await fetch(`${apiUrl}/events/${event.id}`, {
         method: "PATCH",
+        headers: {
+          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+        },
         body: formData,
         credentials: "include",
       });
@@ -43,6 +50,7 @@ export const useSaveEvent = () => {
       const { event } = variables;
       queryClient.invalidateQueries({ queryKey: ["events"] });
       queryClient.invalidateQueries({ queryKey: ["event", event.id] });
+      queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
   });
 };
@@ -54,6 +62,9 @@ export const useDeleteEvent = () => {
       const { eventId } = variables;
       const response = await fetch(`${apiUrl}/events/${eventId}`, {
         method: "DELETE",
+        headers: {
+          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+        },
         credentials: "include",
       });
       if (!response.ok) {
@@ -92,6 +103,7 @@ export const useDeleteEvent = () => {
       queryClient.invalidateQueries({ queryKey: ["events"] });
       queryClient.invalidateQueries({ queryKey: ["event", eventId] });
       queryClient.invalidateQueries({ queryKey: ["userEvents", userId] });
+      queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
   });
 };

@@ -18,6 +18,7 @@ const Profile = () => {
   const queryClient = useQueryClient();
   const user = queryClient.getQueryData(["currentUser"]);
   const { data: events, isLoading: eventsLoading } = useEvents();
+  const csrfToken = queryClient.getQueryData(["csrfToken"]);
   const logoutMutation = useLogout();
   const [editMode, setEditMode] = useState(false);
   const [snsGroups, setSnsGroups] = useState([]);
@@ -153,6 +154,7 @@ const Profile = () => {
           ) : (
             <UserForm
               user={user}
+              csrfToken={csrfToken}
               snsGroups={snsGroups}
               setEditMode={setEditMode}
             />

@@ -62,7 +62,7 @@ app.get('/api/events', async (c) => {
 	}
 });
 
-app.post('/api/events', authenticate, async (c) => {
+app.post('/api/events', authenticate, checkCsrfToken, async (c) => {
 	const eventInfo = await c.req.parseBody();
 	const honeypot = eventInfo.title;
 	if (honeypot && honeypot !== '') {
@@ -101,7 +101,7 @@ app.get('/api/events/:id', async (c) => {
 	}
 });
 
-app.patch('/api/events/:id', authenticate, async (c) => {
+app.patch('/api/events/:id', authenticate, checkCsrfToken, async (c) => {
 	const userId = c.get('userId');
 	const eventId = c.req.param('id');
 	const eventInfo = await c.req.parseBody();
@@ -135,7 +135,7 @@ app.patch('/api/events/:id', authenticate, async (c) => {
 	}
 });
 
-app.delete('api/events/:id', authenticate, async (c) => {
+app.delete('api/events/:id', authenticate, checkCsrfToken, async (c) => {
 	const data = await c.req.parseBody();
 	const honeypot = data.eventname;
 	if (honeypot && honeypot !== '') {
@@ -163,7 +163,7 @@ app.delete('api/events/:id', authenticate, async (c) => {
 	}
 });
 
-app.post('api/events/:id/likes', authenticate, async (c) => {
+app.post('api/events/:id/likes', authenticate, checkCsrfToken, async (c) => {
 	const eventId = c.req.param('id');
 	const userId = c.get('userId');
 	try {
@@ -176,7 +176,7 @@ app.post('api/events/:id/likes', authenticate, async (c) => {
 		return c.json({ error: 'Failed to update event likes' }, 500);
 	}
 });
-app.delete('api/events/:id/likes', authenticate, async (c) => {
+app.delete('api/events/:id/likes', authenticate, checkCsrfToken, async (c) => {
 	const eventId = c.req.param('id');
 	const userId = c.get('userId');
 	try {
@@ -189,7 +189,7 @@ app.delete('api/events/:id/likes', authenticate, async (c) => {
 		return c.json({ error: 'Failed to update event likes' }, 500);
 	}
 });
-app.post('api/events/:id/saves', authenticate, async (c) => {
+app.post('api/events/:id/saves', authenticate, checkCsrfToken, async (c) => {
 	const eventId = c.req.param('id');
 	const userId = c.get('userId');
 	try {
@@ -202,7 +202,7 @@ app.post('api/events/:id/saves', authenticate, async (c) => {
 		return c.json({ error: 'Failed to update event saves' }, 500);
 	}
 });
-app.delete('api/events/:id/saves', authenticate, async (c) => {
+app.delete('api/events/:id/saves', authenticate, checkCsrfToken, async (c) => {
 	const eventId = c.req.param('id');
 	const userId = c.get('userId');
 	try {
@@ -215,7 +215,7 @@ app.delete('api/events/:id/saves', authenticate, async (c) => {
 		return c.json({ error: 'Failed to update event saves' }, 500);
 	}
 });
-app.post('api/events/:id/attendees', authenticate, async (c) => {
+app.post('api/events/:id/attendees', authenticate, checkCsrfToken, async (c) => {
 	const eventId = c.req.param('id');
 	const userId = c.get('userId');
 	try {
@@ -229,7 +229,7 @@ app.post('api/events/:id/attendees', authenticate, async (c) => {
 	}
 });
 
-app.delete('api/events/:id/attendees', authenticate, async (c) => {
+app.delete('api/events/:id/attendees', authenticate, checkCsrfToken, async (c) => {
 	const eventId = c.req.param('id');
 	const userId = c.get('userId');
 	try {
@@ -305,7 +305,7 @@ app.get('api/auth/callback', async (c) => {
 		} else {
 			userId = storedUser.id;
 		}
-		const { accessToken, refreshToken } = await generateTokens(c, userId);
+		const { accessToken, refreshToken, csrfToken } = await generateTokens(c, userId);
 
 		setCookie(c, 'jwt', accessToken, {
 			httpOnly: true,
@@ -321,7 +321,6 @@ app.get('api/auth/callback', async (c) => {
 			path: '/',
 			secure: c.env.ENV === 'production',
 		});
-
 		return c.redirect(`${c.env.APP_URL}/profile`);
 	} catch (error) {
 		console.error(error);
@@ -419,7 +418,7 @@ app.get('api/users/:id', async (c) => {
 	}
 });
 
-app.patch('api/users/:id', authenticate, async (c) => {
+app.patch('api/users/:id', authenticate, checkCsrfToken, async (c) => {
 	const userInfo = await c.req.parseBody();
 	const honeypot = userInfo.age;
 	if (honeypot && honeypot !== '') {
@@ -441,7 +440,7 @@ app.patch('api/users/:id', authenticate, async (c) => {
 	}
 });
 
-app.patch('api/users/:id/profile-pic', authenticate, async (c) => {
+app.patch('api/users/:id/profile-pic', authenticate, checkCsrfToken, async (c) => {
 	const data = await c.req.parseBody();
 	const honeypot = data.title;
 	if (honeypot && honeypot !== '') {
@@ -475,7 +474,7 @@ app.patch('api/users/:id/profile-pic', authenticate, async (c) => {
 	}
 });
 
-app.delete('api/users/:id', authenticate, async (c) => {
+app.delete('api/users/:id', authenticate, checkCsrfToken, async (c) => {
 	const userId = c.req.param('id');
 	const data = await c.req.parseBody();
 	const honeypot = data.username;
@@ -494,7 +493,7 @@ app.delete('api/users/:id', authenticate, async (c) => {
 	}
 });
 
-app.delete('api/users/:id/profile-pic', authenticate, async (c) => {
+app.delete('api/users/:id/profile-pic', authenticate, checkCsrfToken, async (c) => {
 	const userId = c.req.param('id');
 	const data = await c.req.parseBody();
 	const honeypot = data.title;
@@ -517,5 +516,21 @@ app.delete('api/users/:id/profile-pic', authenticate, async (c) => {
 		return c.json({ error: 'Failed to delete profile pic' }, 500);
 	}
 });
+
+app.get('api/csrf', authenticate, async (c) => {
+	const userId = c.get('userId');
+	const csrfToken = crypto.randomUUID();
+	await c.env.TDT_KV.put(`csrf:${userId}`, csrfToken, { expirationTtl: parseInt(c.env.CSRF_TOKEN_TTL) });
+	return c.json(csrfToken);
+});
+
+async function checkCsrfToken(c, userId) {
+	const csrfToken = c.req.header('X-CSRF-Token');
+	const token = c.env.TDT_KV.get(`csrf:${userId}`, 'text');
+	if (csrfToken !== token) {
+		return c.json({ message: 'Unauthorized!' }, 401);
+	}
+	await next();
+}
 
 export default app;

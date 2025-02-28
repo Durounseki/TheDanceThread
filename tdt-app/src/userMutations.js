@@ -30,6 +30,9 @@ export const useBookmarkEvent = (eventId) => {
       const method = isBookmarked ? "DELETE" : "POST";
       await fetch(`${apiUrl}/events/${eventId}/saves`, {
         method: method,
+        headers: {
+          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+        },
         credentials: "include",
       });
     },
@@ -53,6 +56,7 @@ export const useBookmarkEvent = (eventId) => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
   });
 };
@@ -64,6 +68,9 @@ export const useLikeEvent = (eventId) => {
       const method = isLiked ? "DELETE" : "POST";
       await fetch(`${apiUrl}/events/${eventId}/likes`, {
         method: method,
+        headers: {
+          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+        },
         credentials: "include",
       });
     },
@@ -112,6 +119,7 @@ export const useLikeEvent = (eventId) => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+      queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
   });
 };
@@ -123,6 +131,9 @@ export const useAttendEvent = (eventId) => {
       const method = isAttending ? "DELETE" : "POST";
       await fetch(`${apiUrl}/events/${eventId}/attendees`, {
         method: method,
+        headers: {
+          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+        },
         credentials: "include",
       });
     },
@@ -183,6 +194,7 @@ export const useAttendEvent = (eventId) => {
       queryClient.invalidateQueries({
         queryKey: ["userEvents", queryClient.getQueryData("currentUser").id],
       });
+      queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
   });
 };
@@ -194,6 +206,9 @@ export const useSaveProfile = () => {
       const { formData, user } = variables;
       const response = await fetch(`${apiUrl}/users/${user.id}`, {
         method: "PATCH",
+        headers: {
+          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+        },
         body: formData,
         credentials: "include",
       });
@@ -221,6 +236,7 @@ export const useSaveProfile = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
   });
 };
@@ -232,6 +248,9 @@ export const useUpdatePicture = () => {
       const { user, formData } = variables;
       const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
         method: "PATCH",
+        headers: {
+          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+        },
         body: formData,
         credentials: "include",
       });
@@ -241,6 +260,7 @@ export const useUpdatePicture = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
   });
 };
@@ -248,9 +268,14 @@ export const useUpdatePicture = () => {
 export const useDeletePicture = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (user) => {
+    mutationFn: async (variables) => {
+      const { user, formData } = variables;
       const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
         method: "DELETE",
+        headers: {
+          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+        },
+        body: formData,
         credentials: "include",
       });
       if (!response.ok) {
@@ -259,6 +284,7 @@ export const useDeletePicture = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
   });
 };
@@ -270,6 +296,9 @@ export const useDeleteUser = () => {
       const { userId, formData } = variables;
       const response = await fetch(`${apiUrl}/users/${userId}`, {
         method: "DELETE",
+        headers: {
+          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+        },
         body: formData,
         credentials: "include",
       });
@@ -281,6 +310,7 @@ export const useDeleteUser = () => {
       const { userId } = variables;
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       queryClient.invalidateQueries({ queryKey: ["userEvents", userId] });
+      queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
   });
 };
