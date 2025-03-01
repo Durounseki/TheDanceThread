@@ -59,6 +59,7 @@ export const useCsrfToken = () => {
   return useQuery({
     queryKey: ["csrfToken"],
     queryFn: async () => {
+      console.log("Fetching CSRF token");
       const response = await fetch(`${apiUrl}/csrf`, {
         method: "GET",
         credentials: "include",

@@ -173,7 +173,7 @@ export const useAttendEvent = (eventId) => {
           return {
             ...oldEvent,
             attendees: [
-              oldEvent.attendees,
+              ...oldEvent.attendees,
               {
                 user: { id: currentUser.id, name: currentUser.name },
                 type: "GOING",
@@ -182,6 +182,7 @@ export const useAttendEvent = (eventId) => {
           };
         }
       });
+      console.log();
       return { currentUser, currentEvent };
     },
     onError: (err, context) => {
@@ -201,6 +202,7 @@ export const useAttendEvent = (eventId) => {
 
 export const useSaveProfile = () => {
   const queryClient = useQueryClient();
+  console.log(queryClient.getQueryData(["csrfToken"]));
   return useMutation({
     mutationFn: async (variables) => {
       const { formData, user } = variables;

@@ -13,9 +13,12 @@ import TermsOfService from "./TermsOfService.jsx";
 import PrivacyPolicy from "./PrivacyPolicy.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import { useAuthenticateUser } from "./userQueries.js";
+import { useCsrfToken } from "./otherQueries.js";
 
 const Router = () => {
   const { data: user, isLoading: userLoading } = useAuthenticateUser();
+  const { data: csrf } = useCsrfToken();
+
   if (userLoading) return <h1>Loading...</h1>;
   return (
     <BrowserRouter>

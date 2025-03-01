@@ -5,6 +5,7 @@ import ProgressiveImage from "../../ProgressiveImage";
 import ResponsiveImage from "../../ResponsiveImage";
 
 const EventDetails = ({ event, isLoading }) => {
+  console.log(event);
   if (isLoading) {
     return (
       <>

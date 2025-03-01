@@ -305,7 +305,7 @@ app.get('api/auth/callback', async (c) => {
 		} else {
 			userId = storedUser.id;
 		}
-		const { accessToken, refreshToken, csrfToken } = await generateTokens(c, userId);
+		const { accessToken, refreshToken } = await generateTokens(c, userId);
 
 		setCookie(c, 'jwt', accessToken, {
 			httpOnly: true,
@@ -381,11 +381,12 @@ app.get('api/auth/protected', authenticate, async (c) => {
 	return c.json(user);
 });
 
-app.get('api/auth/logout', async (c) => {
+app.get('api/auth/logout', authenticate, async (c) => {
 	const refreshToken = getCookie(c, 'refreshToken');
 
 	if (refreshToken) {
 		await c.env.TDT_KV.delete(refreshToken);
+		await c.env.TDT_KV.delete(`csrf:${c.get('userId')}`);
 	}
 	deleteCookie(c, 'jwt');
 	deleteCookie(c, 'refreshToken');
@@ -524,9 +525,10 @@ app.get('api/csrf', authenticate, async (c) => {
 	return c.json(csrfToken);
 });
 
-async function checkCsrfToken(c, userId) {
+async function checkCsrfToken(c, next) {
+	const userId = c.get('userId');
 	const csrfToken = c.req.header('X-CSRF-Token');
-	const token = c.env.TDT_KV.get(`csrf:${userId}`, 'text');
+	const token = await c.env.TDT_KV.get(`csrf:${userId}`, 'text');
 	if (csrfToken !== token) {
 		return c.json({ message: 'Unauthorized!' }, 401);
 	}

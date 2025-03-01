@@ -1191,7 +1191,7 @@ label input:checked ~ .custom-checkbox {
 }
 
 .login-form-container button,
-.confirm-delete button {
+.confirm-delete form.confirm-delete-actions button {
   background-color: #141414;
   border: 1px solid #202020;
   padding: 12px 36px;
@@ -1201,6 +1201,7 @@ label input:checked ~ .custom-checkbox {
   gap: 16px;
   align-items: center;
   justify-content: center;
+  box-shadow: none;
   p {
     margin: 0;
     font-size: 16px;
@@ -1211,7 +1212,7 @@ label input:checked ~ .custom-checkbox {
 }
 
 .login-form-container button:hover,
-.confirm-delete button:hover {
+.confirm-delete form.confirm-delete-actions button:hover {
   background-color: #a6dbff;
   color: #141414;
   cursor: pointer;
@@ -1245,7 +1246,13 @@ label input:checked ~ .custom-checkbox {
   position: absolute;
 }
 
-.confirm-delete-actions {
+form.confirm-delete-actions {
+  padding: 0;
+  border-radius: 0;
+  background-color: inherit;
+  max-width: 100%;
+  margin-bottom: 0;
+  border: none;
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
