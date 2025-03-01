@@ -383,11 +383,8 @@ app.get('api/auth/protected', authenticate, async (c) => {
 
 app.get('api/auth/logout', authenticate, async (c) => {
 	const refreshToken = getCookie(c, 'refreshToken');
-
-	if (refreshToken) {
-		await c.env.TDT_KV.delete(refreshToken);
-		await c.env.TDT_KV.delete(`csrf:${c.get('userId')}`);
-	}
+	await c.env.TDT_KV.delete(refreshToken);
+	await c.env.TDT_KV.delete(`csrf:${c.get('userId')}`);
 	deleteCookie(c, 'jwt');
 	deleteCookie(c, 'refreshToken');
 	return c.json({ message: 'Logged out successfully!' }, 200);
@@ -477,6 +474,7 @@ app.patch('api/users/:id/profile-pic', authenticate, checkCsrfToken, async (c) =
 
 app.delete('api/users/:id', authenticate, checkCsrfToken, async (c) => {
 	const userId = c.req.param('id');
+	const refreshToken = getCookie(c, 'refreshToken');
 	const data = await c.req.parseBody();
 	const honeypot = data.username;
 	if (honeypot && honeypot !== '') {
@@ -486,7 +484,10 @@ app.delete('api/users/:id', authenticate, checkCsrfToken, async (c) => {
 	try {
 		const prisma = c.get('prisma');
 		await prisma.user.deleteUser(userId);
+		await c.env.TDT_KV.delete(refreshToken);
+		await c.env.TDT_KV.delete(`csrf:${c.get('userId')}`);
 		deleteCookie(c, 'jwt');
+		deleteCookie(c, 'refreshToken');
 		return c.json({ message: 'User deleted' }, 200);
 	} catch (error) {
 		console.error('Error deleting user', error);
