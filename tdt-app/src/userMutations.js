@@ -182,7 +182,6 @@ export const useAttendEvent = (eventId) => {
           };
         }
       });
-      console.log();
       return { currentUser, currentEvent };
     },
     onError: (err, context) => {
@@ -202,7 +201,6 @@ export const useAttendEvent = (eventId) => {
 
 export const useSaveProfile = () => {
   const queryClient = useQueryClient();
-  console.log(queryClient.getQueryData(["csrfToken"]));
   return useMutation({
     mutationFn: async (variables) => {
       const { formData, user } = variables;

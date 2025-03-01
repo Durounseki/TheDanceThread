@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Country, State, City } from "country-state-city";
 import { v4 as uuidv4 } from "uuid";
 
@@ -59,7 +59,6 @@ export const useCsrfToken = () => {
   return useQuery({
     queryKey: ["csrfToken"],
     queryFn: async () => {
-      console.log("Fetching CSRF token");
       const response = await fetch(`${apiUrl}/csrf`, {
         method: "GET",
         credentials: "include",

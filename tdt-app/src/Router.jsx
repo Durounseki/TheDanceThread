@@ -1,4 +1,3 @@
-// import useAuth from "./useAuth.jsx";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./Layout.jsx";
 import Home from "./Home.jsx";

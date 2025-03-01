@@ -98,6 +98,8 @@ export async function getEventById(eventId) {
 							select: {
 								id: true,
 								name: true,
+								avatar: true,
+								profilePic: true,
 							},
 						},
 					},

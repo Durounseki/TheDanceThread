@@ -5,7 +5,6 @@ import ProgressiveImage from "../../ProgressiveImage";
 import ResponsiveImage from "../../ResponsiveImage";
 
 const EventDetails = ({ event, isLoading }) => {
-  console.log(event);
   if (isLoading) {
     return (
       <>
@@ -146,6 +145,15 @@ const EventDetails = ({ event, isLoading }) => {
       </div>
       <div className="event-section">
         <h2>Details</h2>
+        <div className="event-styles">
+          <ul>
+            {event.styles.map((style) => (
+              <li className="dance-style" key={style.id}>
+                {style.name.charAt(0).toUpperCase() + style.name.slice(1)}
+              </li>
+            ))}
+          </ul>
+        </div>
         <p>{event.description}</p>
       </div>
 
@@ -166,25 +174,45 @@ const EventDetails = ({ event, isLoading }) => {
         </p>
       </div>
       <section className="event-section">
-        <h2>Artists</h2>
-        <p>Coming soon!</p>
-      </section>
-      <section className="event-section">
-        <h2>DJ&apos;s</h2>
-        <p>Coming soon!</p>
-      </section>
-      <section className="event-section">
         <h2>Dancers</h2>
-
-        {event.totalAttendees > 0 ? (
-          event.attendees.map((item) => (
-            <p key={item.user.id}>
-              <b>{item.user.name}</b>
-            </p>
-          ))
-        ) : (
-          <p>No one here yet...</p>
-        )}
+        <ul className="event-dancers">
+          {event.totalAttendees > 0 ? (
+            event.attendees.map((attendee) => (
+              <li key={attendee.user.id} className="attendee">
+                <figure className="profile-picture">
+                  {attendee.user.profilePic ? (
+                    <ProgressiveImage
+                      imageKey={attendee.user.profilePic.src}
+                      alt={attendee.user.profilePic.alt}
+                      size="small"
+                    />
+                  ) : (
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: attendee.user.avatar,
+                      }}
+                    />
+                  )}
+                </figure>
+                <p>
+                  <b>{attendee.user.name}</b>
+                </p>
+              </li>
+            ))
+          ) : (
+            <li>No one here yet...</li>
+          )}
+        </ul>
+      </section>
+      <section className="event-section">
+        <h2>
+          Artists <span>(Comming soon!)</span>
+        </h2>
+      </section>
+      <section className="event-section">
+        <h2>
+          DJ&apos;s <span>(Comming soon!)</span>
+        </h2>
       </section>
     </>
   );

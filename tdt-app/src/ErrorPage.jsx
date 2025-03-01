@@ -1,9 +1,10 @@
-import useAuth from "./useAuth.jsx";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ErrorPage = () => {
-  const { user, loading } = useAuth();
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(["user"]);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -17,9 +18,7 @@ const ErrorPage = () => {
       navigate("/");
     }
   }, [user, location.pathname, navigate]);
-  if (loading) {
-    return <></>;
-  }
+
   return (
     <main className="error-page-content">
       <h1>It seems that you got lost...</h1>
