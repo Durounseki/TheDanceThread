@@ -337,7 +337,6 @@ async function authenticate(c, next) {
 	}
 	try {
 		const payload = await jwtVerify(token, jwtSecret);
-
 		c.set('userId', payload.payload.userId);
 	} catch (error) {
 		if (error.code === 'ERR_JWT_EXPIRED' && refreshToken) {
