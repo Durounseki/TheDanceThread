@@ -16,7 +16,7 @@ export const useLogout = () => {
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["currentUser"] });
       const currentUser = queryClient.getQueryData(["currentUser"]);
-      queryClient.setQueryData(["currentUser"], null);
+      queryClient.setQueryData(["currentUser"], {});
       return currentUser;
     },
     onError: (err, context) => {
