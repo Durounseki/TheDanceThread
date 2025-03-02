@@ -4,7 +4,7 @@ This is the prototype of The Dance Thread a social platform where dancers can fi
 
 ## To do
 
-- [ ] Set up cookies
+- [x] Set up cookies
 - [x] Optimistic updates.
 - [x] CSRF synchronizing token pattern
 - [x] JWT Refresh token
