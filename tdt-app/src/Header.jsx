@@ -22,7 +22,6 @@ const Header = ({ showLogin }) => {
   const handleLogOut = async (event) => {
     event.preventDefault();
     await logoutMutation.mutateAsync(user.id);
-    navigate("/");
   };
   const handleOpenProfile = (event) => {
     event.preventDefault();

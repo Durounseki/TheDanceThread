@@ -12,7 +12,6 @@ const Footer = ({ showLogin }) => {
   const handleLogOut = async (event) => {
     event.preventDefault();
     await logoutMutation.mutateAsync(user.id);
-    navigate("/");
   };
   const handleNewEvent = () => {
     navigate("/events/create");

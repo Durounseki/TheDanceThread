@@ -43,7 +43,6 @@ const Profile = () => {
   const handleLogOut = async (event) => {
     event.preventDefault();
     await logoutMutation.mutateAsync(user.id);
-    navigate("/");
   };
 
   const handleDeleteAccount = async (event) => {
