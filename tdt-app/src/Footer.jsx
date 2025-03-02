@@ -1,10 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
-// import { useQueryClient } from "@tanstack/react-query";
 import { useAuthenticateUser } from "./userQueries";
 import { useLogout } from "./userMutations";
 const Footer = ({ showLogin }) => {
-  // const queryClient = useQueryClient();
-  // const user = queryClient.getQueryData(["currentUser"]);
   const { data: user, isLoading: userLoading } = useAuthenticateUser();
   const logoutMutation = useLogout();
   const navigate = useNavigate();
@@ -14,8 +11,8 @@ const Footer = ({ showLogin }) => {
   };
   const handleLogOut = async (event) => {
     event.preventDefault();
+    await logoutMutation.mutateAsync(user.id);
     navigate("/");
-    logoutMutation.mutate(user.id);
   };
   const handleNewEvent = () => {
     navigate("/events/create");

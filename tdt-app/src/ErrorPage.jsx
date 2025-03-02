@@ -1,11 +1,8 @@
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
-// import { useQueryClient } from "@tanstack/react-query";
 import { useAuthenticateUser } from "./userQueries";
 
 const ErrorPage = () => {
-  // const queryClient = useQueryClient();
-  // const user = queryClient.getQueryData(["user"]);
   const { data: user, isLoading: userLoading } = useAuthenticateUser();
   const navigate = useNavigate();
   const location = useLocation();

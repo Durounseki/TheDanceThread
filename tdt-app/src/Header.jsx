@@ -2,12 +2,9 @@ import { Link, useNavigate } from "react-router-dom";
 import mainLogo from "./assets/tdt-logo-dark.png";
 import { useState, useEffect, useRef } from "react";
 import ProgressiveImage from "./ProgressiveImage.jsx";
-import { useQueryClient } from "@tanstack/react-query";
 import { useLogout } from "./userMutations.js";
 import { useAuthenticateUser } from "./userQueries.js";
 const Header = ({ showLogin }) => {
-  // const queryClient = useQueryClient();
-  // const user = queryClient.getQueryData(["currentUser"]);
   const { data: user, isLoading: userLoading } = useAuthenticateUser();
   const logoutMutation = useLogout();
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
@@ -24,8 +21,8 @@ const Header = ({ showLogin }) => {
   };
   const handleLogOut = async (event) => {
     event.preventDefault();
+    await logoutMutation.mutateAsync(user.id);
     navigate("/");
-    logoutMutation.mutate(user.id);
   };
   const handleOpenProfile = (event) => {
     event.preventDefault();
