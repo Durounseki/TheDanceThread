@@ -8,7 +8,8 @@ import ProgressiveImage from "../../ProgressiveImage";
 import DatePicker from "react-datepicker";
 import { addYears } from "date-fns";
 import "../../DatePicker.css";
-import { useQueryClient } from "@tanstack/react-query";
+// import { useQueryClient } from "@tanstack/react-query";
+import { useAuthenticateUser } from "../../userQueries";
 import { useEvent } from "../../eventQueries";
 import { useCreateEvent, useSaveEvent } from "../../eventMutations";
 
@@ -25,8 +26,9 @@ function EventForm() {
   const [city, setCity] = useState("");
   const [venueName, setVenueName] = useState("");
   const [venueUrl, setVenueUrl] = useState("");
-  const queryClient = useQueryClient();
-  const user = queryClient.getQueryData(["currentUser"]);
+  // const queryClient = useQueryClient();
+  // const user = queryClient.getQueryData(["currentUser"]);
+  const { data: user, isLoading: userLoading } = useAuthenticateUser();
   const [styleOptions, setStyleOptions] = useState([
     {
       id: uuidv4(),

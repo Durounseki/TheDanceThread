@@ -21,5 +21,8 @@ export const useAuthenticateUser = () => {
       return data;
     },
     retry: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };

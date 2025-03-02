@@ -5,10 +5,12 @@ import PropTypes from "prop-types";
 import ProgressiveImage from "../../ProgressiveImage";
 import { useQueryClient } from "@tanstack/react-query";
 import { useBookmarkEvent } from "../../userMutations";
+import { useAuthenticateUser } from "../../userQueries";
 
 const EventCard = ({ eventInfo, canEdit = false, showModal, setEventId }) => {
-  const queryClient = useQueryClient();
-  const user = queryClient.getQueryData(["currentUser"]);
+  // const queryClient = useQueryClient();
+  // const user = queryClient.getQueryData(["currentUser"]);
+  const { data: user, isLoading: userLoading } = useAuthenticateUser();
   const [bookmark, setBookmark] = useState(false);
   const bookmarkMutation = useBookmarkEvent(eventInfo.id);
   const [shared, setShared] = useState(false);

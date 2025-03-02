@@ -4,9 +4,11 @@ import { useState, useEffect, useRef } from "react";
 import ProgressiveImage from "./ProgressiveImage.jsx";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLogout } from "./userMutations.js";
+import { useAuthenticateUser } from "./userQueries.js";
 const Header = ({ showLogin }) => {
-  const queryClient = useQueryClient();
-  const user = queryClient.getQueryData(["currentUser"]);
+  // const queryClient = useQueryClient();
+  // const user = queryClient.getQueryData(["currentUser"]);
+  const { data: user, isLoading: userLoading } = useAuthenticateUser();
   const logoutMutation = useLogout();
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
   const profileMenuRef = useRef(null);

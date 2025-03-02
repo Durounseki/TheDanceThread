@@ -5,6 +5,7 @@ import EventSchedule from "./components/EventSchedule.jsx";
 import EventDetails from "./components/EventDetails.jsx";
 import EventBanner from "./components/EventBanner.jsx";
 import { useEvents, useEvent } from "../eventQueries.js";
+// import { useQueryClient } from "@tanstack/react-query";
 
 const EventsSchedule = () => {
   const { id: eventId } = useParams();

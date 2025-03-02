@@ -26,6 +26,9 @@ export const useEvents = (country, style, date) => {
       const data = await response.json();
       return data;
     },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };
 
@@ -41,6 +44,9 @@ export const useEvent = (eventId) => {
       const data = await response.json();
       return data;
     },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
     enable: !!eventId,
   });
 };
@@ -59,5 +65,9 @@ export const useUserEvents = (user, events) => {
       );
       return { created, attending };
     },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    enabled: !!user && !!events,
   });
 };

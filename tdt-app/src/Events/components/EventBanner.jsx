@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAuthenticateUser } from "../../userQueries";
 import {
   useBookmarkEvent,
   useLikeEvent,
@@ -9,8 +10,9 @@ import {
 } from "../../userMutations";
 
 const EventBanner = ({ eventInfo, isLoading }) => {
-  const queryClient = useQueryClient();
-  const user = queryClient.getQueryData(["currentUser"]);
+  // const queryClient = useQueryClient();
+  // const user = queryClient.getQueryData(["currentUser"]);
+  const { data: user, isLoading: userLoading } = useAuthenticateUser();
   const [bookmark, setBookmark] = useState(false);
   const bookmarkMutation = useBookmarkEvent(eventInfo.id);
   const [shared, setShared] = useState(false);

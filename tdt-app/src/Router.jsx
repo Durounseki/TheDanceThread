@@ -15,18 +15,6 @@ import { useAuthenticateUser } from "./userQueries.js";
 import { useCsrfToken } from "./otherQueries.js";
 
 const Router = () => {
-  const {
-    data: user,
-    isLoading: userLoading,
-    isError: userError,
-  } = useAuthenticateUser();
-
-  const { data: csrf, isError: csrfError } = useCsrfToken();
-
-  if (userLoading) return <h1>Loading...</h1>;
-  if (userError || csrfError) {
-    console.error("Authentication error:", userError);
-  }
   return (
     <BrowserRouter>
       <Routes>

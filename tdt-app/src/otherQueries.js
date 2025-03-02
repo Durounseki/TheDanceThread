@@ -16,6 +16,9 @@ export const useDanceStyles = () => {
       const data = await response.json();
       return data;
     },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };
 
@@ -31,6 +34,9 @@ export const useCountries = () => {
       }));
       return data;
     },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };
 
@@ -52,6 +58,9 @@ export const useCities = (countryCode) => {
         return [];
       }
     },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };
 
@@ -70,5 +79,8 @@ export const useCsrfToken = () => {
       const data = await response.json();
       return data;
     },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };

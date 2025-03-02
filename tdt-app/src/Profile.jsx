@@ -8,15 +8,16 @@ import ConfirmUserDelete from "./ConfirmUserDelete.jsx";
 import Modal from "./Modal.jsx";
 import ProgressiveImage from "./ProgressiveImage.jsx";
 import { useLogout } from "./userMutations.js";
-import { useQueryClient } from "@tanstack/react-query";
+// import { useQueryClient } from "@tanstack/react-query";
 import { useEvents } from "./eventQueries.js";
+import { useAuthenticateUser } from "./userQueries.js";
 
 const Profile = () => {
   const [showDeleteEventModal, setShowDeleteEventModal] = useState(false);
   const [showDeleteUserModal, setShowDeleteUserModal] = useState(false);
   const [eventId, setEventId] = useState(null);
-  const queryClient = useQueryClient();
-  const user = queryClient.getQueryData(["currentUser"]);
+  // const queryClient = useQueryClient();
+  const { data: user, isLoading: userLoading } = useAuthenticateUser();
   const { data: events, isLoading: eventsLoading } = useEvents();
   const logoutMutation = useLogout();
   const [editMode, setEditMode] = useState(false);
@@ -56,6 +57,9 @@ const Profile = () => {
     event.preventDefault();
     setEditMode(true);
   };
+  if (userLoading) {
+    return <p>Loading...</p>;
+  }
   return (
     <>
       {showDeleteEventModal && (
