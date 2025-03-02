@@ -4,12 +4,13 @@ This is the prototype of The Dance Thread a social platform where dancers can fi
 
 ## To do
 
+- [ ] Set up cookies
 - [x] Optimistic updates.
 - [x] CSRF synchronizing token pattern
 - [x] JWT Refresh token
 - [ ] Change token storage from KV to D1.
 - [ ] Show status and error messages.
-- [ ] Enable google auth in production.
+- [x] Enable google auth in production.
 - [ ] Add google map.
 - [x] Add event dance styles.
 - [x] Prevent opening delete user and delete event at the same time.
