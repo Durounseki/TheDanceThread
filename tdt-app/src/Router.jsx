@@ -26,7 +26,6 @@ const Router = () => {
   if (userLoading) return <h1>Loading...</h1>;
   if (userError || csrfError) {
     console.error("Authentication error:", userError);
-    return <h1>Authentication failed please login!</h1>;
   }
   return (
     <BrowserRouter>
