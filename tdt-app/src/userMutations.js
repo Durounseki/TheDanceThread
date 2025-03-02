@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: async () => {
       const response = await fetch(`${apiUrl}/auth/logout`, {
@@ -16,7 +18,7 @@ export const useLogout = () => {
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["currentUser"] });
       const currentUser = queryClient.getQueryData(["currentUser"]);
-      queryClient.setQueryData(["currentUser"], {});
+      queryClient.setQueryData(["currentUser"], undefined);
       return currentUser;
     },
     onError: (err, context) => {
@@ -25,6 +27,7 @@ export const useLogout = () => {
     onSuccess: (userId) => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       queryClient.invalidateQueries({ queryKey: ["userEvents", userId] });
+      navigate("/");
     },
   });
 };
