@@ -13,8 +13,14 @@ export const useLogout = () => {
         throw new Error("Error logging out");
       }
     },
-    onError: (err) => {
-      console.error("Failed to logout:", err);
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ["currentUser"] });
+      const currentUser = queryClient.getQueryData(["currentUser"]);
+      queryClient.setQueryData(["currentUser"], null);
+      return currentUser;
+    },
+    onError: (err, context) => {
+      queryClient.setQueryData(["currentUser"], context.currentUser);
     },
     onSuccess: (userId) => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
