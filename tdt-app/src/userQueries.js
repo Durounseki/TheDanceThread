@@ -11,7 +11,11 @@ export const useAuthenticateUser = () => {
         credentials: "include",
       });
       if (!response.ok) {
-        return null;
+        if (response.status === 401) {
+          throw new Error("User not authenticated");
+        } else {
+          throw new Error(`Something went wrong: ${response.status}`);
+        }
       }
       const data = await response.json();
       return data;
