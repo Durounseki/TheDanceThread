@@ -380,7 +380,7 @@ app.get('api/auth/protected', authenticate, async (c) => {
 	return c.json(user);
 });
 
-app.get('api/auth/logout', authenticate, async (c) => {
+app.get('api/auth/logout', authenticate, checkCsrfToken, async (c) => {
 	const refreshToken = getCookie(c, 'refreshToken');
 	await c.env.TDT_KV.delete(refreshToken);
 	await c.env.TDT_KV.delete(`csrf:${c.get('userId')}`);

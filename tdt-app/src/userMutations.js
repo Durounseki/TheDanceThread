@@ -1,14 +1,19 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useCsrfToken } from "./otherQueries";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { data: csrfToken, isLoading: csrfTokenLoading } = useCsrfToken();
   return useMutation({
     mutationFn: async () => {
       const response = await fetch(`${apiUrl}/auth/logout`, {
         method: "GET",
+        headers: {
+          "X-CSRF-Token": csrfToken,
+        },
         credentials: "include",
       });
       if (!response.ok) {
@@ -29,18 +34,20 @@ export const useLogout = () => {
       queryClient.invalidateQueries({ queryKey: ["userEvents", userId] });
       navigate("/");
     },
+    enabled: !csrfTokenLoading && !!csrfToken,
   });
 };
 
 export const useBookmarkEvent = (eventId) => {
   const queryClient = useQueryClient();
+  const { data: csrfToken, isLoading: csrfTokenLoading } = useCsrfToken();
   return useMutation({
     mutationFn: async (isBookmarked) => {
       const method = isBookmarked ? "DELETE" : "POST";
       await fetch(`${apiUrl}/events/${eventId}/saves`, {
         method: method,
         headers: {
-          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+          "X-CSRF-Token": csrfToken,
         },
         credentials: "include",
       });
@@ -67,18 +74,20 @@ export const useBookmarkEvent = (eventId) => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
+    enabled: !csrfTokenLoading && !!csrfToken,
   });
 };
 
 export const useLikeEvent = (eventId) => {
   const queryClient = useQueryClient();
+  const { data: csrfToken, isLoading: csrfTokenLoading } = useCsrfToken();
   return useMutation({
     mutationFn: async (isLiked) => {
       const method = isLiked ? "DELETE" : "POST";
       await fetch(`${apiUrl}/events/${eventId}/likes`, {
         method: method,
         headers: {
-          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+          "X-CSRF-Token": csrfToken,
         },
         credentials: "include",
       });
@@ -130,18 +139,20 @@ export const useLikeEvent = (eventId) => {
       queryClient.invalidateQueries({ queryKey: ["event", eventId] });
       queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
+    enabled: !csrfTokenLoading && !!csrfToken,
   });
 };
 
 export const useAttendEvent = (eventId) => {
   const queryClient = useQueryClient();
+  const { data: csrfToken, isLoading: csrfTokenLoading } = useCsrfToken();
   return useMutation({
     mutationFn: async (isAttending) => {
       const method = isAttending ? "DELETE" : "POST";
       await fetch(`${apiUrl}/events/${eventId}/attendees`, {
         method: method,
         headers: {
-          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+          "X-CSRF-Token": csrfToken,
         },
         credentials: "include",
       });
@@ -205,18 +216,20 @@ export const useAttendEvent = (eventId) => {
       });
       queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
+    enabled: !csrfTokenLoading && !!csrfToken,
   });
 };
 
 export const useSaveProfile = () => {
   const queryClient = useQueryClient();
+  const { data: csrfToken, isLoading: csrfTokenLoading } = useCsrfToken();
   return useMutation({
     mutationFn: async (variables) => {
       const { formData, user } = variables;
       const response = await fetch(`${apiUrl}/users/${user.id}`, {
         method: "PATCH",
         headers: {
-          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+          "X-CSRF-Token": csrfToken,
         },
         body: formData,
         credentials: "include",
@@ -247,18 +260,20 @@ export const useSaveProfile = () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
+    enabled: !csrfTokenLoading && !!csrfToken,
   });
 };
 
 export const useUpdatePicture = () => {
   const queryClient = useQueryClient();
+  const { data: csrfToken, isLoading: csrfTokenLoading } = useCsrfToken();
   return useMutation({
     mutationFn: async (variables) => {
       const { user, formData } = variables;
       const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
         method: "PATCH",
         headers: {
-          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+          "X-CSRF-Token": csrfToken,
         },
         body: formData,
         credentials: "include",
@@ -271,18 +286,20 @@ export const useUpdatePicture = () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
+    enabled: !csrfTokenLoading && !!csrfToken,
   });
 };
 
 export const useDeletePicture = () => {
   const queryClient = useQueryClient();
+  const { data: csrfToken, isLoading: csrfTokenLoading } = useCsrfToken();
   return useMutation({
     mutationFn: async (variables) => {
       const { user, formData } = variables;
       const response = await fetch(`${apiUrl}/users/${user.id}/profile-pic`, {
         method: "DELETE",
         headers: {
-          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+          "X-CSRF-Token": csrfToken,
         },
         body: formData,
         credentials: "include",
@@ -295,18 +312,20 @@ export const useDeletePicture = () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
+    enabled: !csrfTokenLoading && !!csrfToken,
   });
 };
 
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
+  const { data: csrfToken, isLoading: csrfTokenLoading } = useCsrfToken();
   return useMutation({
     mutationFn: async (variables) => {
       const { userId, formData } = variables;
       const response = await fetch(`${apiUrl}/users/${userId}`, {
         method: "DELETE",
         headers: {
-          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+          "X-CSRF-Token": csrfToken,
         },
         body: formData,
         credentials: "include",
@@ -321,5 +340,6 @@ export const useDeleteUser = () => {
       queryClient.invalidateQueries({ queryKey: ["userEvents", userId] });
       queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
+    enabled: !csrfTokenLoading && !!csrfToken,
   });
 };
