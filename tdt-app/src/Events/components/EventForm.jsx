@@ -97,18 +97,18 @@ function EventForm() {
     }
   }, [currentEvent]);
 
-  useEffect(() => {
-    const textArea = textAreaRef.current;
-    if (!textArea) return;
-    const resizeTextArea = () => {
-      textArea.style.height = "auto";
-      textArea.style.height = `calc(${textArea.scrollHeight}px + 1em)`;
-    };
-    textArea.addEventListener("input", resizeTextArea);
+  // useEffect(() => {
+  //   const textArea = textAreaRef.current;
+  //   if (!textArea) return;
+  //   const resizeTextArea = () => {
+  //     textArea.style.height = "auto";
+  //     textArea.style.height = `calc(${textArea.scrollHeight}px + 1em)`;
+  //   };
+  //   textArea.addEventListener("input", resizeTextArea);
 
-    resizeTextArea();
-    return () => textArea.removeEventListener("input", resizeTextArea);
-  }, []);
+  //   resizeTextArea();
+  //   return () => textArea.removeEventListener("input", resizeTextArea);
+  // }, []);
 
   const handleStyleCheck = (event) => {
     const { id, checked } = event.target;
@@ -211,12 +211,15 @@ function EventForm() {
   };
 
   const handleDescriptionChange = (event) => {
+    const textArea = textAreaRef.current;
     const text = event.target.value;
     if (text.length > MAX_DESCRIPTION_LENGTH) {
       event.target.value = text.slice(0, MAX_DESCRIPTION_LENGTH);
       return;
     }
     setDescription(text);
+    textArea.style.height = "auto";
+    textArea.style.height = `calc(${textArea.scrollHeight}px + 1em)`;
   };
 
   const handleSubmit = async (event) => {
