@@ -8,6 +8,7 @@ This is the prototype of The Dance Thread a social platform where dancers can fi
 - [x] Optimistic updates.
 - [x] CSRF synchronizing token pattern
 - [x] JWT Refresh token
+- [ ] Change SNS
 - [ ] Change token storage from KV to D1.
 - [ ] Show status and error messages.
 - [x] Enable google auth in production.

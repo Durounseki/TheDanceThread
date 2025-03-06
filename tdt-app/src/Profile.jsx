@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import UserEvents from "./UserEvents.jsx";
 import { v4 as uuidv4 } from "uuid";
 import UserForm from "./UserForm.jsx";
@@ -20,8 +20,6 @@ const Profile = () => {
   const logoutMutation = useLogout();
   const [editMode, setEditMode] = useState(false);
   const [snsGroups, setSnsGroups] = useState([]);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {

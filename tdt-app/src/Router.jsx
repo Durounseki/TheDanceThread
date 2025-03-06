@@ -11,8 +11,6 @@ import Profile from "./Profile.jsx";
 import TermsOfService from "./TermsOfService.jsx";
 import PrivacyPolicy from "./PrivacyPolicy.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
-import { useAuthenticateUser } from "./userQueries.js";
-import { useCsrfToken } from "./otherQueries.js";
 
 const Router = () => {
   return (

@@ -97,19 +97,6 @@ function EventForm() {
     }
   }, [currentEvent]);
 
-  // useEffect(() => {
-  //   const textArea = textAreaRef.current;
-  //   if (!textArea) return;
-  //   const resizeTextArea = () => {
-  //     textArea.style.height = "auto";
-  //     textArea.style.height = `calc(${textArea.scrollHeight}px + 1em)`;
-  //   };
-  //   textArea.addEventListener("input", resizeTextArea);
-
-  //   resizeTextArea();
-  //   return () => textArea.removeEventListener("input", resizeTextArea);
-  // }, []);
-
   const handleStyleCheck = (event) => {
     const { id, checked } = event.target;
     if (checked) {
