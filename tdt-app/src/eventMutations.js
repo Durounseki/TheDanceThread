@@ -1,14 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useCsrfToken } from "./otherQueries";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const useCreateEvent = () => {
   const queryClient = useQueryClient();
+  const { data: csrfToken, isLoading: csrfTokenLoading } = useCsrfToken();
   return useMutation({
     mutationFn: async (variables) => {
       const response = await fetch(`${apiUrl}/events`, {
         method: "POST",
         headers: {
-          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+          "X-CSRF-Token": csrfToken,
         },
         body: variables.formData,
         credentials: "include",
@@ -25,18 +27,20 @@ export const useCreateEvent = () => {
       queryClient.invalidateQueries({ queryKey: ["userEvents", userId] });
       queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
+    enabled: !csrfTokenLoading && !!csrfToken,
   });
 };
 
 export const useSaveEvent = () => {
   const queryClient = useQueryClient();
+  const { data: csrfToken, isLoading: csrfTokenLoading } = useCsrfToken();
   return useMutation({
     mutationFn: async (variables) => {
       const { formData, event } = variables;
       const response = await fetch(`${apiUrl}/events/${event.id}`, {
         method: "PATCH",
         headers: {
-          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+          "X-CSRF-Token": csrfToken,
         },
         body: formData,
         credentials: "include",
@@ -52,18 +56,20 @@ export const useSaveEvent = () => {
       queryClient.invalidateQueries({ queryKey: ["event", event.id] });
       queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
+    enabled: !csrfTokenLoading && !!csrfToken,
   });
 };
 
 export const useDeleteEvent = () => {
   const queryClient = useQueryClient();
+  const { data: csrfToken, isLoading: csrfTokenLoading } = useCsrfToken();
   return useMutation({
     mutationFn: async (variables) => {
       const { eventId } = variables;
       const response = await fetch(`${apiUrl}/events/${eventId}`, {
         method: "DELETE",
         headers: {
-          "X-CSRF-Token": queryClient.getQueryData(["csrfToken"]),
+          "X-CSRF-Token": csrfToken,
         },
         credentials: "include",
       });
@@ -105,5 +111,6 @@ export const useDeleteEvent = () => {
       queryClient.invalidateQueries({ queryKey: ["userEvents", userId] });
       queryClient.invalidateQueries({ queryKey: ["csrfToken"] });
     },
+    enabled: !csrfTokenLoading && !!csrfToken,
   });
 };
