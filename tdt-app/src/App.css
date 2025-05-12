@@ -425,6 +425,28 @@ footer {
     }
   }
 }
+.team {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+.team-member {
+  width: 100%;
+  margin: 0 auto;
+  .member-image {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      margin: auto;
+      border-radius: 24px;
+    }
+  }
+}
 
 .event-image-container::before {
   content: "";
@@ -1296,9 +1318,11 @@ form.confirm-delete-actions {
   }
 }
 
-.legal-document {
+.legal-document,
+.about-page {
   h1 {
     color: #ffa6db;
+    font-size: 24px;
   }
   padding-inline: 24px;
   text-align: left;
@@ -1540,9 +1564,15 @@ form.confirm-delete-actions {
   color: #7d7d7d;
 }
 
-.error-page-content {
+.error-page-content,
+.community-page {
   flex: 1;
   align-self: stretch;
+  padding: 16px 8px;
+  h1 {
+    color: #ffa6db;
+    font-size: 24px;
+  }
 }
 .error-page-message a {
   color: #a6dbff;

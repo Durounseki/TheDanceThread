@@ -8,6 +8,8 @@ import ErrorPage from "./ErrorPage.jsx";
 import EventsSchedule from "./Events/EventsSchedule.jsx";
 import LoginPage from "./LoginPage.jsx";
 import Profile from "./Profile.jsx";
+import About from "./About.jsx";
+import Community from "./Community.jsx";
 import TermsOfService from "./TermsOfService.jsx";
 import PrivacyPolicy from "./PrivacyPolicy.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
@@ -47,6 +49,8 @@ const Router = () => {
               </ProtectedRoute>
             }
           />
+          <Route path="/community" element={<Community />}></Route>
+          <Route path="/about" element={<About />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="*" element={<ErrorPage />} />

@@ -7,7 +7,8 @@ const Footer = ({ showLogin }) => {
   const navigate = useNavigate();
   const handleShowLogin = (event) => {
     event.preventDefault();
-    showLogin(true);
+    console.log("show login");
+    showLogin();
   };
   const handleLogOut = async (event) => {
     event.preventDefault();

@@ -1,7 +1,7 @@
 const Modal = ({ closeModal, children }) => {
   const handleClose = (event) => {
     event.preventDefault();
-    closeModal(false);
+    closeModal();
   };
   return (
     <div className="modal-backdrop">

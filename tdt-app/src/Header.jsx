@@ -13,7 +13,7 @@ const Header = ({ showLogin }) => {
 
   const handleShowLogin = (event) => {
     event.preventDefault();
-    showLogin(true);
+    showLogin();
   };
   const toggleProfileMenu = (event) => {
     event.preventDefault();
@@ -22,6 +22,7 @@ const Header = ({ showLogin }) => {
   const handleLogOut = async (event) => {
     event.preventDefault();
     await logoutMutation.mutateAsync(user.id);
+    setOpenProfileMenu(false);
   };
   const handleOpenProfile = (event) => {
     event.preventDefault();
