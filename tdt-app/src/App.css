@@ -286,6 +286,11 @@ footer {
   gap: 12px;
   padding-top: 24px;
   border-top: solid 1px #202020;
+  h3 {
+    text-align: left;
+    padding-inline: 12px;
+    color: #777;
+  }
 }
 
 .event-container {
