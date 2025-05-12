@@ -16,7 +16,7 @@ const EventSchedule = ({ events, isLoading }) => {
             </div>
           ))}
         </section>
-        <section>
+        <section className="event-cards">
           <h2>Past Events</h2>
           {[...Array(4)].map((_, i) => (
             <div key={i} className="event-card-container">
@@ -82,7 +82,7 @@ const EventSchedule = ({ events, isLoading }) => {
           </p>
         )}
       </section>
-      <section>
+      <section className="event-cards">
         <h2>Past Events</h2>
         {pastEvents && pastEvents.length > 0 ? (
           pastEvents.map((event) => (
